@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Deck Productive Layout</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .streamdeck {
+            display: grid;
+            grid-template-columns: repeat(8, 80px);
+            grid-template-rows: repeat(8, 80px);
+            gap: 4px;
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .key {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            position: relative;
+            border: 1px solid #404040;
+        }
+        
+        .system { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .apps { background: linear-gradient(135deg, #FF9800, #f57c00); }
+        .audio { background: linear-gradient(135deg, #9C27B0, #7b1fa2); }
+        .display { background: linear-gradient(135deg, #F44336, #d32f2f); }
+        .content { background: linear-gradient(135deg, #00BCD4, #0097a7); }
+        .nav { background: linear-gradient(135deg, #607D8B, #455a64); }
+        .empty { background: #333; border: 1px dashed #555; }
+        
+        .icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        .title {
+            text-align: center;
+            margin: 30px 0 20px 0;
+            font-size: 24px;
+            color: #fff;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">🎛️ Productive Stream Deck Layout</h1>
+    
+    <div class="streamdeck">
+        <!-- Row 1 - System Monitoring -->
+        <div class="key system">
+            <div class="icon">🕐</div>
+            <div>18:36<br>London</div>
+        </div>
+        <div class="key system">
+            <div class="icon">💾</div>
+            <div>CPU<br>8%</div>
+        </div>
+        <div class="key system">
+            <div class="icon">⚡</div>
+            <div>RAM<br>54%</div>
+        </div>
+        <div class="key system">
+            <div class="icon">📶</div>
+            <div>Network<br>Good</div>
+        </div>
+        <div class="key system">
+            <div class="icon">📅</div>
+            <div>Tue<br>17/02/26</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 2 - Core Apps -->
+        <div class="key apps">
+            <div class="icon">📹</div>
+            <div>OBS<br>Studio</div>
+        </div>
+        <div class="key apps">
+            <div class="icon">🎬</div>
+            <div>DaVinci<br>Resolve</div>
+        </div>
+        <div class="key apps">
+            <div class="icon">👥</div>
+            <div>Microsoft<br>Teams</div>
+        </div>
+        <div class="key apps">
+            <div class="icon">📝</div>
+            <div>Obsidian<br>Notes</div>
+        </div>
+        <div class="key apps">
+            <div class="icon">💻</div>
+            <div>Terminal</div>
+        </div>
+        <div class="key apps">
+            <div class="icon">🌐</div>
+            <div>Browser</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 3 - Audio Control -->
+        <div class="key audio">
+            <div class="icon">🔇</div>
+            <div>Mute<br>Toggle</div>
+        </div>
+        <div class="key audio">
+            <div class="icon">🔊</div>
+            <div>Volume<br>Control</div>
+        </div>
+        <div class="key audio">
+            <div class="icon">🎚️</div>
+            <div>Focus<br>Rite</div>
+        </div>
+        <div class="key audio">
+            <div class="icon">🎵</div>
+            <div>Razer<br>Audio</div>
+        </div>
+        <div class="key audio">
+            <div class="icon">🎤</div>
+            <div>Input<br>Switch</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 4 - Display & Monitor Control -->
+        <div class="key display">
+            <div class="icon">🖥️</div>
+            <div>Move<br>Monitors</div>
+        </div>
+        <div class="key display">
+            <div class="icon">📺</div>
+            <div>Ninja<br>Prompter*</div>
+        </div>
+        <div class="key display">
+            <div class="icon">📸</div>
+            <div>Screen<br>Capture</div>
+        </div>
+        <div class="key display">
+            <div class="icon">🖼️</div>
+            <div>Show<br>Desktop</div>
+        </div>
+        <div class="key display">
+            <div class="icon">⚙️</div>
+            <div>Resolution<br>Presets</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 5 - Content & Recording -->
+        <div class="key content">
+            <div class="icon">📹</div>
+            <div>Insta360<br>Link</div>
+        </div>
+        <div class="key content">
+            <div class="icon">✏️</div>
+            <div>Huion<br>Tablet</div>
+        </div>
+        <div class="key content">
+            <div class="icon">✂️</div>
+            <div>Smart<br>Clip*</div>
+        </div>
+        <div class="key content">
+            <div class="icon">🎛️</div>
+            <div>Stream<br>Deck</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 6-7 - Empty for expansion -->
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        
+        <!-- Row 8 - Navigation -->
+        <div class="key nav">
+            <div class="icon">📂</div>
+            <div>Page 2<br>Tools</div>
+        </div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key empty"></div>
+        <div class="key nav">
+            <div class="icon">⚙️</div>
+            <div>Settings</div>
+        </div>
+        <div class="key nav">
+            <div class="icon">🔒</div>
+            <div>Lock<br>PC</div>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color system"></div>
+            <span>System Monitoring</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color apps"></div>
+            <span>App Launchers</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color audio"></div>
+            <span>Audio Control</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color display"></div>
+            <span>Display/Monitor</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color content"></div>
+            <span>Content/Recording</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color nav"></div>
+            <span>Navigation</span>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px; max-width: 600px; text-align: center; color: #ccc; font-size: 14px;">
+        <h3>Key Improvements:</h3>
+        <p><strong>*Ninja Prompter:</strong> Consolidate all monitor variants (LG/Samsung/Asus/Kamvas) into one smart button that auto-detects or uses folders</p>
+        <p><strong>*Smart Clip:</strong> Merge all "Asus Clip" variants into one intelligent clip saver that routes to the right monitor</p>
+        <p><strong>Grouping:</strong> Related functions are grouped by row, making muscle memory easier</p>
+        <p><strong>Growth:</strong> Plenty of empty slots for new tools without reorganizing core workflow</p>
+    </div>
+</body>
+</html>
