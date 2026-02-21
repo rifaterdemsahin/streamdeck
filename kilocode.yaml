@@ -1,0 +1,55 @@
+# Kilo Code Configuration File
+# This file contains settings for Kilo Code integration with Ollama and Qdrant
+
+codebase_indexing:
+  status: "Standby"
+
+  setup:
+    embedder_provider: "Ollama"
+    ollama_base_url: "http://localhost:11434"
+    model: "deepseek-coder:6.7b"  # Model ID for embeddings
+    model_dimension: 1536
+
+    vector_store_provider: "Qdrant"
+    qdrant_url: "http://localhost:6333"
+    qdrant_api_key: ""  # Leave empty for local Qdrant instance
+
+  advanced_configuration:
+    # Additional advanced settings can be added here
+    chunk_size: 1000
+    chunk_overlap: 200
+    collection_name: "kilocode_codebase"
+    excluded_patterns:
+      - ".git"
+      - "__pycache__"
+      - "node_modules"
+      - "*.pyc"
+      - "*.log"
+      - "*.png"
+      - "*.jpg"
+      - "*.jpeg"
+      - "*.gif"
+      - "*.bmp"
+      - "*.ico"
+      - "*.mp4"
+      - "*.avi"
+      - "*.mov"
+      - "*.zip"
+      - "*.tar.gz"
+
+# Additional Kilo Code settings
+kilo_code:
+  ollama_url: "http://localhost:11434"
+  qdrant_url: "http://localhost:6333"
+  default_model: "deepseek-coder:6.7b"
+  embedding_model: "deepseek-coder:6.7b"
+  collection_name: "kilocode_codebase"
+
+  # Performance settings
+  max_tokens: 2048
+  temperature: 0.7
+  timeout: 30
+
+  # Indexing settings
+  index_batch_size: 100
+  index_workers: 4
