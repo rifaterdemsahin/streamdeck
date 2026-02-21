@@ -300,6 +300,111 @@
         .badge.new {
             background: #FF9800;
         }
+
+        /* Search Styles */
+        .search-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-box input::placeholder {
+            color: #a8d0ff;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ffd700;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+            display: none;
+        }
+
+        .clear-search:hover {
+            color: #fff;
+        }
+
+        .search-info {
+            display: none;
+            font-size: 0.85em;
+            color: #a8d0ff;
+            margin-top: 5px;
+        }
+
+        .search-info.visible {
+            display: block;
+        }
+
+        .search-nav {
+            display: none;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .search-nav.visible {
+            display: flex;
+        }
+
+        .search-nav button {
+            padding: 5px 15px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            color: #ffd700;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .search-nav button:hover:not(:disabled) {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .search-nav button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .markdown-body mark {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .markdown-body mark.current-highlight {
+            background: #ff9800;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -313,6 +418,19 @@
     <div class="container">
         <nav class="sidebar" id="sidebar">
             <a href="index.html" class="home-button">⬅️ Back to Home</a>
+
+            <!-- Search Section -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search in document...">
+                    <button type="button" class="clear-search" id="clearSearch" title="Clear search">✕</button>
+                </div>
+                <div class="search-info" id="searchInfo"></div>
+                <div class="search-nav" id="searchNav">
+                    <button type="button" id="prevResult" title="Previous result">⬆ Prev</button>
+                    <button type="button" id="nextResult" title="Next result">Next ⬇</button>
+                </div>
+            </div>
 
             <h2>📖 Navigation</h2>
 
@@ -361,6 +479,7 @@
                 <h3>🔗 External Links</h3>
                 <a class="menu-item" href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub Repository →</a>
                 <a class="menu-item" href="https://rifaterdemsahin.github.io/streamdeck/" target="_blank" rel="noopener">Project Website →</a>
+                <a class="menu-item" href="https://www.linkedin.com/in/rifaterdemsahin/" target="_blank" rel="noopener">👤 Contact (LinkedIn) →</a>
             </div>
         </nav>
 
@@ -501,6 +620,179 @@
             const hash = window.location.hash.slice(1);
             if (hash) {
                 loadMarkdown(hash);
+            }
+        });
+
+        // Search functionality
+        let searchResults = [];
+        let currentResultIndex = -1;
+
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const searchInfo = document.getElementById('searchInfo');
+        const searchNav = document.getElementById('searchNav');
+        const prevBtn = document.getElementById('prevResult');
+        const nextBtn = document.getElementById('nextResult');
+
+        // Clear previous highlights
+        function clearHighlights() {
+            const markdownBody = document.querySelector('.markdown-body');
+            if (!markdownBody) return;
+
+            const marks = markdownBody.querySelectorAll('mark');
+            marks.forEach(mark => {
+                const parent = mark.parentNode;
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            });
+
+            searchResults = [];
+            currentResultIndex = -1;
+        }
+
+        // Highlight search term
+        function highlightSearchTerm(searchTerm) {
+            clearHighlights();
+
+            if (!searchTerm || searchTerm.length < 2) {
+                searchInfo.classList.remove('visible');
+                searchNav.classList.remove('visible');
+                return;
+            }
+
+            const markdownBody = document.querySelector('.markdown-body');
+            if (!markdownBody) return;
+
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+            // Walk through text nodes and highlight matches
+            const walker = document.createTreeWalker(
+                markdownBody,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+
+            const nodesToReplace = [];
+            let node;
+
+            while (node = walker.nextNode()) {
+                if (node.nodeValue.match(regex)) {
+                    nodesToReplace.push(node);
+                }
+            }
+
+            nodesToReplace.forEach(textNode => {
+                const span = document.createElement('span');
+                span.innerHTML = textNode.nodeValue.replace(regex, '<mark>$1</mark>');
+                textNode.parentNode.replaceChild(span, textNode);
+
+                // Unwrap the span
+                while (span.firstChild) {
+                    span.parentNode.insertBefore(span.firstChild, span);
+                }
+                span.parentNode.removeChild(span);
+            });
+
+            // Collect all marks
+            searchResults = Array.from(markdownBody.querySelectorAll('mark'));
+
+            // Update UI
+            if (searchResults.length > 0) {
+                searchInfo.textContent = `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''}`;
+                searchInfo.classList.add('visible');
+                searchNav.classList.add('visible');
+                currentResultIndex = 0;
+                highlightCurrentResult();
+            } else {
+                searchInfo.textContent = 'No results found';
+                searchInfo.classList.add('visible');
+                searchNav.classList.remove('visible');
+            }
+        }
+
+        // Highlight current result
+        function highlightCurrentResult() {
+            searchResults.forEach((mark, index) => {
+                if (index === currentResultIndex) {
+                    mark.classList.add('current-highlight');
+                    mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    mark.classList.remove('current-highlight');
+                }
+            });
+
+            // Update button states
+            prevBtn.disabled = currentResultIndex <= 0;
+            nextBtn.disabled = currentResultIndex >= searchResults.length - 1;
+
+            // Update info text
+            searchInfo.textContent = `Result ${currentResultIndex + 1} of ${searchResults.length}`;
+        }
+
+        // Search input event
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm) {
+                clearSearchBtn.style.display = 'block';
+            } else {
+                clearSearchBtn.style.display = 'none';
+            }
+            highlightSearchTerm(searchTerm);
+        });
+
+        // Clear search
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            clearHighlights();
+            searchInfo.classList.remove('visible');
+            searchNav.classList.remove('visible');
+        });
+
+        // Previous result
+        prevBtn.addEventListener('click', () => {
+            if (currentResultIndex > 0) {
+                currentResultIndex--;
+                highlightCurrentResult();
+            }
+        });
+
+        // Next result
+        nextBtn.addEventListener('click', () => {
+            if (currentResultIndex < searchResults.length - 1) {
+                currentResultIndex++;
+                highlightCurrentResult();
+            }
+        });
+
+        // Keyboard shortcuts
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    // Shift+Enter: previous result
+                    if (currentResultIndex > 0) {
+                        currentResultIndex--;
+                        highlightCurrentResult();
+                    }
+                } else {
+                    // Enter: next result
+                    if (currentResultIndex < searchResults.length - 1) {
+                        currentResultIndex++;
+                        highlightCurrentResult();
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                clearSearchBtn.click();
+            }
+        });
+
+        // Global keyboard shortcut Ctrl/Cmd+F
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
             }
         });
     </script>
