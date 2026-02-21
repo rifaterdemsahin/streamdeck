@@ -7,7 +7,7 @@ A comprehensive automation system for Stream Deck devices focused on MLOps/DevOp
 - Focus: MLOps/DevOps/Video Editing
 - Environment: Windows
 - Devices: 2x Stream Deck XL, 1x Stream Deck +, 1x Stream Deck Mobile
-- Tools: Python, OpenAI, XAI, OpenRouter, DaVinci Resolve, Slideshow FX plugin
+- Tools: Python, OpenAI, XAI, OpenRouter, DaVinci Resolve, Slideshow FX plugin, Qdrant (semantic search), Ollama (local embeddings)
 
 ## Project Structure
 
@@ -57,6 +57,8 @@ Main application files and utilities.
 │   ├── docker_status.py
 │   ├── git_status.py
 │   ├── ai_query.py
+│   ├── semantic_search.py      # Semantic code search
+│   ├── qdrant_stats.py         # Qdrant statistics
 │   ├── backup_streamdeck.py    # Backup configurations
 │   └── restore_streamdeck.py   # Restore from backup
 ├── utils/            # Utility modules
@@ -64,6 +66,7 @@ Main application files and utilities.
 │   ├── docker_manager.py
 │   ├── git_manager.py
 │   ├── ai_client.py
+│   ├── qdrant_manager.py       # Semantic search manager
 │   ├── notification.py
 │   └── clipboard_manager.py
 └── configs/          # Configuration files
@@ -94,11 +97,13 @@ Test plans and validation procedures.
 ## Quick Start
 
 ### Prerequisites
-1. Windows 10/11
+1. Windows 10/11 (or macOS for development)
 2. Python 3.8+
 3. Stream Deck software installed
 4. DaVinci Resolve (for video editing features)
 5. Docker Desktop (for DevOps features)
+6. Qdrant (for semantic search) - http://localhost:6333
+7. Ollama (for local embeddings) - http://localhost:11434 with nomic-embed-text model
 
 ### Installation
 
@@ -149,12 +154,49 @@ You should see a notification with Docker container status.
 ### AI Integration
 - **Multi-Model Queries:** Compare responses from OpenAI, XAI, and OpenRouter
 - **Code Assistance:** Quick code reviews, explanations, and generation
+- **Semantic Search:** AI-powered code search using Qdrant vector database
+- **Smart Code Discovery:** Find code by meaning, not just keywords
 
 ### Multi-Device Setup
 - **XL #1:** Primary DevOps/MLOps operations
 - **XL #2:** Video editing workflows
 - **Stream Deck +:** AI tools and utilities with rotary controls
 - **Mobile:** Remote monitoring and emergency operations
+
+### Semantic Search (Qdrant Skill)
+
+The project includes a powerful semantic search capability powered by Qdrant vector database and Ollama embeddings:
+
+**Key Features:**
+
+- **AI-Powered Search:** Find code by meaning, not just keywords
+- **Local & Private:** All embeddings generated locally via Ollama
+- **Fast Results:** Sub-second search across entire codebase
+- **Multi-Language:** Supports Python, JavaScript, Markdown, and 40+ languages
+- **Context-Aware:** Uses 768-dimensional nomic-embed-text embeddings
+
+**Quick Start:**
+
+```powershell
+# 1. Ensure services are running
+# Qdrant: http://localhost:6333
+# Ollama: http://localhost:11434
+
+# 2. Index your codebase
+python 4_Formula\check_and_index.py
+
+# 3. Search via clipboard
+# Copy: "how to restart docker containers"
+# Press: Stream Deck semantic search button
+# Results copied to clipboard automatically
+```
+
+**Stream Deck Buttons:**
+
+- **Semantic Search:** Copy query → Press button → Get results
+- **Qdrant Stats:** View indexing statistics and health
+
+**Learn More:** See [Qdrant Semantic Search Guide](4_Formula/qdrant-semantic-search-guide.md) for detailed documentation.
 
 ### Disaster Recovery
 
@@ -236,8 +278,9 @@ Logging (6_Semblance/logs/)
 2. **Docker Manager:** Container operations
 3. **Git Manager:** Version control operations
 4. **AI Client:** Multi-model AI integration
-5. **Notification System:** User feedback
-6. **Clipboard Manager:** Cross-platform clipboard operations
+5. **Qdrant Manager:** Semantic search and vector database operations
+6. **Notification System:** User feedback
+7. **Clipboard Manager:** Cross-platform clipboard operations
 
 ## Troubleshooting
 
@@ -283,6 +326,7 @@ When making changes:
 ### Documentation
 - [Setup Guide](4_Formula/setup-guide.md)
 - [Best Practices](4_Formula/best-practices.md)
+- [Qdrant Semantic Search Guide](4_Formula/qdrant-semantic-search-guide.md)
 - [Use Cases](2_Environment/use-cases.md)
 - [Test Plan](7_Testing_known/test-plan.md)
 - [Error Catalog](6_Semblance/error-catalog.md)
@@ -292,6 +336,8 @@ When making changes:
 - [DaVinci Resolve Python API](https://www.blackmagicdesign.com/developer/)
 - [OpenAI API](https://platform.openai.com/docs)
 - [Docker Python SDK](https://docker-py.readthedocs.io/)
+- [Qdrant Documentation](https://qdrant.tech/documentation/)
+- [Ollama Documentation](https://github.com/ollama/ollama)
 
 ## Backup and Recovery
 
@@ -356,7 +402,17 @@ See [backups/README.md](backups/README.md) for detailed backup documentation.
 
 ## Version History
 
+### v1.1.0 - Semantic Search Integration
+
+- Qdrant vector database integration
+- Semantic code search capability
+- Ollama local embeddings (nomic-embed-text)
+- QdrantManager utility class
+- Semantic search and statistics scripts
+- Comprehensive documentation and tests
+
 ### v1.0.0 - Initial Setup
+
 - 7-folder structure created
 - Core utilities implemented
 - Basic Docker, Git, and AI integrations
