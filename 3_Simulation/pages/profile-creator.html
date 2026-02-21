@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Deck Profile Creator - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .main-content { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; }
+        .sidebar { background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 20px; }
+        .creator-area { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 30px; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 15px 0 10px 0; color: #a8d0ff; }
+        .device-selector { margin-bottom: 20px; }
+        .device-selector button { width: 100%; padding: 12px; margin: 5px 0; background: rgba(255, 255, 255, 0.1); border: 2px solid transparent; border-radius: 5px; color: #fff; cursor: pointer; transition: all 0.3s; }
+        .device-selector button:hover { background: rgba(255, 215, 0, 0.2); border-color: #ffd700; }
+        .device-selector button.active { background: rgba(255, 215, 0, 0.3); border-color: #ffd700; }
+        .stream-deck { display: inline-block; background: #222; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); }
+        .button-grid { display: grid; gap: 10px; }
+        .deck-button { width: 72px; height: 72px; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 2px solid #333; border-radius: 8px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 0.75em; text-align: center; padding: 4px; overflow: hidden; }
+        .deck-button:hover { border-color: #ffd700; transform: scale(1.05); }
+        .deck-button.selected { border-color: #ffd700; border-width: 3px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        .deck-button.assigned { background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%); }
+        .color-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+        .color-option { width: 100%; height: 40px; border: 2px solid transparent; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+        .color-option:hover { border-color: #fff; transform: scale(1.1); }
+        .color-option.selected { border-color: #ffd700; border-width: 3px; }
+        .action-selector { margin: 15px 0; }
+        .action-selector select, .action-selector input { width: 100%; padding: 10px; margin: 5px 0; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 5px; color: #fff; font-family: inherit; }
+        .action-selector select option { background: #2a5298; color: #fff; }
+        .apply-button { width: 100%; padding: 12px; margin-top: 15px; background: rgba(76, 175, 80, 0.3); border: 2px solid #4CAF50; border-radius: 5px; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .apply-button:hover { background: rgba(76, 175, 80, 0.5); transform: translateY(-2px); }
+        .clear-button { width: 100%; padding: 12px; margin-top: 10px; background: rgba(244, 67, 54, 0.3); border: 2px solid #F44336; border-radius: 5px; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .clear-button:hover { background: rgba(244, 67, 54, 0.5); transform: translateY(-2px); }
+        .export-section { margin-top: 20px; }
+        .export-button { width: 100%; padding: 12px; margin: 5px 0; background: rgba(33, 150, 243, 0.3); border: 2px solid #2196F3; border-radius: 5px; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .export-button:hover { background: rgba(33, 150, 243, 0.5); transform: translateY(-2px); }
+        .tips { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; font-size: 0.9em; }
+        @media (max-width: 1200px) {
+            .main-content { grid-template-columns: 1fr; }
+            .sidebar { margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            </div>
+            <div class="nav-group">
+                <a href="#" onclick="saveLayout()">💾 Save Layout</a>
+                <a href="#" onclick="loadLayout()">📂 Load Layout</a>
+            </div>
+        </div>
+
+        <div class="creator-area">
+            <h1>🎨 Stream Deck Profile Creator</h1>
+            <p style="margin-bottom: 20px;">Design your Stream Deck button layout visually. Select buttons, assign colors and labels, then export your configuration.</p>
+
+            <div class="tips">
+                <strong>💡 How to use:</strong> Select a device, click buttons to select them, choose colors and actions from the sidebar, then apply. Your layout is saved automatically to browser storage.
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Left Sidebar - Device Selection -->
+            <div class="sidebar">
+                <h2>Device Type</h2>
+                <div class="device-selector">
+                    <button class="device-btn active" data-device="xl" onclick="selectDevice('xl')">
+                        Stream Deck XL<br><small>(8x4 = 32 buttons)</small>
+                    </button>
+                    <button class="device-btn" data-device="classic" onclick="selectDevice('classic')">
+                        Stream Deck Classic<br><small>(5x3 = 15 buttons)</small>
+                    </button>
+                    <button class="device-btn" data-device="mini" onclick="selectDevice('mini')">
+                        Stream Deck Mini<br><small>(3x2 = 6 buttons)</small>
+                    </button>
+                    <button class="device-btn" data-device="plus" onclick="selectDevice('plus')">
+                        Stream Deck +<br><small>(4x2 = 8 buttons + knobs)</small>
+                    </button>
+                </div>
+
+                <h3>Templates</h3>
+                <button class="export-button" onclick="loadTemplate('davinci')">📹 DaVinci Resolve</button>
+                <button class="export-button" onclick="loadTemplate('devops')">🐳 DevOps/Docker</button>
+                <button class="export-button" onclick="loadTemplate('git')">🔧 Git Commands</button>
+                <button class="export-button" onclick="clearAll()">🗑️ Clear All</button>
+            </div>
+
+            <!-- Center - Stream Deck Display -->
+            <div class="creator-area" style="text-align: center;">
+                <h2 id="device-title">Stream Deck XL (8x4)</h2>
+                <div class="stream-deck">
+                    <div id="button-grid" class="button-grid" style="grid-template-columns: repeat(8, 72px);"></div>
+                </div>
+                <p style="margin-top: 20px; color: #a8d0ff;">Selected: <span id="selected-count">0</span> buttons</p>
+            </div>
+
+            <!-- Right Sidebar - Configuration -->
+            <div class="sidebar">
+                <h2>Button Config</h2>
+
+                <h3>Background Color</h3>
+                <div class="color-palette" id="color-palette"></div>
+
+                <div class="action-selector">
+                    <h3>Action Type</h3>
+                    <select id="action-type">
+                        <option value="hotkey">Hotkey</option>
+                        <option value="multi-action">Multi-Action</option>
+                        <option value="open">Open App/URL</option>
+                        <option value="profile">Switch Profile</option>
+                        <option value="page">Switch Page</option>
+                        <option value="text">Text Input</option>
+                    </select>
+
+                    <h3>Label</h3>
+                    <input type="text" id="button-label" placeholder="Button label...">
+
+                    <h3>Notes</h3>
+                    <input type="text" id="button-notes" placeholder="Optional notes...">
+                </div>
+
+                <button class="apply-button" onclick="applyToSelected()">✅ Apply to Selected</button>
+                <button class="clear-button" onclick="clearSelected()">❌ Clear Selected</button>
+
+                <div class="export-section">
+                    <h3>Export</h3>
+                    <button class="export-button" onclick="exportJSON()">📄 Export JSON</button>
+                    <button class="export-button" onclick="exportMarkdown()">📝 Export Markdown</button>
+                    <button class="export-button" onclick="printLayout()">🖨️ Print Layout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            {name: 'Red', value: '#F44336'},
+            {name: 'Orange', value: '#FF9800'},
+            {name: 'Yellow', value: '#FFC107'},
+            {name: 'Green', value: '#4CAF50'},
+            {name: 'Blue', value: '#2196F3'},
+            {name: 'Purple', value: '#9C27B0'},
+            {name: 'Cyan', value: '#00BCD4'},
+            {name: 'Pink', value: '#E91E63'},
+            {name: 'Gray', value: '#607D8B'},
+            {name: 'Dark', value: '#212121'},
+            {name: 'Light', value: '#E0E0E0'},
+            {name: 'Gold', value: '#FFD700'}
+        ];
+
+        const devices = {
+            xl: {rows: 4, cols: 8, name: 'Stream Deck XL'},
+            classic: {rows: 3, cols: 5, name: 'Stream Deck Classic'},
+            mini: {rows: 2, cols: 3, name: 'Stream Deck Mini'},
+            plus: {rows: 2, cols: 4, name: 'Stream Deck +'}
+        };
+
+        let currentDevice = 'xl';
+        let buttonStates = [];
+        let selectedButtons = new Set();
+
+        function initializePalette() {
+            const palette = document.getElementById('color-palette');
+            colors.forEach(color => {
+                const div = document.createElement('div');
+                div.className = 'color-option';
+                div.style.background = color.value;
+                div.title = color.name;
+                div.onclick = () => selectColor(color.value, div);
+                palette.appendChild(div);
+            });
+        }
+
+        let selectedColor = '#2196F3';
+        function selectColor(color, element) {
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedColor = color;
+        }
+
+        function createGrid(deviceType) {
+            const device = devices[deviceType];
+            const grid = document.getElementById('button-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${device.cols}, 72px)`;
+
+            document.getElementById('device-title').textContent = `${device.name} (${device.cols}x${device.rows})`;
+
+            buttonStates = [];
+            selectedButtons.clear();
+
+            const totalButtons = device.rows * device.cols;
+            for (let i = 0; i < totalButtons; i++) {
+                const button = document.createElement('div');
+                button.className = 'deck-button';
+                button.dataset.index = i;
+                button.onclick = () => toggleButton(i);
+                grid.appendChild(button);
+
+                buttonStates.push({
+                    index: i,
+                    color: '#2a2a2a',
+                    label: '',
+                    action: 'hotkey',
+                    notes: ''
+                });
+            }
+
+            updateSelectedCount();
+        }
+
+        function toggleButton(index) {
+            const button = document.querySelector(`[data-index="${index}"]`);
+            if (selectedButtons.has(index)) {
+                selectedButtons.delete(index);
+                button.classList.remove('selected');
+            } else {
+                selectedButtons.add(index);
+                button.classList.add('selected');
+            }
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            document.getElementById('selected-count').textContent = selectedButtons.size;
+        }
+
+        function applyToSelected() {
+            const label = document.getElementById('button-label').value;
+            const action = document.getElementById('action-type').value;
+            const notes = document.getElementById('button-notes').value;
+
+            selectedButtons.forEach(index => {
+                const button = document.querySelector(`[data-index="${index}"]`);
+                buttonStates[index].color = selectedColor;
+                buttonStates[index].label = label;
+                buttonStates[index].action = action;
+                buttonStates[index].notes = notes;
+
+                button.style.background = selectedColor;
+                button.textContent = label;
+                button.classList.add('assigned');
+            });
+
+            saveToLocalStorage();
+        }
+
+        function clearSelected() {
+            selectedButtons.forEach(index => {
+                const button = document.querySelector(`[data-index="${index}"]`);
+                buttonStates[index] = {
+                    index: index,
+                    color: '#2a2a2a',
+                    label: '',
+                    action: 'hotkey',
+                    notes: ''
+                };
+                button.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)';
+                button.textContent = '';
+                button.classList.remove('assigned');
+            });
+
+            selectedButtons.clear();
+            updateSelectedCount();
+            saveToLocalStorage();
+        }
+
+        function clearAll() {
+            if (!confirm('Clear all buttons?')) return;
+            selectedButtons = new Set();
+            for (let i = 0; i < buttonStates.length; i++) {
+                selectedButtons.add(i);
+            }
+            clearSelected();
+        }
+
+        function selectDevice(deviceType) {
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-device="${deviceType}"]`).classList.add('active');
+            currentDevice = deviceType;
+            createGrid(deviceType);
+            loadFromLocalStorage();
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                device: currentDevice,
+                buttons: buttonStates
+            };
+            localStorage.setItem('streamdeck-profile', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('streamdeck-profile');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.device === currentDevice && data.buttons) {
+                    data.buttons.forEach((state, index) => {
+                        if (index < buttonStates.length) {
+                            const button = document.querySelector(`[data-index="${index}"]`);
+                            buttonStates[index] = state;
+                            button.style.background = state.color;
+                            button.textContent = state.label;
+                            if (state.label) button.classList.add('assigned');
+                        }
+                    });
+                }
+            }
+        }
+
+        function exportJSON() {
+            const data = {
+                device: devices[currentDevice].name,
+                created: new Date().toISOString(),
+                buttons: buttonStates.filter(b => b.label)
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `streamdeck-profile-${currentDevice}-${Date.now()}.json`;
+            a.click();
+        }
+
+        function exportMarkdown() {
+            let md = `# Stream Deck Profile - ${devices[currentDevice].name}\n\n`;
+            md += `Created: ${new Date().toLocaleString()}\n\n`;
+            md += `## Button Configuration\n\n`;
+            md += `| Position | Label | Action | Color | Notes |\n`;
+            md += `|----------|-------|--------|-------|-------|\n`;
+
+            buttonStates.forEach(btn => {
+                if (btn.label) {
+                    const row = Math.floor(btn.index / devices[currentDevice].cols) + 1;
+                    const col = (btn.index % devices[currentDevice].cols) + 1;
+                    md += `| Row ${row}, Col ${col} | ${btn.label} | ${btn.action} | ${btn.color} | ${btn.notes || '-'} |\n`;
+                }
+            });
+
+            const blob = new Blob([md], {type: 'text/markdown'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `streamdeck-profile-${currentDevice}.md`;
+            a.click();
+        }
+
+        function printLayout() {
+            window.print();
+        }
+
+        function loadTemplate(type) {
+            clearAll();
+            // Templates would be implemented here
+            alert(`${type} template - Coming soon! This will load pre-configured button layouts for common workflows.`);
+        }
+
+        // Initialize
+        initializePalette();
+        createGrid('xl');
+        loadFromLocalStorage();
+    </script>
+</body>
+</html>

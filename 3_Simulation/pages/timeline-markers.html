@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Markers & Colors - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .content-section { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 30px; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.8em; margin: 25px 0 15px 0; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 20px 0 10px 0; color: #a8d0ff; }
+        .image-container { width: 100%; max-width: 900px; margin: 30px auto; border: 3px solid #ffd700; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .image-container img { width: 100%; height: auto; display: block; }
+        .prerequisites { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .prerequisites h3 { color: #4CAF50; margin-top: 0; }
+        .prerequisites ul { margin-left: 20px; margin-top: 10px; }
+        .prerequisites li { margin: 8px 0; }
+        .checklist { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .checklist h3 { color: #FF9800; margin-top: 0; }
+        .checklist-item { margin: 12px 0; display: flex; align-items: start; gap: 10px; }
+        .checklist-item input[type="checkbox"] { margin-top: 5px; width: 20px; height: 20px; cursor: pointer; }
+        .checklist-item label { flex: 1; cursor: pointer; }
+        .tips { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tips h3 { color: #2196F3; margin-top: 0; }
+        .warning { background: rgba(244, 67, 54, 0.2); border-left: 4px solid #F44336; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning h3 { color: #F44336; margin-top: 0; }
+        .step-number { display: inline-block; width: 30px; height: 30px; background: #ffd700; color: #000; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
+        .badge { display: inline-block; padding: 5px 15px; border-radius: 15px; font-size: 0.9em; margin: 5px 5px 5px 0; }
+        .badge-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .badge-info { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        .page-navigation { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; flex-wrap: wrap; }
+        .page-navigation a { flex: 1; min-width: 200px; padding: 15px 20px; background: rgba(255, 255, 255, 0.1); border: 2px solid #ffd700; border-radius: 10px; text-align: center; text-decoration: none; color: #fff; transition: all 0.3s; }
+        .page-navigation a:hover { background: rgba(255, 215, 0, 0.2); transform: translateY(-3px); }
+        .marker-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .marker-card { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px; border-left: 5px solid; }
+        .marker-card.blue { border-color: #2196F3; }
+        .marker-card.green { border-color: #4CAF50; }
+        .marker-card.yellow { border-color: #FFC107; }
+        .marker-card.red { border-color: #F44336; }
+        .marker-card.purple { border-color: #9C27B0; }
+        .marker-card.cyan { border-color: #00BCD4; }
+        .marker-card.orange { border-color: #FF9800; }
+        .marker-card.pink { border-color: #E91E63; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            </div>
+            <div class="nav-group">
+                <a href="#prerequisites">Prerequisites</a>
+                <a href="#checklist">Checklist</a>
+                <a href="#implementation">Implementation</a>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h1>🎬 Timeline Markers & Colors</h1>
+
+            <div>
+                <span class="badge badge-medium">Medium</span>
+                <span class="badge badge-info">DaVinci Resolve</span>
+                <span class="badge badge-info">30 min</span>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                Set up Stream Deck buttons to add colored markers to your DaVinci Resolve timeline.
+                Markers help you organize edits, mark important moments, and collaborate with team members.
+            </p>
+
+            <div id="prerequisites" class="prerequisites">
+                <h3>✅ Prerequisites</h3>
+                <ul>
+                    <li><strong>Software:</strong> DaVinci Resolve 18+ installed</li>
+                    <li><strong>Stream Deck:</strong> Configured with DaVinci profile</li>
+                    <li><strong>Knowledge:</strong> Basic timeline navigation in DaVinci</li>
+                    <li><strong>Keyboard Shortcuts:</strong> DaVinci marker shortcuts enabled</li>
+                    <li><strong>Time:</strong> 20-30 minutes for setup</li>
+                </ul>
+            </div>
+
+            <h2 id="implementation">📝 Implementation Steps</h2>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">1</span><strong>Open DaVinci Resolve Keyboard Customization</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Go to DaVinci Resolve → Keyboard Customization and verify marker shortcuts are configured.
+                    Default: M for marker, Shift+1-9 for colored markers.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">2</span><strong>Create Stream Deck Profile for Markers</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Open Stream Deck software and create a new profile or page dedicated to timeline markers.
+                    This keeps markers organized and easily accessible.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">3</span><strong>Add Marker Buttons</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    For each marker color, create a Hotkey action button. Configure keyboard shortcuts
+                    matching DaVinci's marker hotkeys (M, Shift+1, Shift+2, etc.).
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">4</span><strong>Color Code Your Buttons</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Set each button's background color to match the marker color it creates.
+                    This provides instant visual feedback and reduces mistakes.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">5</span><strong>Add Labels</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Label each button with the marker purpose (e.g., "Cut Here", "Review", "Music Cue", "B-Roll").
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">6</span><strong>Test in DaVinci Resolve</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Open a timeline and test each marker button. Verify colors appear correctly
+                    and markers can be navigated using Stream Deck.
+                </p>
+            </div>
+
+            <h2>🎨 Marker Color System</h2>
+
+            <div class="marker-list">
+                <div class="marker-card blue">
+                    <h4>🔵 Blue - General Notes</h4>
+                    <ul>
+                        <li>General comments</li>
+                        <li>Reference points</li>
+                        <li>Timestamps</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card green">
+                    <h4>🟢 Green - Approved</h4>
+                    <ul>
+                        <li>Final cut approved</li>
+                        <li>Completed sections</li>
+                        <li>Ready for export</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card yellow">
+                    <h4>🟡 Yellow - Review Needed</h4>
+                    <ul>
+                        <li>Needs review</li>
+                        <li>Pending decision</li>
+                        <li>Client feedback</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card red">
+                    <h4>🔴 Red - Issues/Fixes</h4>
+                    <ul>
+                        <li>Technical problems</li>
+                        <li>Requires fixes</li>
+                        <li>Audio sync issues</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card purple">
+                    <h4>🟣 Purple - Music/Audio</h4>
+                    <ul>
+                        <li>Music cues</li>
+                        <li>Sound effects</li>
+                        <li>Audio transitions</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card cyan">
+                    <h4>🔷 Cyan - B-Roll</h4>
+                    <ul>
+                        <li>B-roll needed</li>
+                        <li>Insert shots</li>
+                        <li>Cutaways</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card orange">
+                    <h4>🟠 Orange - VFX/Color</h4>
+                    <ul>
+                        <li>VFX shots</li>
+                        <li>Color grading</li>
+                        <li>Graphics needed</li>
+                    </ul>
+                </div>
+
+                <div class="marker-card pink">
+                    <h4>🩷 Pink - Client Notes</h4>
+                    <ul>
+                        <li>Client requests</li>
+                        <li>Specific changes</li>
+                        <li>Stakeholder feedback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="checklist" class="checklist">
+                <h3>✔️ Implementation Checklist</h3>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check1">
+                    <label for="tm-check1">DaVinci Resolve marker shortcuts verified</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check2">
+                    <label for="tm-check2">Stream Deck profile/page created for markers</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check3">
+                    <label for="tm-check3">8 colored marker buttons configured</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check4">
+                    <label for="tm-check4">Button colors match DaVinci marker colors</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check5">
+                    <label for="tm-check5">Labels added to each marker button</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check6">
+                    <label for="tm-check6">All markers tested in actual timeline</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check7">
+                    <label for="tm-check7">Marker navigation shortcuts added (optional)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="tm-check8">
+                    <label for="tm-check8">Team trained on marker color system</label>
+                </div>
+            </div>
+
+            <div class="tips">
+                <h3>💡 Pro Tips</h3>
+                <ul>
+                    <li>Create a consistent marker color system across all projects</li>
+                    <li>Document your marker system in project notes for team collaboration</li>
+                    <li>Add marker navigation buttons (Next/Previous Marker) for quick jumping</li>
+                    <li>Use Multi-Action to add markers with automatic note text</li>
+                    <li>Export marker list to CSV for post-production handoff</li>
+                    <li>Combine markers with clip colors for comprehensive organization</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Important Notes</h3>
+                <ul>
+                    <li>DaVinci Resolve must be the active window for shortcuts to work</li>
+                    <li>Some marker colors may vary between DaVinci Resolve versions</li>
+                    <li>Markers don't transfer between different NLE software</li>
+                    <li>Too many markers can clutter timeline - use strategically</li>
+                </ul>
+            </div>
+
+            <div class="page-navigation">
+                <a href="davinci-profile.html">⬅️ DaVinci Profile Setup</a>
+                <a href="../index.html">📋 All Guides</a>
+                <a href="color-grading.html">Color Grading Setup ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Save checkbox state to localStorage
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const savedState = localStorage.getItem(checkbox.id);
+            if (savedState === 'true') {
+                checkbox.checked = true;
+            }
+
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(this.id, this.checked);
+            });
+        });
+    </script>
+</body>
+</html>

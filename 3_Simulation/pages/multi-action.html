@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Action Profile Switching - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .content-section { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 30px; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.8em; margin: 25px 0 15px 0; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 20px 0 10px 0; color: #a8d0ff; }
+        .prerequisites { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .prerequisites h3 { color: #4CAF50; margin-top: 0; }
+        .prerequisites ul { margin-left: 20px; margin-top: 10px; }
+        .prerequisites li { margin: 8px 0; }
+        .checklist { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .checklist h3 { color: #FF9800; margin-top: 0; }
+        .checklist-item { margin: 12px 0; display: flex; align-items: start; gap: 10px; }
+        .checklist-item input[type="checkbox"] { margin-top: 5px; width: 20px; height: 20px; cursor: pointer; }
+        .checklist-item label { flex: 1; cursor: pointer; }
+        .tips { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tips h3 { color: #2196F3; margin-top: 0; }
+        .step-number { display: inline-block; width: 30px; height: 30px; background: #ffd700; color: #000; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
+        .badge { display: inline-block; padding: 5px 15px; border-radius: 15px; font-size: 0.9em; margin: 5px 5px 5px 0; }
+        .badge-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .badge-info { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        .page-navigation { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; flex-wrap: wrap; }
+        .page-navigation a { flex: 1; min-width: 200px; padding: 15px 20px; background: rgba(255, 255, 255, 0.1); border: 2px solid #ffd700; border-radius: 10px; text-align: center; text-decoration: none; color: #fff; transition: all 0.3s; }
+        .page-navigation a:hover { background: rgba(255, 215, 0, 0.2); transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            </div>
+            <div class="nav-group">
+                <a href="#prerequisites">Prerequisites</a>
+                <a href="#checklist">Checklist</a>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h1>🔄 Multi-Action Profile Switching</h1>
+
+            <div>
+                <span class="badge badge-medium">Medium</span>
+                <span class="badge badge-info">Automation</span>
+                <span class="badge badge-info">25 min</span>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                Use Multi-Action buttons to create smart profile switchers that can launch applications and switch Stream Deck profiles in one press.
+                Perfect for context-based workflows like switching to DaVinci Resolve with the video editing profile.
+            </p>
+
+            <div id="prerequisites" class="prerequisites">
+                <h3>✅ Prerequisites</h3>
+                <ul>
+                    <li><strong>Software:</strong> Stream Deck software 6.0+</li>
+                    <li><strong>Profiles:</strong> At least 2 profiles configured</li>
+                    <li><strong>Knowledge:</strong> Basic understanding of profiles and actions</li>
+                    <li><strong>Time:</strong> 20-30 minutes for setup</li>
+                </ul>
+            </div>
+
+            <h2>📝 Implementation Steps</h2>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">1</span><strong>Create Multi-Action Button</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Drag the Multi-Action from the action list to an empty button on your Stream Deck.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">2</span><strong>Add Application Launch Action</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Add an "Open" action and configure it to launch your target application (e.g., DaVinci Resolve, Docker Desktop, VS Code).
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">3</span><strong>Add Profile Switch Action</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Add a "Switch Profile" action and select the profile matching your application workflow.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">4</span><strong>Add Delay (Optional)</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Insert a delay between app launch and profile switch to ensure the app has time to load (500-2000ms recommended).
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">5</span><strong>Configure Button Appearance</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Set button icon, title, and background to clearly indicate the application and workflow.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><span class="step-number">6</span><strong>Test the Multi-Action</strong></p>
+                <p style="margin-left: 50px; margin-top: 10px;">
+                    Press the button and verify the application launches and the profile switches correctly.
+                </p>
+            </div>
+
+            <div id="checklist" class="checklist">
+                <h3>✔️ Implementation Checklist</h3>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check1">
+                    <label for="ma-check1">Multi-Action button created</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check2">
+                    <label for="ma-check2">Application launch action configured</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check3">
+                    <label for="ma-check3">Profile switch action added</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check4">
+                    <label for="ma-check4">Delay added if needed</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check5">
+                    <label for="ma-check5">Button appearance configured</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ma-check6">
+                    <label for="ma-check6">Multi-action tested successfully</label>
+                </div>
+            </div>
+
+            <div class="tips">
+                <h3>💡 Pro Tips</h3>
+                <ul>
+                    <li>Create "back to home" button on target profile to return to default</li>
+                    <li>Use window focus actions to ensure the app is active before switching profiles</li>
+                    <li>Combine with hotkeys to set app to specific workspace/window position</li>
+                    <li>Add notification/sound feedback to confirm actions executed</li>
+                    <li>Use different icon states for press/release for visual feedback</li>
+                </ul>
+            </div>
+
+            <div class="page-navigation">
+                <a href="profile-backout.html">⬅️ Profile Backout System</a>
+                <a href="../index.html">📋 All Guides</a>
+                <a href="page-jump.html">Page Jump Design ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const savedState = localStorage.getItem(checkbox.id);
+            if (savedState === 'true') checkbox.checked = true;
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(this.id, this.checked);
+            });
+        });
+    </script>
+</body>
+</html>
