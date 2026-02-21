@@ -191,10 +191,101 @@
             margin-left: 10px;
         }
 
+        /* Search functionality */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 1.1em;
+            border: 3px solid #ffd700;
+            border-radius: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input::placeholder {
+            color: #a8d0ff;
+        }
+
+        .search-input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffd700;
+            font-size: 1.2em;
+            pointer-events: none;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.highlighted {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item .title {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .autocomplete-item .description {
+            color: #a8d0ff;
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #a8d0ff;
+        }
+
+        .menu-card.hidden,
+        .quick-link.hidden {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2.5em; }
             .main-menu { grid-template-columns: 1fr; }
             .hero-buttons { flex-direction: column; }
+            .search-container { margin-bottom: 30px; }
         }
     </style>
 </head>
@@ -219,6 +310,13 @@
                 </a>
             </div>
         </header>
+
+        <!-- Search Functionality -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search documentation, guides, and features..." autocomplete="off">
+            <div class="search-icon">🔍</div>
+            <div class="autocomplete-list" id="autocomplete-list"></div>
+        </div>
 
         <div class="main-menu">
             <!-- 1. Real Unknown -->
@@ -381,11 +479,223 @@
             <p><strong>Focus:</strong> MLOps/DevOps & Video Editing</p>
             <p><strong>Devices:</strong> 2x XL, 1x +, 1x Mobile</p>
             <p style="margin-top: 20px; color: #a8d0ff;">
-                <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" style="color: #a8d0ff;">GitHub Repository</a> |
-                <a href="https://rifaterdemsahin.github.io/streamdeck/" target="_blank" style="color: #a8d0ff;">Project Website</a>
+                <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener" style="color: #a8d0ff;">GitHub Repository</a> |
+                <a href="https://rifaterdemsahin.github.io/streamdeck/" target="_blank" rel="noopener" style="color: #a8d0ff;">Project Website</a>
             </p>
             <p style="margin-top: 15px; font-size: 0.9em; color: #888;">© 2024 - Personal Automation Project</p>
         </footer>
     </div>
+
+    <script>
+        // Search functionality with autocomplete
+        class SearchHandler {
+            constructor() {
+                this.searchInput = document.querySelector('.search-input');
+                this.autocompleteList = document.getElementById('autocomplete-list');
+                this.menuCards = document.querySelectorAll('.menu-card');
+                this.quickLinks = document.querySelectorAll('.quick-link');
+                this.searchData = this.buildSearchData();
+                this.currentFocus = -1;
+
+                this.init();
+            }
+
+            buildSearchData() {
+                return [
+                    // Main menu items
+                    { title: "Real Unknown", description: "Problem definition and objectives", element: document.querySelector('a[href*="1_Real_Unknown"]'), type: "menu" },
+                    { title: "Objectives", description: "Project OKRs and success metrics", element: document.querySelector('a[href*="objectives.md"]'), type: "menu" },
+                    { title: "Environment", description: "Roadmap and use cases", element: document.querySelector('a[href*="2_Environment"]'), type: "menu" },
+                    { title: "Roadmap", description: "Development phases and timeline", element: document.querySelector('a[href*="roadmap.md"]'), type: "menu" },
+                    { title: "Use Cases", description: "Detailed user scenarios", element: document.querySelector('a[href*="use-cases.md"]'), type: "menu" },
+                    { title: "Simulation", description: "UI examples and button layouts", element: document.querySelector('a[href*="3_Simulation"]'), type: "menu" },
+                    { title: "Visual Simulations", description: "Interactive visual guides", element: document.querySelector('a[href*="3_Simulation/index.html"]'), type: "menu" },
+                    { title: "Formula", description: "Setup guides and best practices", element: document.querySelector('a[href*="4_Formula"]'), type: "menu" },
+                    { title: "Setup Guide", description: "Installation and configuration", element: document.querySelector('a[href*="setup-guide.md"]'), type: "menu" },
+                    { title: "Best Practices", description: "Development guidelines", element: document.querySelector('a[href*="best-practices.md"]'), type: "menu" },
+                    { title: "Symbols", description: "Source code and utilities", element: document.querySelector('a[href*="5_Symbols"]'), type: "menu" },
+                    { title: "Scripts", description: "Automation scripts", element: document.querySelector('a[href*="scripts"]'), type: "menu" },
+                    { title: "Semblance", description: "Error logs and solutions", element: document.querySelector('a[href*="6_Semblance"]'), type: "menu" },
+                    { title: "Error Catalog", description: "Common errors and fixes", element: document.querySelector('a[href*="error-catalog.md"]'), type: "menu" },
+                    { title: "Testing Known", description: "Validation and test plans", element: document.querySelector('a[href*="7_Testing_known"]'), type: "menu" },
+                    { title: "Test Plan", description: "Comprehensive test strategy", element: document.querySelector('a[href*="test-plan.md"]'), type: "menu" },
+                    { title: "Backup System", description: "Disaster recovery", element: document.querySelector('a[href*="backups"]'), type: "menu" },
+                    { title: "Backup Guide", description: "Backup and restore procedures", element: document.querySelector('a[href*="backups/README.md"]'), type: "menu" },
+
+                    // Quick links
+                    { title: "Documentation Viewer", description: "Markdown documentation browser", element: document.querySelector('a[href*="markdown_renderer.html"]'), type: "quick" },
+                    { title: "Main Documentation", description: "Complete project documentation", element: document.querySelector('a[href*="claude.md"]'), type: "quick" },
+                    { title: "GitHub", description: "Source code repository", element: document.querySelector('a[href*="github.com"]'), type: "quick" },
+
+                    // Features and keywords
+                    { title: "MLOps", description: "Machine Learning Operations", element: null, type: "feature" },
+                    { title: "DevOps", description: "Development Operations", element: null, type: "feature" },
+                    { title: "Video Editing", description: "DaVinci Resolve workflows", element: null, type: "feature" },
+                    { title: "AI Integration", description: "OpenAI, XAI, and local models", element: null, type: "feature" },
+                    { title: "Docker", description: "Container management", element: null, type: "feature" },
+                    { title: "Git", description: "Version control operations", element: null, type: "feature" },
+                    { title: "Stream Deck", description: "Hardware automation", element: null, type: "feature" },
+                    { title: "Kilo Code", description: "AI coding assistant integration", element: null, type: "feature" },
+                    { title: "Ollama", description: "Local LLM server", element: null, type: "feature" },
+                    { title: "Qdrant", description: "Vector database for search", element: null, type: "feature" }
+                ];
+            }
+
+            init() {
+                this.searchInput.addEventListener('input', (e) => this.handleInput(e));
+                this.searchInput.addEventListener('keydown', (e) => this.handleKeydown(e));
+                this.searchInput.addEventListener('focus', () => this.showAllSuggestions());
+                document.addEventListener('click', (e) => this.handleClickOutside(e));
+            }
+
+            handleInput(event) {
+                const query = event.target.value.toLowerCase().trim();
+                this.currentFocus = -1;
+
+                if (query.length === 0) {
+                    this.showAllSuggestions();
+                    this.filterMenuItems('');
+                    return;
+                }
+
+                const matches = this.searchData.filter(item =>
+                    item.title.toLowerCase().includes(query) ||
+                    item.description.toLowerCase().includes(query)
+                );
+
+                this.showSuggestions(matches);
+                this.filterMenuItems(query);
+            }
+
+            handleKeydown(event) {
+                const items = this.autocompleteList.querySelectorAll('.autocomplete-item');
+
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    this.currentFocus = (this.currentFocus + 1) % items.length;
+                    this.updateFocus();
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    this.currentFocus = this.currentFocus <= 0 ? items.length - 1 : this.currentFocus - 1;
+                    this.updateFocus();
+                } else if (event.key === 'Enter') {
+                    event.preventDefault();
+                    if (this.currentFocus >= 0 && items[this.currentFocus]) {
+                        items[this.currentFocus].click();
+                    }
+                } else if (event.key === 'Escape') {
+                    this.hideSuggestions();
+                }
+            }
+
+            handleClickOutside(event) {
+                if (!this.searchInput.contains(event.target) && !this.autocompleteList.contains(event.target)) {
+                    this.hideSuggestions();
+                }
+            }
+
+            showAllSuggestions() {
+                this.showSuggestions(this.searchData.slice(0, 10)); // Show first 10 items
+            }
+
+            showSuggestions(items) {
+                this.autocompleteList.innerHTML = '';
+
+                if (items.length === 0) {
+                    this.autocompleteList.innerHTML = '<div class="no-results">No results found</div>';
+                    this.autocompleteList.style.display = 'block';
+                    return;
+                }
+
+                items.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerHTML = `
+                        <div class="title">${this.highlightMatch(item.title, this.searchInput.value)}</div>
+                        <div class="description">${this.highlightMatch(item.description, this.searchInput.value)}</div>
+                    `;
+                    div.addEventListener('click', () => this.selectItem(item));
+                    this.autocompleteList.appendChild(div);
+                });
+
+                this.autocompleteList.style.display = 'block';
+            }
+
+            hideSuggestions() {
+                this.autocompleteList.style.display = 'none';
+                this.currentFocus = -1;
+            }
+
+            updateFocus() {
+                const items = this.autocompleteList.querySelectorAll('.autocomplete-item');
+                items.forEach((item, index) => {
+                    item.classList.toggle('highlighted', index === this.currentFocus);
+                });
+            }
+
+            selectItem(item) {
+                if (item.element) {
+                    // Scroll to and highlight the menu item
+                    item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const card = item.element.querySelector('.menu-card') || item.element;
+                    card.style.animation = 'pulse 0.5s';
+                    setTimeout(() => card.style.animation = '', 500);
+
+                    // If it's an external link, open it
+                    if (item.element.href && item.element.href.startsWith('http')) {
+                        window.open(item.element.href, '_blank');
+                    }
+                }
+
+                this.searchInput.value = item.title;
+                this.hideSuggestions();
+            }
+
+            highlightMatch(text, query) {
+                if (!query) return text;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            }
+
+            filterMenuItems(query) {
+                if (!query) {
+                    // Show all items
+                    this.menuCards.forEach(card => card.classList.remove('hidden'));
+                    this.quickLinks.forEach(link => link.classList.remove('hidden'));
+                    return;
+                }
+
+                // Filter menu cards
+                this.menuCards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    const shouldShow = text.includes(query.toLowerCase());
+                    card.classList.toggle('hidden', !shouldShow);
+                });
+
+                // Filter quick links
+                this.quickLinks.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    const shouldShow = text.includes(query.toLowerCase());
+                    link.classList.toggle('hidden', !shouldShow);
+                });
+            }
+        }
+
+        // Initialize search when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new SearchHandler();
+        });
+
+        // Add pulse animation for highlighting
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
