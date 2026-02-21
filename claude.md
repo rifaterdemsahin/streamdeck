@@ -288,9 +288,9 @@ When making changes:
 - [Error Catalog](6_Semblance/error-catalog.md)
 
 ### External Links
-- [Stream Deck SDK](https://docs.elgato.com/streamdeck/sdk/)
+- [Stream Deck SDK](https://developer.elgato.com/documentation/stream-deck/)
 - [DaVinci Resolve Python API](https://www.blackmagicdesign.com/developer/)
-- [OpenAI API](https://platform.openai.com/docs/introduction)
+- [OpenAI API](https://platform.openai.com/docs)
 - [Docker Python SDK](https://docker-py.readthedocs.io/)
 
 ## Backup and Recovery
