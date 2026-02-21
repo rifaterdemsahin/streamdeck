@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Deck - Documentation Viewer</title>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a8d0ff;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1800px;
+            width: 100%;
+            margin: 0 auto;
+            gap: 0;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .sidebar h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 8px;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-section h3 {
+            color: #a8d0ff;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid transparent;
+            border-radius: 5px;
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 215, 0, 0.15);
+            border-left-color: #ffd700;
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-left-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .markdown-body {
+            background: rgba(255, 255, 255, 0.95);
+            color: #24292e;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            line-height: 1.6;
+        }
+
+        .markdown-body h1 {
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            color: #1e3c72;
+        }
+
+        .markdown-body h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #2a5298;
+        }
+
+        .markdown-body h3 {
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: #1e3c72;
+        }
+
+        .markdown-body a {
+            color: #2a5298;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+
+        .markdown-body a:hover {
+            border-bottom-color: #2a5298;
+        }
+
+        .markdown-body code {
+            background: #f6f8fa;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+
+        .markdown-body pre {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .markdown-body pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .markdown-body th,
+        .markdown-body td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .markdown-body li {
+            margin: 8px 0;
+        }
+
+        .markdown-body blockquote {
+            border-left: 4px solid #ffd700;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a8d0ff;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #F44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #fff;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            color: #ffd700;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .home-button:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .toggle-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            padding: 10px 15px;
+            background: rgba(255, 215, 0, 0.9);
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: -340px;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                transition: left 0.3s;
+                width: 300px;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .toggle-menu {
+                display: block;
+            }
+
+            .content {
+                width: 100%;
+            }
+
+            .markdown-body {
+                padding: 20px;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-left: 8px;
+        }
+
+        .badge.new {
+            background: #FF9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 Stream Deck Documentation</h1>
+        <p>Interactive Documentation Viewer with Navigation</p>
+    </div>
+
+    <button class="toggle-menu" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <a href="index.html" class="home-button">⬅️ Back to Home</a>
+
+            <h2>📖 Navigation</h2>
+
+            <div class="menu-section">
+                <h3>🎯 Getting Started</h3>
+                <a class="menu-item" data-file="README.md">Project Overview</a>
+                <a class="menu-item" data-file="claude.md">Main Documentation</a>
+                <a class="menu-item" data-file="1_Real_Unknown/objectives.md">Objectives (OKRs)</a>
+                <a class="menu-item" data-file="2_Environment/roadmap.md">Development Roadmap</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>🎮 Visual Simulations</h3>
+                <a class="menu-item" data-file="3_Simulation/README.md">Simulation Guide</a>
+                <a class="menu-item" data-file="3_Simulation/button-layouts.md">Button Layouts</a>
+                <a class="menu-item" onclick="window.location.href='3_Simulation/index.html'">Interactive Guides →</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>⚙️ Setup & Configuration</h3>
+                <a class="menu-item" data-file="4_Formula/setup-guide.md">Setup Guide</a>
+                <a class="menu-item" data-file="4_Formula/best-practices.md">Best Practices</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>📋 Use Cases</h3>
+                <a class="menu-item" data-file="2_Environment/use-cases.md">Detailed Use Cases</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>💾 Backup & Recovery <span class="badge new">NEW</span></h3>
+                <a class="menu-item" data-file="backups/README.md">Backup Guide</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>🔍 Troubleshooting</h3>
+                <a class="menu-item" data-file="6_Semblance/error-catalog.md">Error Catalog</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>✅ Testing</h3>
+                <a class="menu-item" data-file="7_Testing_known/test-plan.md">Test Plan</a>
+            </div>
+
+            <div class="menu-section">
+                <h3>🔗 External Links</h3>
+                <a class="menu-item" href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub Repository →</a>
+                <a class="menu-item" href="https://rifaterdemsahin.github.io/streamdeck/" target="_blank" rel="noopener">Project Website →</a>
+            </div>
+        </nav>
+
+        <main class="content">
+            <div id="markdown-content" class="markdown-body">
+                <div class="loading">
+                    <h2>👈 Select a document from the menu</h2>
+                    <p>Choose any document to view its contents</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configuration
+        const DEFAULT_FILE = 'README.md';
+
+        // Initialize marked with options
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            mangle: false,
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } catch (err) {}
+                }
+                return hljs.highlightAuto(code).value;
+            }
+        });
+
+        // Load markdown file
+        async function loadMarkdown(filePath) {
+            const contentDiv = document.getElementById('markdown-content');
+            contentDiv.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const markdown = await response.text();
+
+                // Convert markdown to HTML
+                let html = marked.parse(markdown);
+
+                // Fix relative links to work with this viewer
+                html = html.replace(/href="(?!http|#|mailto:)([^"]+)"/g, (match, path) => {
+                    // If it's a .md file, use the viewer
+                    if (path.endsWith('.md')) {
+                        return `onclick="loadMarkdown('${path}'); return false;" href="#" style="cursor: pointer;"`;
+                    }
+                    // If it's .html, open directly
+                    if (path.endsWith('.html')) {
+                        return `href="${path}" target="_blank"`;
+                    }
+                    // Other links stay as is
+                    return match;
+                });
+
+                contentDiv.innerHTML = `<div class="markdown-body">${html}</div>`;
+
+                // Update active menu item
+                updateActiveMenuItem(filePath);
+
+                // Scroll to top
+                contentDiv.scrollTop = 0;
+
+                // Update URL hash
+                window.location.hash = filePath;
+
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Error Loading Document</h2>
+                        <p><strong>File:</strong> ${filePath}</p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Please check that the file exists and try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update active menu item
+        function updateActiveMenuItem(filePath) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-file') === filePath) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Toggle mobile menu
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Close menu when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.toggle-menu');
+
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(e.target) &&
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Setup menu item click handlers
+        document.querySelectorAll('.menu-item[data-file]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const file = item.getAttribute('data-file');
+                loadMarkdown(file);
+
+                // Close mobile menu after selection
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
+
+        // Load file from URL hash or default
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.slice(1);
+            const fileToLoad = hash || DEFAULT_FILE;
+            loadMarkdown(fileToLoad);
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                loadMarkdown(hash);
+            }
+        });
+    </script>
+</body>
+</html>

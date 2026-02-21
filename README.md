@@ -7,6 +7,7 @@ Comprehensive automation system for Stream Deck devices focused on MLOps/DevOps 
 | Category | Link | Description |
 |----------|------|-------------|
 | 🎮 **Visual Guides** | [Open Simulations](3_Simulation/index.html) | Interactive implementation guides with checklists |
+| 📖 **Doc Viewer** | [Markdown Renderer](markdown_renderer.html) | Browse all docs with navigation menu |
 | 📚 **Documentation** | [Main Docs](claude.md) | Complete project documentation |
 | 🌐 **Website** | [GitHub Pages](https://rifaterdemsahin.github.io/streamdeck/) | Live project website |
 | 🎯 **Objectives** | [OKRs](1_Real_Unknown/objectives.md) | Project goals and key results |
