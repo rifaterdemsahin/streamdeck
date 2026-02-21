@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusion 3D Support - Stream Deck Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e0e7ff;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .content-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #a8d0ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .feature-card h4 {
+            color: #ffd700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .streamdeck-layout {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        .sd-button {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 0.9em;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sd-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .sd-button-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .dial-control {
+            background: rgba(255, 215, 0, 0.1);
+            border: 3px solid #ffd700;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .dial-control::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 60px;
+            background: #ffd700;
+            top: 20px;
+            border-radius: 5px;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #a8d0ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 2px solid #ffd700;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .streamdeck-layout { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Fusion 3D Support on Stream Deck+</h1>
+            <p class="subtitle">Master 3D workspace controls with rotary dials and tactile feedback</p>
+            <span class="badge">DaVinci Resolve Fusion</span>
+            <span class="badge">Stream Deck+</span>
+        </header>
+
+        <!-- Video Tutorial Section -->
+        <div class="content-section">
+            <h2>📹 Video Tutorial</h2>
+            <p>Watch this comprehensive guide on using Stream Deck+ for Fusion 3D workspace in DaVinci Resolve:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/wpeqkG89nqM"
+                    title="Fusion 3D Support on Stream Deck+"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="margin-top: 15px;">
+                <strong>🔗 Full Video:</strong>
+                <a href="https://youtu.be/wpeqkG89nqM" target="_blank" style="color: #ffd700;">
+                    Watch on YouTube
+                </a>
+            </p>
+        </div>
+
+        <!-- What is Fusion 3D Section -->
+        <div class="content-section">
+            <h2>🔮 What is Fusion 3D?</h2>
+            <p>Fusion 3D is DaVinci Resolve's powerful 3D compositing workspace that allows you to:</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="sd-button-icon">🎭</div>
+                    <h4>3D Node Compositing</h4>
+                    <p>Work with 3D space, cameras, and positioning for advanced motion graphics and VFX.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="sd-button-icon">📐</div>
+                    <h4>Camera Controls</h4>
+                    <p>Manipulate virtual cameras with precise X, Y, Z axis positioning and rotation.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="sd-button-icon">🌟</div>
+                    <h4>Particle Systems</h4>
+                    <p>Create complex particle effects with 3D depth and spatial awareness.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="sd-button-icon">💡</div>
+                    <h4>Lighting & Shadows</h4>
+                    <p>Add realistic 3D lighting, shadows, and reflections to your compositions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stream Deck+ Integration -->
+        <div class="content-section">
+            <h2>🎛️ Stream Deck+ for Fusion 3D</h2>
+
+            <div class="highlight-box">
+                <h3>⚡ Why Stream Deck+ is Perfect for Fusion 3D</h3>
+                <p>The Stream Deck+ features <strong>4 rotary dials with push-button functionality</strong> that are ideal for:</p>
+                <ul>
+                    <li><strong>Precise 3D positioning</strong> - X, Y, Z axis controls</li>
+                    <li><strong>Smooth rotation</strong> - Continuous dial motion for camera orbiting</li>
+                    <li><strong>Tactile feedback</strong> - Physical control feels more natural than mouse dragging</li>
+                    <li><strong>Multi-parameter control</strong> - Adjust multiple values simultaneously</li>
+                    <li><strong>Context switching</strong> - Different dial functions per Fusion page</li>
+                </ul>
+            </div>
+
+            <h3>🎯 Recommended Dial Assignments</h3>
+
+            <div class="workflow-step">
+                <h4>Dial 1: X-Axis Position</h4>
+                <p><strong>Rotate:</strong> Move object left/right in 3D space</p>
+                <p><strong>Push:</strong> Reset X position to center (0)</p>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Dial 2: Y-Axis Position</h4>
+                <p><strong>Rotate:</strong> Move object up/down in 3D space</p>
+                <p><strong>Push:</strong> Reset Y position to center (0)</p>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Dial 3: Z-Axis Position (Depth)</h4>
+                <p><strong>Rotate:</strong> Move object forward/backward in depth</p>
+                <p><strong>Push:</strong> Reset Z position to default</p>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Dial 4: Camera Rotation/Zoom</h4>
+                <p><strong>Rotate:</strong> Orbit camera around the composition</p>
+                <p><strong>Push:</strong> Switch between rotation and zoom modes</p>
+            </div>
+
+            <div class="dial-control">
+                <span style="font-size: 2em;">🔄</span>
+            </div>
+            <p style="text-align: center; color: #a8d0ff;">Rotary Dial Visualization</p>
+        </div>
+
+        <!-- Button Layout -->
+        <div class="content-section">
+            <h2>🎮 Fusion 3D Button Layout</h2>
+            <p>Example Stream Deck+ button configuration for Fusion 3D workflow:</p>
+
+            <div class="streamdeck-layout">
+                <div class="sd-button">
+                    <div class="sd-button-icon">🎥</div>
+                    Camera View
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">📦</div>
+                    3D Merge
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">✨</div>
+                    Particle Emit
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">💡</div>
+                    Add Light
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">🔄</div>
+                    Transform 3D
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">📐</div>
+                    Grid View
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">👁️</div>
+                    Show/Hide
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">🎬</div>
+                    Render
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Guide -->
+        <div class="content-section">
+            <h2>⚙️ Setup Guide</h2>
+
+            <h3>Step 1: Install Fusion Page Plugin</h3>
+            <ol>
+                <li>Open Stream Deck software</li>
+                <li>Navigate to More Actions → DaVinci Resolve</li>
+                <li>Install the official DaVinci Resolve plugin if not already installed</li>
+                <li>Drag Fusion-specific actions to your Stream Deck layout</li>
+            </ol>
+
+            <h3>Step 2: Configure Rotary Dials</h3>
+            <ol>
+                <li>Click on the dial configuration in Stream Deck software</li>
+                <li>Set dial actions to "Adjust Value" or custom keyboard shortcuts</li>
+                <li>Map to Fusion inspector parameters (X, Y, Z positions)</li>
+                <li>Set rotation sensitivity (recommended: 0.1 - 1.0 units per click)</li>
+                <li>Configure push-button action to reset or toggle modes</li>
+            </ol>
+
+            <h3>Step 3: Link to Fusion Inspector</h3>
+            <div class="workflow-step">
+                <p>In DaVinci Resolve Fusion page:</p>
+                <ol>
+                    <li>Select a 3D node (Transform 3D, Camera, Light, etc.)</li>
+                    <li>Open the Inspector panel (Ctrl/Cmd + I)</li>
+                    <li>Right-click on parameter (e.g., "X Position")</li>
+                    <li>Select "Assign to MIDI Controller" or use keyboard mapping</li>
+                    <li>Test dial rotation to ensure smooth parameter control</li>
+                </ol>
+            </div>
+
+            <h3>Step 4: Create Profiles for Different Workflows</h3>
+            <ul>
+                <li><strong>Camera Profile:</strong> Focus on camera movement and positioning</li>
+                <li><strong>Particle Profile:</strong> Emitter controls, velocity, gravity</li>
+                <li><strong>Lighting Profile:</strong> Light intensity, color, position</li>
+                <li><strong>Transform Profile:</strong> Object rotation, scale, position</li>
+            </ul>
+        </div>
+
+        <!-- Common 3D Operations -->
+        <div class="content-section">
+            <h2>🚀 Common Fusion 3D Operations</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎥 Camera Orbit</h4>
+                    <p><strong>Dial 1:</strong> Horizontal orbit</p>
+                    <p><strong>Dial 2:</strong> Vertical orbit</p>
+                    <p><strong>Dial 3:</strong> Zoom distance</p>
+                    <p><strong>Button:</strong> Reset to default view</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>📦 Object Transform</h4>
+                    <p><strong>Dial 1:</strong> X Position</p>
+                    <p><strong>Dial 2:</strong> Y Position</p>
+                    <p><strong>Dial 3:</strong> Z Position</p>
+                    <p><strong>Button:</strong> Center object (0,0,0)</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>🔄 Rotation Controls</h4>
+                    <p><strong>Dial 1:</strong> X-Axis rotation</p>
+                    <p><strong>Dial 2:</strong> Y-Axis rotation</p>
+                    <p><strong>Dial 3:</strong> Z-Axis rotation</p>
+                    <p><strong>Button:</strong> Reset all rotation to 0°</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>💡 Light Positioning</h4>
+                    <p><strong>Dial 1:</strong> Light X position</p>
+                    <p><strong>Dial 2:</strong> Light Y position</p>
+                    <p><strong>Dial 3:</strong> Light intensity</p>
+                    <p><strong>Button:</strong> Toggle light on/off</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="content-section">
+            <h2>💡 Pro Tips</h2>
+
+            <div class="tip-box">
+                <h4>🎯 Dial Sensitivity Settings</h4>
+                <ul>
+                    <li><strong>Position dials:</strong> 1-5 units per rotation step (for smooth movement)</li>
+                    <li><strong>Rotation dials:</strong> 1-15 degrees per step (for precise angles)</li>
+                    <li><strong>Zoom/Scale:</strong> 0.05-0.1 units per step (for gradual changes)</li>
+                    <li><strong>Intensity:</strong> 0.01-0.05 per step (for subtle lighting adjustments)</li>
+                </ul>
+            </div>
+
+            <div class="tip-box">
+                <h4>⚡ Workflow Optimization</h4>
+                <ul>
+                    <li>Use <strong>dial touch zones</strong> on Stream Deck+ for instant parameter switching</li>
+                    <li>Create separate profiles for different Fusion node types</li>
+                    <li>Map frequently used nodes (Merge 3D, Transform 3D) to quick-access buttons</li>
+                    <li>Use multi-action buttons to insert node + open inspector in one press</li>
+                    <li>Set up folder navigation for switching between Fusion tool categories</li>
+                </ul>
+            </div>
+
+            <div class="tip-box">
+                <h4>🎨 Advanced Techniques</h4>
+                <ul>
+                    <li><strong>Keyframe on Dial Press:</strong> Push dial to automatically add keyframe at current position</li>
+                    <li><strong>Fine/Coarse Toggle:</strong> Use dial press to switch between 0.1x and 10x sensitivity</li>
+                    <li><strong>Link Multiple Parameters:</strong> Control multiple nodes' positions simultaneously</li>
+                    <li><strong>Camera Rigs:</strong> Use dials for custom camera rig controls (boom, pan, tilt)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="content-section">
+            <h2>✨ Benefits of Stream Deck+ for Fusion 3D</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>⚡ Speed</h4>
+                    <p>Navigate 3D space 3-5x faster than mouse-based workflows. No more hunting for parameters in the inspector.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>🎯 Precision</h4>
+                    <p>Fine-tune positions with tactile dial feedback. More accurate than mouse dragging for subtle adjustments.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>🔄 Natural Feel</h4>
+                    <p>Rotary dials mimic real-world 3D controls like gimbals and joysticks for intuitive operation.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>🎬 Multi-Tasking</h4>
+                    <p>Keep one hand on dials, one on keyboard. Dramatically improves workflow efficiency.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Pages -->
+        <div class="content-section">
+            <h2>🔗 Related Pages</h2>
+            <ul style="font-size: 1.1em;">
+                <li><a href="streamdeck-plus.html" style="color: #ffd700;">Stream Deck+ Features Overview</a></li>
+                <li><a href="color-grading.html" style="color: #ffd700;">Color Grading with Knobs</a></li>
+                <li><a href="coarse-fine-dials.html" style="color: #ffd700;">Coarse & Fine Dial Adjustments</a></li>
+                <li><a href="davinci-profile.html" style="color: #ffd700;">DaVinci Resolve Profile Setup</a></li>
+                <li><a href="keyboard-integration.html" style="color: #ffd700;">Keyboard Integration with Stream Deck</a></li>
+            </ul>
+        </div>
+
+        <a href="../index.html" class="back-link">← Back to Gallery</a>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Animate dial on page load
+        window.addEventListener('load', function() {
+            const dial = document.querySelector('.dial-control::before');
+            if (dial) {
+                let rotation = 0;
+                setInterval(() => {
+                    rotation = (rotation + 2) % 360;
+                    document.querySelector('.dial-control').style.transform = `rotate(${rotation}deg)`;
+                }, 50);
+            }
+        });
+    </script>
+</body>
+</html>
