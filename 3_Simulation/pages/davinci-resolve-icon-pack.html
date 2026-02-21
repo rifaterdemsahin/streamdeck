@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaVinci Resolve Icon Pack for Stream Deck - Stream Deck Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e0e7ff;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .content-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #a8d0ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #e0e7ff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .feature-card .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h4 {
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        /* Icon preview grid */
+        .icon-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        .icon-sample {
+            aspect-ratio: 1;
+            background: #1a1a2e;
+            border: 2px solid rgba(255, 215, 0, 0.25);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            font-size: 0.7em;
+            text-align: center;
+            transition: all 0.3s;
+            gap: 4px;
+        }
+
+        .icon-sample:hover {
+            border-color: #ffd700;
+            transform: scale(1.08);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .icon-sample .emoji {
+            font-size: 2em;
+        }
+
+        .icon-sample .label {
+            color: #a8d0ff;
+            font-size: 0.85em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .comparison-card.default-icons {
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+
+        .comparison-card.custom-icons {
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .comparison-card h4 {
+            margin-top: 0;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #a8d0ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .workflow-step strong {
+            color: #ffd700;
+        }
+
+        .tip-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 152, 0, 0.2);
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #ff9800;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .shortcut-table th {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .shortcut-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcut-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #ffd700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .icon-preview-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+        }
+    </style>
+    <link rel="stylesheet" href="../../5_Symbols/configs/learning-assessment.css">
+    <script src="../../5_Symbols/scripts/learning-assessment.js"></script>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header>
+            <h1>🎨 DaVinci Resolve Icon Pack</h1>
+            <p class="subtitle">Custom icon packs for Stream Deck buttons — purpose-built for DaVinci Resolve workflows</p>
+            <span class="badge">🎬 DaVinci Resolve</span>
+            <span class="badge">🎨 Icon Pack</span>
+            <span class="badge">🖼️ Visual Design</span>
+        </header>
+
+        <!-- Video Tutorial -->
+        <div class="content-section">
+            <h2>📹 Video Tutorial</h2>
+            <p>Watch how to set up and use a dedicated DaVinci Resolve icon pack for your Stream Deck:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/e6Za7TyGBoY?start=601"
+                    title="DaVinci Resolve Icon Pack for Stream Deck"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="margin-top: 15px;">
+                <strong>🔗 Direct Link:</strong>
+                <a href="https://youtu.be/e6Za7TyGBoY?t=601" target="_blank" style="color: #ffd700;">
+                    Watch on YouTube (starts at 10:01)
+                </a>
+            </p>
+        </div>
+
+        <!-- What Is an Icon Pack? -->
+        <div class="content-section">
+            <h2>🔍 What Is a DaVinci Resolve Icon Pack?</h2>
+
+            <div class="highlight-box">
+                <h3>🖼️ Purpose-Built Button Icons</h3>
+                <p>A <strong>DaVinci Resolve Icon Pack</strong> is a curated set of custom button images designed
+                   specifically for Stream Deck. Each icon visually represents a DaVinci Resolve function — trim,
+                   cut, colour grade, transition, timeline navigation, and more — so you can identify every button
+                   at a glance without reading text labels.</p>
+            </div>
+
+            <p>
+                Instead of the generic Stream Deck icons or plain text labels, a well-designed icon pack uses
+                colours, glyphs, and visual cues that match DaVinci Resolve's own interface language, making
+                your Stream Deck feel like a native extension of the NLE.
+            </p>
+        </div>
+
+        <!-- Why Use an Icon Pack? -->
+        <div class="content-section">
+            <h2>💡 Why Use an Icon Pack?</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h4>Instant Recognition</h4>
+                    <p>Custom icons let you find the right button in milliseconds. Your eyes process images far faster than reading text — critical when editing at speed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h4>Colour-Coded Categories</h4>
+                    <p>Group related functions by colour — e.g., red for trim tools, blue for navigation, green for playback, orange for markers — so button clusters are obvious.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🧠</div>
+                    <h4>Muscle Memory + Visual Memory</h4>
+                    <p>Consistent, recognisable icons reinforce spatial memory. Over time you won't even look at the deck — the icons help you learn button positions faster.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔗</div>
+                    <h4>Matches Resolve's UI Language</h4>
+                    <p>Icons that mirror DaVinci Resolve's toolbar and menu symbols reduce cognitive load — the same visual means the same action across screen and deck.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h4>Multi-Device Consistency</h4>
+                    <p>Apply the same icon pack across Stream Deck XL, Stream Deck+, and Mobile to keep a unified look regardless of which device you reach for.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">✨</div>
+                    <h4>Professional Appearance</h4>
+                    <p>A polished icon set transforms the Stream Deck from a hobby gadget into a professional editing console that looks the part in any studio.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Icons -->
+        <div class="content-section">
+            <h2>🖼️ Typical Icon Categories</h2>
+            <p>A DaVinci Resolve icon pack generally covers these functional groups:</p>
+
+            <h3>✂️ Edit &amp; Trim Tools</h3>
+            <div class="icon-preview-grid">
+                <div class="icon-sample"><span class="emoji">✂️</span><span class="label">Cut</span></div>
+                <div class="icon-sample"><span class="emoji">↔️</span><span class="label">Roll</span></div>
+                <div class="icon-sample"><span class="emoji">⬅️</span><span class="label">Ripple L</span></div>
+                <div class="icon-sample"><span class="emoji">➡️</span><span class="label">Ripple R</span></div>
+                <div class="icon-sample"><span class="emoji">🎯</span><span class="label">Slip</span></div>
+                <div class="icon-sample"><span class="emoji">🔄</span><span class="label">Slide</span></div>
+                <div class="icon-sample"><span class="emoji">🔀</span><span class="label">Swap</span></div>
+                <div class="icon-sample"><span class="emoji">🗑️</span><span class="label">Delete</span></div>
+            </div>
+
+            <h3>▶️ Playback &amp; Transport</h3>
+            <div class="icon-preview-grid">
+                <div class="icon-sample"><span class="emoji">▶️</span><span class="label">Play</span></div>
+                <div class="icon-sample"><span class="emoji">⏸️</span><span class="label">Pause</span></div>
+                <div class="icon-sample"><span class="emoji">⏪</span><span class="label">Reverse</span></div>
+                <div class="icon-sample"><span class="emoji">⏩</span><span class="label">Fast Fwd</span></div>
+                <div class="icon-sample"><span class="emoji">⏮️</span><span class="label">Start</span></div>
+                <div class="icon-sample"><span class="emoji">⏭️</span><span class="label">End</span></div>
+                <div class="icon-sample"><span class="emoji">🔁</span><span class="label">Loop</span></div>
+                <div class="icon-sample"><span class="emoji">⏹️</span><span class="label">Stop</span></div>
+            </div>
+
+            <h3>🎨 Colour &amp; Grading</h3>
+            <div class="icon-preview-grid">
+                <div class="icon-sample"><span class="emoji">🌈</span><span class="label">Colour</span></div>
+                <div class="icon-sample"><span class="emoji">☀️</span><span class="label">Exposure</span></div>
+                <div class="icon-sample"><span class="emoji">🎭</span><span class="label">LUT</span></div>
+                <div class="icon-sample"><span class="emoji">🔴</span><span class="label">Red</span></div>
+                <div class="icon-sample"><span class="emoji">🟢</span><span class="label">Green</span></div>
+                <div class="icon-sample"><span class="emoji">🔵</span><span class="label">Blue</span></div>
+                <div class="icon-sample"><span class="emoji">⚪</span><span class="label">Balance</span></div>
+                <div class="icon-sample"><span class="emoji">🔲</span><span class="label">Qualifier</span></div>
+            </div>
+
+            <h3>📐 Timeline &amp; Navigation</h3>
+            <div class="icon-preview-grid">
+                <div class="icon-sample"><span class="emoji">🔍</span><span class="label">Zoom In</span></div>
+                <div class="icon-sample"><span class="emoji">🔎</span><span class="label">Zoom Out</span></div>
+                <div class="icon-sample"><span class="emoji">📍</span><span class="label">Marker</span></div>
+                <div class="icon-sample"><span class="emoji">🏷️</span><span class="label">Flag</span></div>
+                <div class="icon-sample"><span class="emoji">📋</span><span class="label">Media</span></div>
+                <div class="icon-sample"><span class="emoji">🎬</span><span class="label">Edit</span></div>
+                <div class="icon-sample"><span class="emoji">🧪</span><span class="label">Fusion</span></div>
+                <div class="icon-sample"><span class="emoji">🔊</span><span class="label">Fairlight</span></div>
+            </div>
+        </div>
+
+        <!-- Default vs Custom -->
+        <div class="content-section">
+            <h2>⚖️ Default Labels vs Custom Icon Pack</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-card default-icons">
+                    <h4 style="color:#F44336;">❌ Default / Text Labels</h4>
+                    <ul>
+                        <li>Generic icons or plain text like "Cut", "Trim L"</li>
+                        <li>Hard to scan quickly — must read each label</li>
+                        <li>No colour coding between categories</li>
+                        <li>Inconsistent visual style across buttons</li>
+                        <li>Looks unprofessional in studio settings</li>
+                    </ul>
+                </div>
+                <div class="comparison-card custom-icons">
+                    <h4 style="color:#4CAF50;">✅ Custom DaVinci Icon Pack</h4>
+                    <ul>
+                        <li>Purpose-designed glyphs matching Resolve's UI</li>
+                        <li>Instant visual recognition — no reading required</li>
+                        <li>Colour-grouped by function category</li>
+                        <li>Consistent sizing, padding, and style</li>
+                        <li>Professional, studio-ready appearance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Install -->
+        <div class="content-section">
+            <h2>⚙️ How to Install an Icon Pack</h2>
+
+            <div class="workflow-step">
+                <strong>Step 1 –</strong> Download or create your icon pack. Icons should be <code>72×72</code> or <code>144×144</code> pixel PNG files with a transparent or dark background.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 2 –</strong> Open the <strong>Elgato Stream Deck</strong> application.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 3 –</strong> Select the button you want to customise. In the button settings panel, click on the icon/image area.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 4 –</strong> Choose <strong>"Set from File…"</strong> and navigate to the downloaded icon PNG.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 5 –</strong> Repeat for each button. Organise icons into folders by category (Edit, Playback, Colour, etc.) for faster setup.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 6 –</strong> Optionally, save the profile so you can back it up or share it across devices.
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 Pro Tip – Icon Size</h4>
+                <p>Stream Deck buttons render at <code>72×72</code> pixels (standard) or <code>144×144</code> (XL/retina).
+                   Design at <code>144×144</code> for the sharpest result — the software will downscale automatically for
+                   smaller devices.</p>
+            </div>
+        </div>
+
+        <!-- Icon Design Best Practices -->
+        <div class="content-section">
+            <h2>🎯 Icon Design Best Practices</h2>
+
+            <table class="shortcut-table">
+                <thead>
+                    <tr>
+                        <th>Guideline</th>
+                        <th>Why It Matters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Use a <strong>dark background</strong> (#1a1a2e or black)</td>
+                        <td>Matches the Stream Deck bezel and looks seamless</td>
+                    </tr>
+                    <tr>
+                        <td>Keep glyphs <strong>simple and bold</strong></td>
+                        <td>Buttons are small — fine detail is lost at 72px</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Colour-code</strong> by category</td>
+                        <td>Lets you find the right cluster without reading</td>
+                    </tr>
+                    <tr>
+                        <td>Add a <strong>subtle text label</strong> below the glyph</td>
+                        <td>Helps during the learning phase; remove later if desired</td>
+                    </tr>
+                    <tr>
+                        <td>Use <strong>consistent padding</strong> (8–12px inset)</td>
+                        <td>Prevents icons from looking cramped against edges</td>
+                    </tr>
+                    <tr>
+                        <td>Match <strong>Resolve's own icon style</strong> where possible</td>
+                        <td>Reduces cognitive switching between screen and deck</td>
+                    </tr>
+                    <tr>
+                        <td>Provide <strong>active/inactive states</strong> for toggles</td>
+                        <td>Visual feedback for modes like Trim On/Off, Solo, Mute</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Stream Deck Integration -->
+        <div class="content-section">
+            <h2>🎛️ Stream Deck Multi-Device Setup</h2>
+            <p>Apply the icon pack consistently across all your devices for a unified editing experience:</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🖥️</div>
+                    <h4>Stream Deck XL #1 — Edit &amp; Trim</h4>
+                    <p>32 buttons for all editing and trimming functions. Use the red/orange icon family for cut and trim tools.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖥️</div>
+                    <h4>Stream Deck XL #2 — Colour &amp; Effects</h4>
+                    <p>32 buttons for colour grading, LUTs, and Fusion. Use the blue/purple icon family for grading controls.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎛️</div>
+                    <h4>Stream Deck+ — Transport &amp; Dials</h4>
+                    <p>8 buttons + 4 dials. Green icon family for playback; dials for jog/shuttle and audio levels.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h4>Stream Deck Mobile — Monitoring</h4>
+                    <p>Quick-access icons for render status, project switching, and emergency save.</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Backup Your Icons</h4>
+                <p>Store your icon pack folder in version control (this repo's <code>backups/</code> directory).
+                   If you reinstall Stream Deck software or switch machines, you'll need the original PNG files to
+                   re-apply the icons. Profile exports include icons, but having the source files is always safer.</p>
+            </div>
+        </div>
+
+        <!-- Where to Get Icon Packs -->
+        <div class="content-section">
+            <h2>📦 Where to Get Icon Packs</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🛒</div>
+                    <h4>Community Packs</h4>
+                    <p>Search the Elgato Marketplace, Reddit (r/streamdeck), and YouTube creators for free and paid DaVinci Resolve icon sets.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h4>Design Your Own</h4>
+                    <p>Use Figma, Photoshop, or even Canva. Create a 144×144 template, design one icon, then duplicate and modify for consistency.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤖</div>
+                    <h4>AI-Generated</h4>
+                    <p>Use AI image tools (DALL-E, Midjourney) to generate icon sets. Prompt with "flat icon, dark background, 144px, [action name]" for best results.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-links">
+            <a href="../index.html">⬅️ Back to Gallery</a>
+            <a href="davinci-profile.html">🎬 DaVinci Profile</a>
+            <a href="dynamic-trim-mode.html">✂️ Dynamic Trim Mode</a>
+            <a href="colored-buttons.html">🎨 Coloured Buttons</a>
+            <a href="../../claude.md">📚 Documentation</a>
+        </div>
+
+    </div>
+
+    <!-- Learning Assessment Component -->
+    <div class="learning-remembered-banner" id="learning-remembered-banner">
+        <div class="learning-banner-content">
+            <span class="learning-banner-emoji">🧠</span>
+            <span class="learning-banner-text">This page is remembered! 🎯</span>
+            <span class="learning-banner-close" onclick="closeLearningBanner()">×</span>
+        </div>
+    </div>
+
+    <div class="learning-assessment-panel" id="learning-assessment-panel">
+        <div class="learning-panel-header">
+            <div class="learning-panel-title">🎓 Self-Assessment</div>
+            <button class="learning-collapse-btn" onclick="toggleLearningPanel()">−</button>
+        </div>
+
+        <div class="learning-panel-content">
+            <div class="learning-progress-bar">
+                <div class="learning-progress-fill" id="learning-progress-fill"></div>
+            </div>
+
+            <div class="bloom-item" data-level="remember">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-remember" onchange="toggleLearningLevel('remember')">
+                <label for="bloom-remember" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🧠</div>
+                        <div class="bloom-text">I can recall what a DaVinci Resolve icon pack is</div>
+                        <div class="bloom-level">🧠 REMEMBER</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="understand">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-understand" onchange="toggleLearningLevel('understand')">
+                <label for="bloom-understand" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">📖</div>
+                        <div class="bloom-text">I understand why custom icons improve editing speed</div>
+                        <div class="bloom-level">📖 UNDERSTAND</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="apply">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-apply" onchange="toggleLearningLevel('apply')">
+                <label for="bloom-apply" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🔧</div>
+                        <div class="bloom-text">I can install and apply an icon pack to my Stream Deck</div>
+                        <div class="bloom-level">🔧 APPLY</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="analyze">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-analyze" onchange="toggleLearningLevel('analyze')">
+                <label for="bloom-analyze" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🔬</div>
+                        <div class="bloom-text">I can compare default labels vs custom icon pack effectiveness</div>
+                        <div class="bloom-level">🔬 ANALYZE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="evaluate">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-evaluate" onchange="toggleLearningLevel('evaluate')">
+                <label for="bloom-evaluate" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">⚖️</div>
+                        <div class="bloom-text">I can judge icon quality and pick the best pack for my workflow</div>
+                        <div class="bloom-level">⚖️ EVALUATE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="create">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-create" onchange="toggleLearningLevel('create')">
+                <label for="bloom-create" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🎨</div>
+                        <div class="bloom-text">I can design my own icon pack for DaVinci Resolve</div>
+                        <div class="bloom-level">🎨 CREATE</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
