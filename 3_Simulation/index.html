@@ -50,6 +50,33 @@
             margin-bottom: 30px;
         }
 
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
         .nav-links {
             display: flex;
             justify-content: center;
@@ -187,6 +214,10 @@
             <p class="subtitle">Interactive Implementation Guide for MLOps/DevOps & Video Editing Workflows</p>
         </header>
 
+        <div class="search-container">
+            <input type="text" id="main-search" class="search-input" placeholder="🔍 Search pages, features, tutorials... (e.g., profile creator, hotkey, davinci)">
+        </div>
+
         <nav>
             <div class="nav-links">
                 <a href="gallery.html">🖼️ Visual Gallery</a>
@@ -205,7 +236,7 @@
             <h2 class="category-title">📋 Profile Setup & Configuration</h2>
             <div class="cards-grid">
                 <a href="pages/profile-creator.html" style="text-decoration: none; color: inherit;">
-                    <div class="card">
+                    <div class="card" data-keywords="profile creator visual designer button layout interactive tool design export configuration create builder">
                         <div class="card-content" style="padding: 30px; text-align: center;">
                             <h3 class="card-title" style="font-size: 2em;">🎨 Profile Creator Tool</h3>
                             <p class="card-description">Interactive visual tool to design Stream Deck layouts. Select buttons, assign colors, and export configurations.</p>
@@ -473,5 +504,94 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('main-search').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+
+            if (!query) {
+                // Show all cards
+                cards.forEach(card => {
+                    card.style.display = 'block';
+                    card.style.opacity = '1';
+                    card.parentElement.style.display = 'block';
+                });
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.style.display = 'block';
+                });
+                return;
+            }
+
+            let hasVisibleCards = {};
+
+            cards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                const cardLink = card.parentElement.href || '';
+                const cardKeywords = card.dataset.keywords || '';
+
+                // Search in card content, link, and keywords
+                const matches = cardText.includes(query) ||
+                               cardLink.toLowerCase().includes(query) ||
+                               cardKeywords.toLowerCase().includes(query);
+
+                if (matches) {
+                    card.style.display = 'block';
+                    card.style.opacity = '1';
+                    card.parentElement.style.display = 'block';
+
+                    // Highlight matching text
+                    card.style.border = '2px solid #ffd700';
+                    card.style.boxShadow = '0 10px 30px rgba(255, 215, 0, 0.5)';
+
+                    // Track which sections have visible cards
+                    const section = card.closest('.category-section');
+                    if (section) {
+                        hasVisibleCards[section.id] = true;
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                    card.parentElement.style.display = 'none';
+                }
+            });
+
+            // Hide sections with no visible cards
+            document.querySelectorAll('.category-section').forEach(section => {
+                if (hasVisibleCards[section.id]) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            // Scroll to first match
+            const firstVisible = document.querySelector('.card[style*="display: block"]');
+            if (firstVisible) {
+                firstVisible.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Reset highlight on blur
+        document.getElementById('main-search').addEventListener('blur', function() {
+            setTimeout(() => {
+                document.querySelectorAll('.card').forEach(card => {
+                    if (!document.getElementById('main-search').value) {
+                        card.style.border = '2px solid transparent';
+                        card.style.boxShadow = '';
+                    }
+                });
+            }, 200);
+        });
+
+        // Keyboard shortcut: Ctrl+K or Cmd+K to focus search
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('main-search').focus();
+            }
+        });
+    </script>
 </body>
 </html>

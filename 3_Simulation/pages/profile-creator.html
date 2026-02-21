@@ -57,6 +57,9 @@
                 <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
             </div>
             <div class="nav-group">
+                <input type="text" id="search-input" placeholder="🔍 Search actions, colors, templates..." style="padding: 8px 15px; border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 255, 255, 0.1); color: #fff; min-width: 250px;">
+            </div>
+            <div class="nav-group">
                 <a href="#" onclick="saveLayout()">💾 Save Layout</a>
                 <a href="#" onclick="loadLayout()">📂 Load Layout</a>
             </div>
@@ -368,10 +371,126 @@
             alert(`${type} template - Coming soon! This will load pre-configured button layouts for common workflows.`);
         }
 
+        // Search functionality
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchableElements = {
+                actions: document.getElementById('action-type'),
+                colors: document.querySelectorAll('.color-option'),
+                templates: document.querySelectorAll('.export-button'),
+                devices: document.querySelectorAll('.device-btn')
+            };
+
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase().trim();
+
+                if (!query) {
+                    // Reset all highlights
+                    resetHighlights();
+                    return;
+                }
+
+                resetHighlights();
+
+                // Search in action types
+                const actionOptions = searchableElements.actions.options;
+                for (let option of actionOptions) {
+                    if (option.text.toLowerCase().includes(query)) {
+                        searchableElements.actions.style.border = '2px solid #ffd700';
+                        searchableElements.actions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        break;
+                    }
+                }
+
+                // Search in colors
+                colors.forEach((color, index) => {
+                    if (color.name.toLowerCase().includes(query)) {
+                        searchableElements.colors[index].style.border = '3px solid #ffd700';
+                        searchableElements.colors[index].style.transform = 'scale(1.2)';
+                        searchableElements.colors[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+
+                // Search in templates
+                const templateKeywords = {
+                    'davinci': ['video', 'editing', 'resolve', 'timeline'],
+                    'devops': ['docker', 'container', 'deployment'],
+                    'git': ['version', 'control', 'commit', 'push']
+                };
+
+                Object.keys(templateKeywords).forEach(template => {
+                    const keywords = [template, ...templateKeywords[template]];
+                    if (keywords.some(keyword => keyword.includes(query) || query.includes(keyword))) {
+                        const templateBtn = Array.from(searchableElements.templates).find(btn =>
+                            btn.textContent.toLowerCase().includes(template)
+                        );
+                        if (templateBtn) {
+                            templateBtn.style.border = '3px solid #ffd700';
+                            templateBtn.style.transform = 'translateY(-2px)';
+                            templateBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+
+                // Search in devices
+                searchableElements.devices.forEach(device => {
+                    if (device.textContent.toLowerCase().includes(query)) {
+                        device.style.border = '3px solid #ffd700';
+                        device.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+
+                // Search in general terms
+                if (query.includes('color') || query.includes('palette')) {
+                    document.getElementById('color-palette').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                if (query.includes('export') || query.includes('save')) {
+                    document.querySelector('.export-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+
+        function resetHighlights() {
+            // Reset action select
+            document.getElementById('action-type').style.border = '1px solid rgba(255, 215, 0, 0.3)';
+
+            // Reset colors
+            document.querySelectorAll('.color-option').forEach(el => {
+                if (!el.classList.contains('selected')) {
+                    el.style.border = '2px solid transparent';
+                    el.style.transform = 'scale(1)';
+                }
+            });
+
+            // Reset template buttons
+            document.querySelectorAll('.export-button').forEach(btn => {
+                btn.style.border = '2px solid #2196F3';
+                btn.style.transform = 'translateY(0)';
+            });
+
+            // Reset device buttons
+            document.querySelectorAll('.device-btn').forEach(btn => {
+                if (!btn.classList.contains('active')) {
+                    btn.style.border = '2px solid transparent';
+                }
+            });
+        }
+
+        function saveLayout() {
+            saveToLocalStorage();
+            alert('Layout saved to browser storage!');
+        }
+
+        function loadLayout() {
+            loadFromLocalStorage();
+            alert('Layout loaded from browser storage!');
+        }
+
         // Initialize
         initializePalette();
         createGrid('xl');
         loadFromLocalStorage();
+        initSearch();
     </script>
 </body>
 </html>
