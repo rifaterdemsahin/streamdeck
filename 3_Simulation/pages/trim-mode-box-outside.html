@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trim Mode Box Outside - Stream Deck Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e0e7ff;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .content-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #a8d0ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #e0e7ff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .image-preview {
+            margin: 30px auto;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            overflow: hidden;
+            max-width: 700px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .feature-card .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h4 {
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .timeline-visual {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%);
+            height: 80px;
+            border-radius: 10px;
+            position: relative;
+            margin: 20px 0;
+            border: 2px solid #a8d0ff;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .clip-zone {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .clip-zone.outgoing {
+            width: 40%;
+            background: rgba(66, 133, 244, 0.3);
+            border-right: 3px solid #ffd700;
+        }
+
+        .clip-zone.incoming {
+            width: 40%;
+            background: rgba(76, 175, 80, 0.3);
+            border-left: 3px solid #ffd700;
+        }
+
+        .clip-zone.outside {
+            width: 20%;
+            background: rgba(244, 67, 54, 0.15);
+            border: 2px dashed rgba(244, 67, 54, 0.6);
+            color: #ff8a80;
+            font-size: 0.8em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .comparison-card.inside {
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .comparison-card.outside {
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+
+        .comparison-card h4 {
+            margin-top: 0;
+        }
+
+        .tip-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 152, 0, 0.2);
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #ff9800;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #a8d0ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .workflow-step strong {
+            color: #ffd700;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .shortcut-table th {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .shortcut-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcut-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #ffd700;
+        }
+    </style>
+    <link rel="stylesheet" href="../../5_Symbols/configs/learning-assessment.css">
+    <script src="../../5_Symbols/scripts/learning-assessment.js"></script>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header>
+            <h1>✂️ Trim Mode – Box Outside</h1>
+            <p class="subtitle">Understanding the "Outside the Box" cursor zone in DaVinci Resolve's Trim Mode</p>
+            <span class="badge">🎬 DaVinci Resolve</span>
+            <span class="badge">✂️ Trim Mode</span>
+            <span class="badge">🖱️ Mouse Position</span>
+        </header>
+
+        <!-- Screenshot -->
+        <div class="content-section">
+            <h2>📸 Reference Screenshot</h2>
+            <div class="image-preview">
+                <img src="../trim-mode-box-outside.png" alt="Trim Mode – Box Outside indicator in DaVinci Resolve">
+            </div>
+            <p style="text-align:center; margin-top:15px; color:#a8d0ff;">
+                The screenshot shows the cursor positioned <strong>outside</strong> the trim edit-point box on the DaVinci Resolve timeline.
+            </p>
+        </div>
+
+        <!-- What Is It? -->
+        <div class="content-section">
+            <h2>🔍 What Is "Box Outside"?</h2>
+            <p>
+                In DaVinci Resolve's <strong>Trim Edit Mode</strong> (keyboard shortcut <code>T</code>), the timeline shows a
+                bounding box around each edit point. The behaviour of a trim operation changes depending on
+                <em>where</em> your mouse cursor is relative to that box:
+            </p>
+
+            <div class="comparison-grid" style="margin-top:25px;">
+                <div class="comparison-card inside">
+                    <h4>✅ Inside the Box</h4>
+                    <p>Cursor is over the edit-point bounding box. Clicking here activates <strong>Ripple</strong>,
+                       <strong>Roll</strong>, or <strong>Slide/Slip</strong> trim depending on exact position.</p>
+                </div>
+                <div class="comparison-card outside">
+                    <h4>❌ Outside the Box</h4>
+                    <p>Cursor is away from the edit-point box. Clicking here <strong>deselects the current trim</strong>
+                       and may select a different edit point or do nothing — preventing accidental edits.</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <strong>Key Concept:</strong> The "outside" state is a safety mechanism. It tells the editor that the
+                mouse is <em>not</em> hovering over any active trim zone, so no trim operation will be applied on click.
+            </div>
+        </div>
+
+        <!-- Why It Matters -->
+        <div class="content-section">
+            <h2>💡 Why Is It Used?</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🛡️</div>
+                    <h4>Prevents Accidental Trims</h4>
+                    <p>Clicking outside the box ensures you don't accidentally ripple or roll an edit point. This safeguards your timeline from unintended changes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔀</div>
+                    <h4>Quick Edit-Point Switching</h4>
+                    <p>Clicking outside one box and onto another lets you rapidly jump between edit points without leaving Trim Mode.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖱️</div>
+                    <h4>Cursor Feedback</h4>
+                    <p>The cursor icon changes when moving in and out of the box, giving instant visual feedback about which trim operation will fire.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h4>Workflow Speed</h4>
+                    <p>Knowing the inside/outside boundary lets experienced editors work faster — they can trust that stray clicks won't damage the edit.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Diagram -->
+        <div class="content-section">
+            <h2>📐 Timeline Zone Diagram</h2>
+            <p>Below is a simplified visual of how trim zones map to the timeline around an edit point:</p>
+
+            <div class="timeline-visual">
+                <div class="clip-zone outside" style="width:15%;">Outside<br>(No Trim)</div>
+                <div class="clip-zone outgoing" style="width:30%;">Outgoing Clip<br>(Ripple Out)</div>
+                <div class="clip-zone incoming" style="width:30%;">Incoming Clip<br>(Ripple In)</div>
+                <div class="clip-zone outside" style="width:15%;">Outside<br>(No Trim)</div>
+            </div>
+
+            <p style="margin-top:10px;">
+                The <strong>gold border</strong> between outgoing and incoming clips represents the edit point. When
+                the cursor is over both sides simultaneously (the very center), a <strong>Roll</strong> trim is performed
+                instead of a Ripple.
+            </p>
+        </div>
+
+        <!-- How to Use -->
+        <div class="content-section">
+            <h2>🎯 How to Use in Practice</h2>
+
+            <div class="workflow-step">
+                <strong>Step 1 –</strong> Press <code>T</code> to enter Trim Edit Mode in DaVinci Resolve.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 2 –</strong> Hover your cursor over the timeline. Notice the bounding box that appears around nearby edit points.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 3 –</strong> Move the cursor <em>inside</em> the box to see it highlight. The cursor icon changes to indicate Ripple, Roll, or Slip.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 4 –</strong> Move the cursor <em>outside</em> the box. The highlight disappears and the cursor returns to the default arrow — this is the "Box Outside" state.
+            </div>
+            <div class="workflow-step">
+                <strong>Step 5 –</strong> Click while outside to deselect the current edit point, or click on a different edit point's box to switch targets.
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 Pro Tip</h4>
+                <p>Use the outside zone intentionally to "park" your cursor when you want to review the edit without
+                   risk of changing anything, then move back inside only when you're ready to trim.</p>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="content-section">
+            <h2>⌨️ Related Keyboard Shortcuts</h2>
+
+            <table class="shortcut-table">
+                <thead>
+                    <tr>
+                        <th>Shortcut</th>
+                        <th>Action</th>
+                        <th>Context</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>T</code></td>
+                        <td>Toggle Trim Edit Mode</td>
+                        <td>Enter/exit trim mode on the Edit page</td>
+                    </tr>
+                    <tr>
+                        <td><code>U</code></td>
+                        <td>Cycle Trim Type</td>
+                        <td>Cycle between Ripple, Roll, Slip, and Slide while in Trim Mode</td>
+                    </tr>
+                    <tr>
+                        <td><code>,</code> / <code>.</code></td>
+                        <td>Nudge Trim (1 frame)</td>
+                        <td>Move the selected edit point by 1 frame left or right</td>
+                    </tr>
+                    <tr>
+                        <td><code>Shift + ,</code> / <code>Shift + .</code></td>
+                        <td>Nudge Trim (5 frames)</td>
+                        <td>Move the selected edit point by 5 frames</td>
+                    </tr>
+                    <tr>
+                        <td><code>Escape</code></td>
+                        <td>Exit Trim Mode</td>
+                        <td>Return to selection mode</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Stream Deck Integration -->
+        <div class="content-section">
+            <h2>🎛️ Stream Deck Integration</h2>
+            <p>
+                Understanding inside vs. outside box states is essential when mapping trim actions to Stream Deck buttons:
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🔘</div>
+                    <h4>Dedicated Trim Toggle</h4>
+                    <p>Assign <code>T</code> to a Stream Deck button so you can enter and exit Trim Mode instantly without taking your eyes off the viewer.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <h4>Cycle Trim Type</h4>
+                    <p>Map <code>U</code> to cycle through Ripple → Roll → Slip → Slide. Combine with the visual cursor feedback to know which mode you're in.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⏪⏩</div>
+                    <h4>Frame Nudge Buttons</h4>
+                    <p>Assign <code>,</code> and <code>.</code> (and their Shift variants) to Stream Deck buttons or dials for precise frame-level trimming.</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Important</h4>
+                <p>Stream Deck hotkeys fire regardless of cursor position. If Trim Mode is active and an edit point is selected,
+                   pressing a mapped nudge key <em>will</em> trim — even if your mouse is in the "outside" zone. Always deselect
+                   the edit point first (click outside the box) if you don't want to affect it.</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-links">
+            <a href="../index.html">⬅️ Back to Gallery</a>
+            <a href="dynamic-trim-mode.html">🎬 Dynamic Trim Mode</a>
+            <a href="edit-point.html">✂️ Edit Point</a>
+            <a href="../../claude.md">📚 Documentation</a>
+        </div>
+
+    </div>
+
+    <!-- Learning Assessment Component -->
+    <div class="learning-remembered-banner" id="learning-remembered-banner">
+        <div class="learning-banner-content">
+            <span class="learning-banner-emoji">🧠</span>
+            <span class="learning-banner-text">This page is remembered! 🎯</span>
+            <span class="learning-banner-close" onclick="closeLearningBanner()">×</span>
+        </div>
+    </div>
+
+    <div class="learning-assessment-panel" id="learning-assessment-panel">
+        <div class="learning-panel-header">
+            <div class="learning-panel-title">🎓 Self-Assessment</div>
+            <button class="learning-collapse-btn" onclick="toggleLearningPanel()">−</button>
+        </div>
+
+        <div class="learning-panel-content">
+            <div class="learning-progress-bar">
+                <div class="learning-progress-fill" id="learning-progress-fill"></div>
+            </div>
+
+            <div class="bloom-item" data-level="remember">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-remember" onchange="toggleLearningLevel('remember')">
+                <label for="bloom-remember" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🧠</div>
+                        <div class="bloom-text">I can recall what "Box Outside" means in Trim Mode</div>
+                        <div class="bloom-level">🧠 REMEMBER</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="understand">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-understand" onchange="toggleLearningLevel('understand')">
+                <label for="bloom-understand" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">📖</div>
+                        <div class="bloom-text">I understand why inside vs outside cursor position matters</div>
+                        <div class="bloom-level">📖 UNDERSTAND</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="apply">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-apply" onchange="toggleLearningLevel('apply')">
+                <label for="bloom-apply" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🔧</div>
+                        <div class="bloom-text">I can use the box zones to perform the correct trim type</div>
+                        <div class="bloom-level">🔧 APPLY</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="analyze">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-analyze" onchange="toggleLearningLevel('analyze')">
+                <label for="bloom-analyze" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🔬</div>
+                        <div class="bloom-text">I can compare Ripple, Roll, Slip, and Slide based on cursor zones</div>
+                        <div class="bloom-level">🔬 ANALYZE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="evaluate">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-evaluate" onchange="toggleLearningLevel('evaluate')">
+                <label for="bloom-evaluate" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">⚖️</div>
+                        <div class="bloom-text">I can judge when to use outside-click deselection vs keyboard exit</div>
+                        <div class="bloom-level">⚖️ EVALUATE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="create">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-create" onchange="toggleLearningLevel('create')">
+                <label for="bloom-create" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🎨</div>
+                        <div class="bloom-text">I can design a Stream Deck layout that leverages trim zone awareness</div>
+                        <div class="bloom-level">🎨 CREATE</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
