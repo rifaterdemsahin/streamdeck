@@ -7,8 +7,8 @@ codebase_indexing:
   setup:
     embedder_provider: "Ollama"
     ollama_base_url: "http://localhost:11434"
-    model: "deepseek-coder:6.7b"  # Model ID for embeddings
-    model_dimension: 1536
+    model: "nomic-embed-text"  # Model ID for embeddings
+    model_dimension: 768
 
     vector_store_provider: "Qdrant"
     qdrant_url: "http://localhost:6333"
@@ -42,7 +42,7 @@ kilo_code:
   ollama_url: "http://localhost:11434"
   qdrant_url: "http://localhost:6333"
   default_model: "deepseek-coder:6.7b"
-  embedding_model: "deepseek-coder:6.7b"
+  embedding_model: "nomic-embed-text"
   collection_name: "kilocode_codebase"
 
   # Performance settings
