@@ -1,0 +1,72 @@
+# Stream Deck Automation - Git Ignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+streamdeck-env/
+venv/
+ENV/
+env/
+
+# Environment Variables
+.env
+*.env
+!.env.example
+
+# Logs
+6_Semblance/logs/*.log
+6_Semblance/logs/*.log.*
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Stream Deck
+*.streamDeckProfile
+
+# Test Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Cache
+.cache/
+.pytest_cache/
+__pycache__/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
