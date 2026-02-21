@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Roadmap - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 15px; }
+        .header-desc { font-size: 1em; color: #ddd; max-width: 700px; margin: 0 auto; }
+
+        /* Overall progress */
+        .overall-progress {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .overall-progress h2 { color: #ffd700; margin-bottom: 15px; font-size: 1.8em; }
+        .overall-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 20px; }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px 30px;
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-number { font-size: 2.5em; font-weight: bold; color: #ffd700; }
+        .stat-label { font-size: 0.9em; color: #a8d0ff; margin-top: 5px; }
+        .overall-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        .overall-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #ffd700, #ff9800);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+        .overall-percent { font-size: 1.3em; margin-top: 10px; color: #ffd700; font-weight: bold; }
+
+        /* Nav */
+        .nav-bar {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .nav-bar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); border-color: #ffd700; transform: translateY(-2px); }
+
+        /* Bloom legend */
+        .bloom-legend {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .bloom-legend h3 { color: #ffd700; margin-bottom: 15px; font-size: 1.3em; }
+        .legend-items { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Category sections */
+        .category-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .category-section h2 {
+            color: #ffd700;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Page rows */
+        .page-row {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            border-left: 4px solid rgba(255, 215, 0, 0.3);
+            gap: 15px;
+        }
+        .page-row:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateX(5px);
+        }
+        .page-row.completed {
+            border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .page-row.partial {
+            border-left-color: #FF9800;
+            background: rgba(255, 152, 0, 0.05);
+        }
+
+        .page-checkbox-col {
+            flex-shrink: 0;
+        }
+        .roadmap-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #4CAF50;
+        }
+
+        .page-info { flex: 1; min-width: 0; }
+        .page-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+        }
+        .page-title:hover { color: #ffd700; }
+        .page-difficulty {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-top: 4px;
+        }
+        .page-difficulty.easy { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .page-difficulty.medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .page-difficulty.hard { background: rgba(244, 67, 54, 0.3); color: #F44336; }
+
+        /* Bloom dots for each page */
+        .bloom-dots {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .bloom-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s;
+            cursor: default;
+            position: relative;
+        }
+        .bloom-dot.active {
+            background: rgba(76, 175, 80, 0.4);
+            border-color: #4CAF50;
+        }
+        .bloom-dot[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .page-progress-bar {
+            width: 80px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .page-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #ffd700);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Actions */
+        .actions-bar {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 12px 25px;
+            border: 2px solid #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .action-btn:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        .action-btn.danger { border-color: #F44336; color: #F44336; background: rgba(244, 67, 54, 0.15); }
+        .action-btn.danger:hover { background: rgba(244, 67, 54, 0.3); }
+
+        /* Completion celebration */
+        .celebration {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(255, 215, 0, 0.3));
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+        }
+        .celebration.show { display: block; animation: celebrateIn 0.6s ease; }
+        @keyframes celebrateIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .celebration h2 { font-size: 2em; color: #ffd700; margin-bottom: 10px; }
+        .celebration p { font-size: 1.2em; color: #ddd; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 40px;
+            color: #a8d0ff;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .overall-stats { gap: 15px; }
+            .stat-box { min-width: 100px; padding: 15px; }
+            .stat-number { font-size: 1.8em; }
+            .bloom-dots { display: none; }
+            .page-progress-bar { width: 60px; }
+            .page-row { flex-wrap: wrap; }
+            .legend-items { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗺️ Learning Roadmap</h1>
+            <p class="subtitle">Your Personal Stream Deck Mastery Journey</p>
+            <p class="header-desc">Track your progress across all topics. Check off pages as you complete them, and watch your Bloom's Taxonomy levels fill up automatically from each page's self-assessment.</p>
+        </header>
+
+        <div class="nav-bar">
+            <a href="../index.html">⬅️ Back to Index</a>
+            <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            <a href="../../markdown_renderer.html#2_Environment/roadmap.md">🗺️ Project Roadmap</a>
+        </div>
+
+        <!-- Celebration Banner -->
+        <div class="celebration" id="celebration">
+            <h2>🎉🏆 Congratulations! 🏆🎉</h2>
+            <p>You've completed the entire Stream Deck learning roadmap! You're now a Stream Deck Master!</p>
+        </div>
+
+        <!-- Overall Progress -->
+        <div class="overall-progress">
+            <h2>📊 Overall Progress</h2>
+            <div class="overall-stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-completed">0</div>
+                    <div class="stat-label">Pages Completed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-total">0</div>
+                    <div class="stat-label">Total Pages</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-bloom">0</div>
+                    <div class="stat-label">Bloom Levels Done</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-mastered">0</div>
+                    <div class="stat-label">Fully Mastered</div>
+                </div>
+            </div>
+            <div class="overall-bar">
+                <div class="overall-bar-fill" id="overall-bar-fill"></div>
+            </div>
+            <div class="overall-percent" id="overall-percent">0% Complete</div>
+        </div>
+
+        <!-- Bloom Legend -->
+        <div class="bloom-legend">
+            <h3>Bloom's Taxonomy Levels</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #8BC34A;"></div>
+                    <span>🧠 Remember - Recall key concepts</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #03A9F4;"></div>
+                    <span>💡 Understand - Grasp interconnections</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #FF9800;"></div>
+                    <span>🔍 Analyze - Break down complexity</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #9C27B0;"></div>
+                    <span>⚖️ Evaluate - Make judgments</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #F44336;"></div>
+                    <span>🚀 Create - Build new solutions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-bar">
+            <button class="action-btn" onclick="expandAll()">📖 Expand All</button>
+            <button class="action-btn" onclick="collapseAll()">📕 Collapse All</button>
+            <button class="action-btn" onclick="exportProgress()">📤 Export Progress</button>
+            <button class="action-btn danger" onclick="resetRoadmap()">🗑️ Reset Roadmap</button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CATEGORY 1: Profile Setup & Configuration    -->
+        <!-- ============================================ -->
+        <div class="category-section" id="cat-profile-setup">
+            <h2>📋 Phase 1: Profile Setup & Configuration</h2>
+
+            <div class="page-row" data-page="profile-setup">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="profile-setup" onchange="toggleRoadmapItem('profile-setup')">
+                </div>
+                <div class="page-info">
+                    <a href="profile-setup.html" class="page-title">Profile Setup Basics</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="profile-setup">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="profile-setup"></div></div>
+            </div>
+
+            <div class="page-row" data-page="profile-backout">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="profile-backout" onchange="toggleRoadmapItem('profile-backout')">
+                </div>
+                <div class="page-info">
+                    <a href="profile-backout.html" class="page-title">Profile Backout System</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="profile-backout">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="profile-backout"></div></div>
+            </div>
+
+            <div class="page-row" data-page="profile-creator">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="profile-creator" onchange="toggleRoadmapItem('profile-creator')">
+                </div>
+                <div class="page-info">
+                    <a href="profile-creator.html" class="page-title">🎨 Profile Creator Tool</a>
+                    <span class="page-difficulty easy">Interactive Tool</span>
+                </div>
+                <div class="bloom-dots" data-page="profile-creator">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="profile-creator"></div></div>
+            </div>
+
+            <div class="page-row" data-page="multi-action">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="multi-action" onchange="toggleRoadmapItem('multi-action')">
+                </div>
+                <div class="page-info">
+                    <a href="multi-action.html" class="page-title">Multi-Action Profile Switching</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="multi-action">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="multi-action"></div></div>
+            </div>
+
+            <div class="page-row" data-page="page-jump">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="page-jump" onchange="toggleRoadmapItem('page-jump')">
+                </div>
+                <div class="page-info">
+                    <a href="page-jump.html" class="page-title">Page Jump Design</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="page-jump">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="page-jump"></div></div>
+            </div>
+
+            <div class="page-row" data-page="pages-setup">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="pages-setup" onchange="toggleRoadmapItem('pages-setup')">
+                </div>
+                <div class="page-info">
+                    <a href="pages-setup.html" class="page-title">Multi-Page Configuration</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="pages-setup">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="pages-setup"></div></div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CATEGORY 2: Button Configuration & Design    -->
+        <!-- ============================================ -->
+        <div class="category-section" id="cat-button-config">
+            <h2>🎨 Phase 2: Button Configuration & Design</h2>
+
+            <div class="page-row" data-page="colored-buttons">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="colored-buttons" onchange="toggleRoadmapItem('colored-buttons')">
+                </div>
+                <div class="page-info">
+                    <a href="colored-buttons.html" class="page-title">Colored Button Organization</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="colored-buttons">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="colored-buttons"></div></div>
+            </div>
+
+            <div class="page-row" data-page="gradient-colors">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="gradient-colors" onchange="toggleRoadmapItem('gradient-colors')">
+                </div>
+                <div class="page-info">
+                    <a href="gradient-colors.html" class="page-title">Gradient Color Implementation</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="gradient-colors">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="gradient-colors"></div></div>
+            </div>
+
+            <div class="page-row" data-page="vertical-horizontal">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="vertical-horizontal" onchange="toggleRoadmapItem('vertical-horizontal')">
+                </div>
+                <div class="page-info">
+                    <a href="vertical-horizontal.html" class="page-title">Vertical & Horizontal Layouts</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="vertical-horizontal">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="vertical-horizontal"></div></div>
+            </div>
+
+            <div class="page-row" data-page="hotkey-setup">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="hotkey-setup" onchange="toggleRoadmapItem('hotkey-setup')">
+                </div>
+                <div class="page-info">
+                    <a href="hotkey-setup.html" class="page-title">Hotkey Configuration</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="hotkey-setup">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="hotkey-setup"></div></div>
+            </div>
+
+            <div class="page-row" data-page="davinci-resolve-icon-pack">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="davinci-resolve-icon-pack" onchange="toggleRoadmapItem('davinci-resolve-icon-pack')">
+                </div>
+                <div class="page-info">
+                    <a href="davinci-resolve-icon-pack.html" class="page-title">DaVinci Resolve Icon Pack</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="davinci-resolve-icon-pack">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="davinci-resolve-icon-pack"></div></div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CATEGORY 3: DaVinci Resolve Integration      -->
+        <!-- ============================================ -->
+        <div class="category-section" id="cat-davinci">
+            <h2>🎬 Phase 3: DaVinci Resolve Integration</h2>
+
+            <div class="page-row" data-page="davinci-profile">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="davinci-profile" onchange="toggleRoadmapItem('davinci-profile')">
+                </div>
+                <div class="page-info">
+                    <a href="davinci-profile.html" class="page-title">DaVinci Resolve Profile</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="davinci-profile">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="davinci-profile"></div></div>
+            </div>
+
+            <div class="page-row" data-page="edit-point">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="edit-point" onchange="toggleRoadmapItem('edit-point')">
+                </div>
+                <div class="page-info">
+                    <a href="edit-point.html" class="page-title">✂️ Understanding Edit Points</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="edit-point">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="edit-point"></div></div>
+            </div>
+
+            <div class="page-row" data-page="timeline-markers">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="timeline-markers" onchange="toggleRoadmapItem('timeline-markers')">
+                </div>
+                <div class="page-info">
+                    <a href="timeline-markers.html" class="page-title">Timeline Markers & Colors</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="timeline-markers">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="timeline-markers"></div></div>
+            </div>
+
+            <div class="page-row" data-page="timeline-zoom-navigation">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="timeline-zoom-navigation" onchange="toggleRoadmapItem('timeline-zoom-navigation')">
+                </div>
+                <div class="page-info">
+                    <a href="timeline-zoom-navigation.html" class="page-title">🔍 Timeline Zoom & Navigation</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="timeline-zoom-navigation">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="timeline-zoom-navigation"></div></div>
+            </div>
+
+            <div class="page-row" data-page="dynamic-trim-mode">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="dynamic-trim-mode" onchange="toggleRoadmapItem('dynamic-trim-mode')">
+                </div>
+                <div class="page-info">
+                    <a href="dynamic-trim-mode.html" class="page-title">Dynamic Trim Mode & Mouse Locations</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="dynamic-trim-mode">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="dynamic-trim-mode"></div></div>
+            </div>
+
+            <div class="page-row" data-page="trim-mode-box-outside">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="trim-mode-box-outside" onchange="toggleRoadmapItem('trim-mode-box-outside')">
+                </div>
+                <div class="page-info">
+                    <a href="trim-mode-box-outside.html" class="page-title">Trim Mode Box Outside</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="trim-mode-box-outside">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="trim-mode-box-outside"></div></div>
+            </div>
+
+            <div class="page-row" data-page="cut-preview-yellow-timeline">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="cut-preview-yellow-timeline" onchange="toggleRoadmapItem('cut-preview-yellow-timeline')">
+                </div>
+                <div class="page-info">
+                    <a href="cut-preview-yellow-timeline.html" class="page-title">Cut Preview Yellow Timeline</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="cut-preview-yellow-timeline">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="cut-preview-yellow-timeline"></div></div>
+            </div>
+
+            <div class="page-row" data-page="cut-page-slidefx">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="cut-page-slidefx" onchange="toggleRoadmapItem('cut-page-slidefx')">
+                </div>
+                <div class="page-info">
+                    <a href="cut-page-slidefx.html" class="page-title">Cut Page SlideFX</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="cut-page-slidefx">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="cut-page-slidefx"></div></div>
+            </div>
+
+            <div class="page-row" data-page="color-grading">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="color-grading" onchange="toggleRoadmapItem('color-grading')">
+                </div>
+                <div class="page-info">
+                    <a href="color-grading.html" class="page-title">Color Grading with Knobs</a>
+                    <span class="page-difficulty hard">Advanced</span>
+                </div>
+                <div class="bloom-dots" data-page="color-grading">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="color-grading"></div></div>
+            </div>
+
+            <div class="page-row" data-page="video-target-dial">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="video-target-dial" onchange="toggleRoadmapItem('video-target-dial')">
+                </div>
+                <div class="page-info">
+                    <a href="video-target-dial.html" class="page-title">🎯 Video Target Dial</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="video-target-dial">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="video-target-dial"></div></div>
+            </div>
+
+            <div class="page-row" data-page="nudge-clip">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="nudge-clip" onchange="toggleRoadmapItem('nudge-clip')">
+                </div>
+                <div class="page-info">
+                    <a href="nudge-clip.html" class="page-title">Nudge Clip Positioning</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="nudge-clip">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="nudge-clip"></div></div>
+            </div>
+
+            <div class="page-row" data-page="raise-lower-audio">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="raise-lower-audio" onchange="toggleRoadmapItem('raise-lower-audio')">
+                </div>
+                <div class="page-info">
+                    <a href="raise-lower-audio.html" class="page-title">Raise/Lower Audio Levels</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="raise-lower-audio">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="raise-lower-audio"></div></div>
+            </div>
+
+            <div class="page-row" data-page="sound-effects">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="sound-effects" onchange="toggleRoadmapItem('sound-effects')">
+                </div>
+                <div class="page-info">
+                    <a href="sound-effects.html" class="page-title">Sound Effects Integration</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="sound-effects">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="sound-effects"></div></div>
+            </div>
+
+            <div class="page-row" data-page="keyboard-integration">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="keyboard-integration" onchange="toggleRoadmapItem('keyboard-integration')">
+                </div>
+                <div class="page-info">
+                    <a href="keyboard-integration.html" class="page-title">Keyboard Integration</a>
+                    <span class="page-difficulty hard">Advanced</span>
+                </div>
+                <div class="bloom-dots" data-page="keyboard-integration">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="keyboard-integration"></div></div>
+            </div>
+
+            <div class="page-row" data-page="fusion-3d">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="fusion-3d" onchange="toggleRoadmapItem('fusion-3d')">
+                </div>
+                <div class="page-info">
+                    <a href="fusion-3d.html" class="page-title">🎨 Fusion 3D Support</a>
+                    <span class="page-difficulty hard">Advanced</span>
+                </div>
+                <div class="bloom-dots" data-page="fusion-3d">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="fusion-3d"></div></div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CATEGORY 4: Stream Deck+ & Hardware          -->
+        <!-- ============================================ -->
+        <div class="category-section" id="cat-hardware">
+            <h2>🎛️ Phase 4: Stream Deck+ & Hardware</h2>
+
+            <div class="page-row" data-page="streamdeck-plus">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="streamdeck-plus" onchange="toggleRoadmapItem('streamdeck-plus')">
+                </div>
+                <div class="page-info">
+                    <a href="streamdeck-plus.html" class="page-title">Stream Deck+ Features</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="streamdeck-plus">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="streamdeck-plus"></div></div>
+            </div>
+
+            <div class="page-row" data-page="streamdeck-plus-extension">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="streamdeck-plus-extension" onchange="toggleRoadmapItem('streamdeck-plus-extension')">
+                </div>
+                <div class="page-info">
+                    <a href="streamdeck-plus-extension.html" class="page-title">Stream Deck+ Extension</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="streamdeck-plus-extension">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="streamdeck-plus-extension"></div></div>
+            </div>
+
+            <div class="page-row" data-page="coarse-fine-dials">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="coarse-fine-dials" onchange="toggleRoadmapItem('coarse-fine-dials')">
+                </div>
+                <div class="page-info">
+                    <a href="coarse-fine-dials.html" class="page-title">🎛️ Coarse & Fine Dials</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="coarse-fine-dials">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="coarse-fine-dials"></div></div>
+            </div>
+
+            <div class="page-row" data-page="knob-click-color-clips">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="knob-click-color-clips" onchange="toggleRoadmapItem('knob-click-color-clips')">
+                </div>
+                <div class="page-info">
+                    <a href="knob-click-color-clips.html" class="page-title">Knob Click Color Clips</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="knob-click-color-clips">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="knob-click-color-clips"></div></div>
+            </div>
+
+            <div class="page-row" data-page="jog-shuttle">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="jog-shuttle" onchange="toggleRoadmapItem('jog-shuttle')">
+                </div>
+                <div class="page-info">
+                    <a href="jog-shuttle.html" class="page-title">Jog Shuttle Control</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="jog-shuttle">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="jog-shuttle"></div></div>
+            </div>
+
+            <div class="page-row" data-page="3d-printed-mount">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="3d-printed-mount" onchange="toggleRoadmapItem('3d-printed-mount')">
+                </div>
+                <div class="page-info">
+                    <a href="3d-printed-mount.html" class="page-title">3D Printed Mount</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="3d-printed-mount">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="3d-printed-mount"></div></div>
+            </div>
+
+            <div class="page-row" data-page="unboxing-experience">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="unboxing-experience" onchange="toggleRoadmapItem('unboxing-experience')">
+                </div>
+                <div class="page-info">
+                    <a href="unboxing-experience.html" class="page-title">Unboxing Experience</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="unboxing-experience">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="unboxing-experience"></div></div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CATEGORY 5: Advanced Workflows & Tools       -->
+        <!-- ============================================ -->
+        <div class="category-section" id="cat-advanced">
+            <h2>⚡ Phase 5: Advanced Workflows & Tools</h2>
+
+            <div class="page-row" data-page="workspace-setup">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="workspace-setup" onchange="toggleRoadmapItem('workspace-setup')">
+                </div>
+                <div class="page-info">
+                    <a href="workspace-setup.html" class="page-title">Workspace Optimization</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="workspace-setup">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="workspace-setup"></div></div>
+            </div>
+
+            <div class="page-row" data-page="analog-notes">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="analog-notes" onchange="toggleRoadmapItem('analog-notes')">
+                </div>
+                <div class="page-info">
+                    <a href="analog-notes.html" class="page-title">📝 Analog Planning Method</a>
+                    <span class="page-difficulty easy">Easy</span>
+                </div>
+                <div class="bloom-dots" data-page="analog-notes">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="analog-notes"></div></div>
+            </div>
+
+            <div class="page-row" data-page="windows-mover">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="windows-mover" onchange="toggleRoadmapItem('windows-mover')">
+                </div>
+                <div class="page-info">
+                    <a href="windows-mover.html" class="page-title">Windows Mover</a>
+                    <span class="page-difficulty medium">Medium</span>
+                </div>
+                <div class="bloom-dots" data-page="windows-mover">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="windows-mover"></div></div>
+            </div>
+
+            <div class="page-row" data-page="semantic-search-qdrant">
+                <div class="page-checkbox-col">
+                    <input type="checkbox" class="roadmap-checkbox" data-page="semantic-search-qdrant" onchange="toggleRoadmapItem('semantic-search-qdrant')">
+                </div>
+                <div class="page-info">
+                    <a href="semantic-search-qdrant.html" class="page-title">Semantic Search (Qdrant)</a>
+                    <span class="page-difficulty hard">Advanced</span>
+                </div>
+                <div class="bloom-dots" data-page="semantic-search-qdrant">
+                    <div class="bloom-dot" title="Remember">🧠</div>
+                    <div class="bloom-dot" title="Understand">💡</div>
+                    <div class="bloom-dot" title="Analyze">🔍</div>
+                    <div class="bloom-dot" title="Evaluate">⚖️</div>
+                    <div class="bloom-dot" title="Create">🚀</div>
+                </div>
+                <div class="page-progress-bar"><div class="page-progress-fill" data-page="semantic-search-qdrant"></div></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🗺️ Learning Roadmap - Stream Deck Automation Project</p>
+            <p style="margin-top: 10px;">&copy; 2024 Rifat Erdem Sahin - MLOps/DevOps & Video Editing Workflows</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Progress is saved in your browser cookies. Come back anytime to track your journey!</p>
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * Learning Roadmap - reads Bloom's taxonomy progress from the same cookie
+         * used by learning-assessment.js, and maintains its own roadmap completion cookie.
+         */
+
+        const BLOOM_COOKIE = 'streamdeck_learning_assessment';
+        const ROADMAP_COOKIE = 'streamdeck_learning_roadmap';
+        const BLOOM_LEVELS = ['remember', 'understand', 'analyze', 'evaluate', 'create'];
+
+        // ---- Cookie helpers ----
+        function getCookieData(name) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [cName, cValue] = cookie.trim().split('=');
+                if (cName === name) {
+                    try { return JSON.parse(decodeURIComponent(cValue)); }
+                    catch (e) { return {}; }
+                }
+            }
+            return {};
+        }
+
+        function setCookieData(name, data) {
+            const expiry = new Date();
+            expiry.setFullYear(expiry.getFullYear() + 1);
+            document.cookie = `${name}=${encodeURIComponent(JSON.stringify(data))}; expires=${expiry.toUTCString()}; path=/`;
+        }
+
+        // ---- Load data ----
+        function getBloomData() {
+            return getCookieData(BLOOM_COOKIE);
+        }
+
+        function getRoadmapData() {
+            return getCookieData(ROADMAP_COOKIE);
+        }
+
+        function saveRoadmapData(data) {
+            setCookieData(ROADMAP_COOKIE, data);
+        }
+
+        // ---- Render ----
+        function renderAll() {
+            const bloomData = getBloomData();
+            const roadmapData = getRoadmapData();
+            const allRows = document.querySelectorAll('.page-row');
+
+            let totalPages = allRows.length;
+            let completedPages = 0;
+            let totalBloomDone = 0;
+            let fullyMastered = 0;
+
+            allRows.forEach(row => {
+                const pageId = row.dataset.page;
+                const pageBlooms = bloomData[pageId] || [];
+                const isChecked = roadmapData[pageId] === true;
+
+                // Checkbox
+                const checkbox = row.querySelector('.roadmap-checkbox');
+                if (checkbox) checkbox.checked = isChecked;
+
+                // Row styling
+                if (isChecked || pageBlooms.length === 5) {
+                    row.classList.add('completed');
+                    row.classList.remove('partial');
+                    completedPages++;
+                } else if (pageBlooms.length > 0) {
+                    row.classList.add('partial');
+                    row.classList.remove('completed');
+                } else {
+                    row.classList.remove('completed', 'partial');
+                }
+
+                // Bloom dots
+                const dots = row.querySelectorAll('.bloom-dot');
+                BLOOM_LEVELS.forEach((level, idx) => {
+                    if (dots[idx]) {
+                        if (pageBlooms.includes(level)) {
+                            dots[idx].classList.add('active');
+                            totalBloomDone++;
+                        } else {
+                            dots[idx].classList.remove('active');
+                        }
+                    }
+                });
+
+                // Page progress bar
+                const progressFill = row.querySelector('.page-progress-fill');
+                if (progressFill) {
+                    const pct = (pageBlooms.length / 5) * 100;
+                    progressFill.style.width = pct + '%';
+                }
+
+                // Fully mastered count
+                if (pageBlooms.length === 5) {
+                    fullyMastered++;
+                }
+            });
+
+            // Also count checkbox-only completions
+            allRows.forEach(row => {
+                const pageId = row.dataset.page;
+                const isChecked = roadmapData[pageId] === true;
+                const pageBlooms = bloomData[pageId] || [];
+                if (isChecked && pageBlooms.length < 5) {
+                    // Already counted if completed via bloom, avoid double count
+                }
+            });
+
+            // Overall stats
+            document.getElementById('stat-completed').textContent = completedPages;
+            document.getElementById('stat-total').textContent = totalPages;
+            document.getElementById('stat-bloom').textContent = totalBloomDone;
+            document.getElementById('stat-mastered').textContent = fullyMastered;
+
+            const overallPct = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
+            document.getElementById('overall-bar-fill').style.width = overallPct + '%';
+            document.getElementById('overall-percent').textContent = overallPct + '% Complete';
+
+            // Celebration
+            const celebration = document.getElementById('celebration');
+            if (completedPages === totalPages && totalPages > 0) {
+                celebration.classList.add('show');
+            } else {
+                celebration.classList.remove('show');
+            }
+        }
+
+        // ---- Actions ----
+        function toggleRoadmapItem(pageId) {
+            const data = getRoadmapData();
+            data[pageId] = !data[pageId];
+            saveRoadmapData(data);
+            renderAll();
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.category-section').forEach(s => s.style.display = 'block');
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.category-section').forEach(s => s.style.display = 'none');
+        }
+
+        function exportProgress() {
+            const bloomData = getBloomData();
+            const roadmapData = getRoadmapData();
+            const allRows = document.querySelectorAll('.page-row');
+
+            let report = '# Stream Deck Learning Roadmap - Progress Report\n';
+            report += `# Generated: ${new Date().toLocaleDateString()}\n\n`;
+
+            let completed = 0;
+            allRows.forEach(row => {
+                const pageId = row.dataset.page;
+                const title = row.querySelector('.page-title').textContent;
+                const pageBlooms = bloomData[pageId] || [];
+                const isChecked = roadmapData[pageId] === true;
+                const status = (isChecked || pageBlooms.length === 5) ? '✅' : (pageBlooms.length > 0 ? '🔶' : '⬜');
+                if (isChecked || pageBlooms.length === 5) completed++;
+
+                report += `${status} ${title}\n`;
+                report += `   Bloom levels: ${pageBlooms.length}/5 [${pageBlooms.join(', ')}]\n\n`;
+            });
+
+            report += `\n---\nTotal: ${completed}/${allRows.length} pages completed\n`;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(report).then(() => {
+                alert('Progress report copied to clipboard!');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = report;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Progress report copied to clipboard!');
+            });
+        }
+
+        function resetRoadmap() {
+            if (confirm('Are you sure you want to reset your roadmap progress? This will NOT reset individual page assessments.')) {
+                setCookieData(ROADMAP_COOKIE, {});
+                renderAll();
+            }
+        }
+
+        // ---- Init ----
+        document.addEventListener('DOMContentLoaded', renderAll);
+    </script>
+</body>
+</html>
