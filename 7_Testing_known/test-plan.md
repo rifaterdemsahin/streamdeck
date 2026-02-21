@@ -315,6 +315,174 @@ class TestDockerManager(unittest.TestCase):
 - [ ] Profiles assigned correctly
 - [ ] Synchronized operation
 
+**KR5.1-5.5: Disaster Recovery**
+
+- [ ] Backup system created
+- [ ] Restore functionality works
+- [ ] Recovery procedures documented
+- [ ] Monthly testing process established
+- [ ] All configurations in version control
+
+---
+
+## Disaster Recovery Tests
+
+### Test Case DR-001: Configuration Backup
+
+**Objective:** Verify backup system captures all configurations
+
+**Prerequisites:**
+
+- All Stream Deck devices configured
+- Backup script installed
+
+**Steps:**
+
+1. Run backup script
+2. Verify backup file created
+3. Check backup contains all profiles
+4. Verify backup includes button configurations
+5. Confirm backup has timestamps
+
+**Expected Result:**
+
+- Backup file created successfully
+- All device configurations included
+- Backup file is properly formatted
+- Timestamp indicates current backup
+
+**Validation Criteria:**
+
+- [ ] Backup file exists
+- [ ] All 4 devices included
+- [ ] All profiles captured
+- [ ] File size reasonable
+- [ ] No errors in log
+
+---
+
+### Test Case DR-002: Complete System Restore
+
+**Objective:** Verify restore from backup works completely
+
+**Prerequisites:**
+
+- Valid backup file exists
+- Fresh Stream Deck software installation
+- All devices connected
+
+**Steps:**
+
+1. Clear all existing Stream Deck configurations
+2. Run restore script with backup file
+3. Verify profiles loaded on all devices
+4. Test button functionality on each device
+5. Verify scripts and paths are correct
+
+**Expected Result:**
+
+- All profiles restored correctly
+- All buttons functional
+- No missing configurations
+- All 4 devices working
+
+**Validation Criteria:**
+
+- [ ] Restore completes without errors
+- [ ] All profiles appear in Stream Deck software
+- [ ] Buttons execute correct scripts
+- [ ] Icons display correctly
+- [ ] Device-specific settings preserved
+
+---
+
+### Test Case DR-003: Partial Device Restore
+
+**Objective:** Restore configuration for single device
+
+**Prerequisites:**
+
+- Backup file exists
+- Single device needs restoration
+
+**Steps:**
+
+1. Run restore script with device filter
+2. Verify only selected device is restored
+3. Test that other devices are unaffected
+4. Validate restored device functionality
+
+**Expected Result:**
+
+- Only specified device restored
+- Other devices unchanged
+- Restored device fully functional
+
+**Validation Criteria:**
+
+- [ ] Selective restore works
+- [ ] No side effects on other devices
+- [ ] Restored device matches backup
+
+---
+
+### Test Case DR-004: Backup Version Control
+
+**Objective:** Verify backups are version controlled
+
+**Prerequisites:**
+
+- Git repository initialized
+- Backup script configured
+
+**Steps:**
+
+1. Create initial backup
+2. Make configuration changes
+3. Create second backup
+4. Check git history
+5. Restore from older version
+
+**Expected Result:**
+
+- Each backup committed to git
+- Can view backup history
+- Can restore from any version
+- Commit messages include timestamps
+
+**Validation Criteria:**
+
+- [ ] Backups in git history
+- [ ] Meaningful commit messages
+- [ ] Can diff between versions
+- [ ] Restore from old backup works
+
+---
+
+### Test Case DR-005: Recovery Time Objective
+
+**Objective:** Measure time to restore from disaster
+
+**Scenario:** Complete system failure - all Stream Deck configurations lost
+
+**Steps:**
+
+1. Start timer
+2. Install Stream Deck software
+3. Clone backup repository
+4. Run restore script
+5. Verify all devices functional
+6. Stop timer
+
+**Target:** Complete recovery in < 30 minutes
+
+**Validation Criteria:**
+
+- [ ] Recovery time under 30 minutes
+- [ ] Process documented
+- [ ] No manual intervention needed
+- [ ] All functionality restored
+
 ---
 
 ## Regression Tests

@@ -56,7 +56,9 @@ Main application files and utilities.
 ├── scripts/           # Stream Deck automation scripts
 │   ├── docker_status.py
 │   ├── git_status.py
-│   └── ai_query.py
+│   ├── ai_query.py
+│   ├── backup_streamdeck.py    # Backup configurations
+│   └── restore_streamdeck.py   # Restore from backup
 ├── utils/            # Utility modules
 │   ├── logger.py
 │   ├── docker_manager.py
@@ -153,6 +155,13 @@ You should see a notification with Docker container status.
 - **XL #2:** Video editing workflows
 - **Stream Deck +:** AI tools and utilities with rotary controls
 - **Mobile:** Remote monitoring and emergency operations
+
+### Disaster Recovery
+
+- **Backup:** One-click backup of all Stream Deck configurations
+- **Restore:** Complete system restore from backup in < 30 minutes
+- **Version Control:** All configurations tracked in git
+- **Monthly Drills:** Regular testing of recovery procedures
 
 ## Development
 
@@ -284,13 +293,75 @@ When making changes:
 - [OpenAI API](https://platform.openai.com/docs)
 - [Docker Python SDK](https://docker-py.readthedocs.io/)
 
+## Backup and Recovery
+
+### Creating Backups
+
+**Using Stream Deck Button:**
+
+- Press "Backup Config" button
+
+**Using Command Line:**
+
+```powershell
+python 5_Symbols\scripts\backup_streamdeck.py
+```
+
+**What Gets Backed Up:**
+
+- All device profiles (4 devices)
+- Button configurations
+- Custom icons
+- Plugin settings
+- Global preferences
+
+### Restoring from Backup
+
+**Using Stream Deck Button:**
+
+- Press "Restore Config" button
+
+**Using Command Line:**
+
+```powershell
+# Restore most recent backup
+python 5_Symbols\scripts\restore_streamdeck.py
+
+# Restore specific backup
+python 5_Symbols\scripts\restore_streamdeck.py backups\streamdeck_backup_20240221_143022
+```
+
+**After Restore:**
+
+1. Restart Stream Deck software
+2. Verify all devices are recognized
+3. Test button functionality
+
+### Backup Location
+
+All backups are stored in [backups/](backups/) directory with timestamps.
+
+See [backups/README.md](backups/README.md) for detailed backup documentation.
+
+### Recovery Time
+
+**Target:** Complete system recovery in < 30 minutes
+
+**Process:**
+
+1. Install Stream Deck software
+2. Clone this repository
+3. Run restore script
+4. Verify functionality
+
 ## Version History
 
 ### v1.0.0 - Initial Setup
 - 7-folder structure created
 - Core utilities implemented
 - Basic Docker, Git, and AI integrations
-- Documentation complete
+- Disaster recovery system with backup/restore
+- Comprehensive documentation complete
 
 ## License
 
