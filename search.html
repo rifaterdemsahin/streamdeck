@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Stream Deck Automation Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a8d0ff;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #a8d0ff;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #ffd700;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 55px 18px 25px;
+            font-size: 1.2em;
+            border: 3px solid #ffd700;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input::placeholder {
+            color: #a8d0ff;
+        }
+
+        .search-input:focus {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffd700;
+            font-size: 1.4em;
+            pointer-events: none;
+        }
+
+        .search-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            color: #a8d0ff;
+            font-size: 0.95em;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 20px;
+            background: transparent;
+            color: #a8d0ff;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #fff;
+        }
+
+        /* Results */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px 25px;
+            border-left: 4px solid #ffd700;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .result-card:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card .result-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .result-card .result-path {
+            font-size: 0.85em;
+            color: #7eaadc;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .result-card .result-description {
+            color: #ddd;
+            font-size: 0.95em;
+        }
+
+        .result-card .result-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .result-tag {
+            padding: 3px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 0.8em;
+            color: #a8d0ff;
+        }
+
+        mark {
+            background: rgba(255, 215, 0, 0.4);
+            color: #fff;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a8d0ff;
+        }
+
+        .no-results h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .initial-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a8d0ff;
+        }
+
+        .initial-state h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .popular-searches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .popular-tag {
+            padding: 8px 18px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .popular-tag:hover {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-top: 40px;
+            color: #a8d0ff;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .search-input { font-size: 1em; padding: 14px 45px 14px 18px; }
+            .search-meta { flex-direction: column; gap: 10px; }
+            .filter-buttons { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Home</a>
+            <h1>🔍 Search</h1>
+            <p class="subtitle">Find pages, guides, scripts, and documentation</p>
+        </header>
+
+        <div class="search-box">
+            <div class="search-input-wrapper">
+                <input type="text" id="search-input" class="search-input" placeholder="Search everything..." autofocus autocomplete="off">
+                <div class="search-icon">🔍</div>
+            </div>
+            <div class="search-meta">
+                <span id="result-count"></span>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="page">Pages</button>
+                    <button class="filter-btn" data-filter="doc">Docs</button>
+                    <button class="filter-btn" data-filter="script">Scripts</button>
+                    <button class="filter-btn" data-filter="config">Config</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" class="results-container">
+            <div class="initial-state" id="initial-state">
+                <h2>Start typing to search</h2>
+                <p>Search across all pages, documentation, scripts, and configurations</p>
+                <div class="popular-searches">
+                    <span class="popular-tag" data-query="DaVinci">DaVinci Resolve</span>
+                    <span class="popular-tag" data-query="Docker">Docker</span>
+                    <span class="popular-tag" data-query="profile">Profiles</span>
+                    <span class="popular-tag" data-query="backup">Backup</span>
+                    <span class="popular-tag" data-query="color">Colors</span>
+                    <span class="popular-tag" data-query="AI">AI</span>
+                    <span class="popular-tag" data-query="setup">Setup</span>
+                    <span class="popular-tag" data-query="hotkey">Hotkeys</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="index.html">Home</a> · <a href="3_Simulation/index.html">Simulations</a> · <a href="markdown_renderer.html">Docs Viewer</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+
+    <script>
+        const searchData = [
+            // Main Pages
+            { title: "Home", path: "index.html", description: "Main landing page with project overview, 7-folder navigation, and quick access links.", category: "page", tags: ["home", "overview", "navigation"] },
+            { title: "Visual Simulations Hub", path: "3_Simulation/index.html", description: "Interactive hub for all Stream Deck visual simulations and button layout guides.", category: "page", tags: ["simulation", "visual", "buttons", "hub"] },
+            { title: "Simulation Gallery", path: "3_Simulation/gallery.html", description: "Gallery view of all Stream Deck button layout simulations and visual examples.", category: "page", tags: ["gallery", "visual", "examples"] },
+            { title: "Documentation Viewer", path: "markdown_renderer.html", description: "Markdown renderer for browsing project documentation files in the browser.", category: "page", tags: ["docs", "markdown", "viewer"] },
+
+            // Simulation Pages
+            { title: "Profile Setup", path: "3_Simulation/pages/profile-setup.html", description: "Step-by-step guide for setting up Stream Deck profiles for different workflows.", category: "page", tags: ["profile", "setup", "workflow"] },
+            { title: "Profile Creator", path: "3_Simulation/pages/profile-creator.html", description: "Interactive tool for creating new Stream Deck profiles with custom layouts.", category: "page", tags: ["profile", "creator", "custom"] },
+            { title: "Profile Backout", path: "3_Simulation/pages/profile-backout.html", description: "Guide for safely reverting and managing profile changes.", category: "page", tags: ["profile", "revert", "backup"] },
+            { title: "DaVinci Resolve Profile", path: "3_Simulation/pages/davinci-profile.html", description: "Dedicated Stream Deck profile layout for DaVinci Resolve video editing workflows.", category: "page", tags: ["davinci", "resolve", "video", "editing", "profile"] },
+            { title: "Color Grading Controls", path: "3_Simulation/pages/color-grading.html", description: "Stream Deck button layouts for DaVinci Resolve color grading controls.", category: "page", tags: ["color", "grading", "davinci", "video"] },
+            { title: "Colored Buttons", path: "3_Simulation/pages/colored-buttons.html", description: "Color coding system for Stream Deck buttons to organize functions visually.", category: "page", tags: ["color", "buttons", "organization", "visual"] },
+            { title: "Gradient Colors", path: "3_Simulation/pages/gradient-colors.html", description: "Using gradient colors on Stream Deck buttons for visual grouping.", category: "page", tags: ["gradient", "color", "design", "visual"] },
+            { title: "Hotkey Setup", path: "3_Simulation/pages/hotkey-setup.html", description: "Configuring keyboard hotkeys and shortcuts for Stream Deck buttons.", category: "page", tags: ["hotkey", "shortcut", "keyboard", "configuration"] },
+            { title: "Keyboard Integration", path: "3_Simulation/pages/keyboard-integration.html", description: "Integrating Stream Deck with keyboard shortcuts and system-wide hotkeys.", category: "page", tags: ["keyboard", "integration", "shortcuts", "system"] },
+            { title: "Multi-Action Setup", path: "3_Simulation/pages/multi-action.html", description: "Creating multi-action buttons that execute sequences of commands.", category: "page", tags: ["multi-action", "sequence", "automation", "buttons"] },
+            { title: "Page Jump", path: "3_Simulation/pages/page-jump.html", description: "Setting up page navigation and folder jumps on Stream Deck.", category: "page", tags: ["page", "jump", "navigation", "folders"] },
+            { title: "Pages Setup", path: "3_Simulation/pages/pages-setup.html", description: "Organizing Stream Deck pages and folders for complex workflows.", category: "page", tags: ["pages", "folders", "organization", "setup"] },
+            { title: "Stream Deck Plus", path: "3_Simulation/pages/streamdeck-plus.html", description: "Configuration and layout guide for Stream Deck + with rotary dials and touchscreen.", category: "page", tags: ["streamdeck+", "plus", "rotary", "touchscreen", "dials"] },
+            { title: "Timeline Markers", path: "3_Simulation/pages/timeline-markers.html", description: "Using Stream Deck for timeline marker management in video editing.", category: "page", tags: ["timeline", "markers", "video", "editing", "davinci"] },
+            { title: "Vertical & Horizontal Layout", path: "3_Simulation/pages/vertical-horizontal.html", description: "Vertical and horizontal orientation configurations for Stream Deck.", category: "page", tags: ["vertical", "horizontal", "layout", "orientation"] },
+            { title: "Workspace Setup", path: "3_Simulation/pages/workspace-setup.html", description: "Complete workspace setup guide with multi-monitor and Stream Deck placement.", category: "page", tags: ["workspace", "setup", "monitor", "desk"] },
+            { title: "Analog Notes", path: "3_Simulation/pages/analog-notes.html", description: "Using analog controls and dials on Stream Deck + for note-taking workflows.", category: "page", tags: ["analog", "notes", "dials", "streamdeck+"] },
+
+            // Documentation
+            { title: "Project Objectives (OKRs)", path: "1_Real_Unknown/objectives.md", description: "Project objectives and key results: MLOps automation, video editing, AI integration, multi-device setup, disaster recovery.", category: "doc", tags: ["objectives", "OKR", "goals", "planning"] },
+            { title: "Development Roadmap", path: "2_Environment/roadmap.md", description: "7-phase development roadmap from foundation to advanced features.", category: "doc", tags: ["roadmap", "phases", "timeline", "planning"] },
+            { title: "Use Cases", path: "2_Environment/use-cases.md", description: "8 detailed use cases covering DevOps, video editing, and AI workflows.", category: "doc", tags: ["use cases", "scenarios", "workflows", "requirements"] },
+            { title: "Setup Guide", path: "4_Formula/setup-guide.md", description: "Complete installation and configuration guide for the Stream Deck automation system.", category: "doc", tags: ["setup", "install", "configuration", "guide"] },
+            { title: "Best Practices", path: "4_Formula/best-practices.md", description: "Development best practices, coding patterns, and project conventions.", category: "doc", tags: ["best practices", "patterns", "conventions", "guidelines"] },
+            { title: "Error Catalog", path: "6_Semblance/error-catalog.md", description: "Comprehensive catalog of known errors, causes, and solutions.", category: "doc", tags: ["errors", "troubleshooting", "debugging", "solutions"] },
+            { title: "Test Plan", path: "7_Testing_known/test-plan.md", description: "Complete test strategy including unit, integration, UAT, and disaster recovery testing.", category: "doc", tags: ["testing", "test plan", "validation", "QA"] },
+            { title: "Backup Guide", path: "backups/README.md", description: "Backup and disaster recovery documentation with procedures and schedules.", category: "doc", tags: ["backup", "restore", "disaster recovery", "RTO"] },
+            { title: "Main README", path: "README.md", description: "Project overview, quick start guide, architecture, and contributing guidelines.", category: "doc", tags: ["readme", "overview", "quickstart"] },
+            { title: "Project Documentation", path: "claude.md", description: "Full project documentation including structure, architecture, and usage.", category: "doc", tags: ["docs", "architecture", "structure", "full"] },
+            { title: "Button Layouts", path: "3_Simulation/button-layouts.md", description: "Stream Deck button layout designs and configurations.", category: "doc", tags: ["buttons", "layouts", "design", "configuration"] },
+
+            // Scripts
+            { title: "Docker Status Script", path: "5_Symbols/scripts/docker_status.py", description: "Python script to check Docker container statuses and display notifications.", category: "script", tags: ["docker", "status", "containers", "python"] },
+            { title: "Git Status Script", path: "5_Symbols/scripts/git_status.py", description: "Python script for quick Git repository status checks.", category: "script", tags: ["git", "status", "repository", "python"] },
+            { title: "AI Query Script", path: "5_Symbols/scripts/ai_query.py", description: "Python script for querying AI models (OpenAI, XAI, OpenRouter) via Stream Deck.", category: "script", tags: ["ai", "query", "openai", "python", "LLM"] },
+            { title: "Backup Script", path: "5_Symbols/scripts/backup_streamdeck.py", description: "One-click backup of all Stream Deck configurations, profiles, and icons.", category: "script", tags: ["backup", "configuration", "profiles", "python"] },
+            { title: "Restore Script", path: "5_Symbols/scripts/restore_streamdeck.py", description: "Restore Stream Deck configurations from a previous backup.", category: "script", tags: ["restore", "backup", "recovery", "python"] },
+            { title: "Link Checker", path: "5_Symbols/scripts/link_checker.py", description: "Script to validate all internal links across the project.", category: "script", tags: ["links", "validation", "checker", "python"] },
+
+            // Utilities
+            { title: "AI Client Utility", path: "5_Symbols/utils/ai_client.py", description: "Multi-model AI client supporting OpenAI, XAI, and OpenRouter APIs.", category: "script", tags: ["ai", "client", "openai", "utility", "API"] },
+            { title: "Docker Manager", path: "5_Symbols/utils/docker_manager.py", description: "Docker container management utility for status, start, stop operations.", category: "script", tags: ["docker", "manager", "containers", "utility"] },
+            { title: "Git Manager", path: "5_Symbols/utils/git_manager.py", description: "Git operations utility for commit, push, pull, and status.", category: "script", tags: ["git", "manager", "version control", "utility"] },
+            { title: "Logger Utility", path: "5_Symbols/utils/logger.py", description: "Centralized logging utility for all automation scripts.", category: "script", tags: ["logger", "logging", "utility"] },
+            { title: "Notification Utility", path: "5_Symbols/utils/notification.py", description: "Cross-platform notification system for script results.", category: "script", tags: ["notification", "alerts", "utility"] },
+            { title: "Clipboard Manager", path: "5_Symbols/utils/clipboard_manager.py", description: "Clipboard operations utility for copy/paste automation.", category: "script", tags: ["clipboard", "copy", "paste", "utility"] },
+
+            // Config
+            { title: "Requirements", path: "5_Symbols/configs/requirements.txt", description: "Python package dependencies for the project.", category: "config", tags: ["requirements", "dependencies", "pip", "python"] },
+            { title: "MIT License", path: "LICENSE", description: "MIT open source license for the project.", category: "config", tags: ["license", "MIT", "open source"] },
+            { title: "Sitemap", path: "sitemap.xml", description: "XML sitemap for search engine indexing.", category: "config", tags: ["sitemap", "SEO", "XML"] },
+            { title: "Robots.txt", path: "robots.txt", description: "Search engine crawler directives.", category: "config", tags: ["robots", "SEO", "crawlers"] },
+        ];
+
+        // DOM elements
+        const searchInput = document.getElementById('search-input');
+        const resultsContainer = document.getElementById('results');
+        const resultCount = document.getElementById('result-count');
+        const initialState = document.getElementById('initial-state');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const popularTags = document.querySelectorAll('.popular-tag');
+
+        let activeFilter = 'all';
+
+        // Filter buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                performSearch(searchInput.value);
+            });
+        });
+
+        // Popular tags
+        popularTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                searchInput.value = tag.dataset.query;
+                searchInput.focus();
+                performSearch(tag.dataset.query);
+            });
+        });
+
+        // Search input
+        searchInput.addEventListener('input', (e) => performSearch(e.target.value));
+
+        function performSearch(query) {
+            query = query.trim().toLowerCase();
+
+            if (!query) {
+                resultsContainer.innerHTML = '';
+                resultsContainer.appendChild(initialState);
+                initialState.style.display = 'block';
+                resultCount.textContent = '';
+                return;
+            }
+
+            initialState.style.display = 'none';
+
+            let results = searchData.filter(item => {
+                const matchesFilter = activeFilter === 'all' || item.category === activeFilter;
+                if (!matchesFilter) return false;
+
+                const searchable = [item.title, item.description, item.path, ...item.tags].join(' ').toLowerCase();
+                return query.split(/\s+/).every(word => searchable.includes(word));
+            });
+
+            resultCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h2>No results for "${escapeHtml(query)}"</h2>
+                        <p>Try different keywords or clear the filter</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = results.map(item => `
+                <a href="${item.path}" class="result-card">
+                    <div class="result-title">${highlight(item.title, query)}</div>
+                    <div class="result-path">${highlight(item.path, query)}</div>
+                    <div class="result-description">${highlight(item.description, query)}</div>
+                    <div class="result-tags">
+                        ${item.tags.map(tag => `<span class="result-tag">${highlight(tag, query)}</span>`).join('')}
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function highlight(text, query) {
+            if (!query) return escapeHtml(text);
+            const escaped = escapeHtml(text);
+            const words = query.split(/\s+/).filter(w => w.length > 0);
+            let result = escaped;
+            words.forEach(word => {
+                const regex = new RegExp(`(${escapeRegex(word)})`, 'gi');
+                result = result.replace(regex, '<mark>$1</mark>');
+            });
+            return result;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Handle URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const q = urlParams.get('q');
+        if (q) {
+            searchInput.value = q;
+            performSearch(q);
+        }
+    </script>
+</body>
+</html>
