@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Deck Automation - Visual Simulations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a8d0ff;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .category-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .card-description {
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+
+        .badge.difficulty-easy { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .badge.difficulty-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .badge.difficulty-hard { background: rgba(244, 67, 54, 0.3); color: #F44336; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .quick-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-links a {
+            color: #a8d0ff;
+            text-decoration: none;
+        }
+
+        .quick-links a:hover {
+            color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .nav-links { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Stream Deck Automation - Visual Simulations</h1>
+            <p class="subtitle">Interactive Implementation Guide for MLOps/DevOps & Video Editing Workflows</p>
+        </header>
+
+        <nav>
+            <div class="nav-links">
+                <a href="../claude.md">📚 Main Documentation</a>
+                <a href="../1_Real_Unknown/objectives.md">🎯 Objectives</a>
+                <a href="../2_Environment/roadmap.md">🗺️ Roadmap</a>
+                <a href="#profile-setup">Profile Setup</a>
+                <a href="#button-config">Button Configuration</a>
+                <a href="#davinci-resolve">DaVinci Resolve</a>
+                <a href="#advanced">Advanced Features</a>
+            </div>
+        </nav>
+
+        <!-- Profile Setup Section -->
+        <div id="profile-setup" class="category-section">
+            <h2 class="category-title">📋 Profile Setup & Configuration</h2>
+            <div class="cards-grid">
+                <a href="pages/profile-setup.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck_profile_setup.PNG" alt="Profile Setup" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Profile Setup Basics</h3>
+                            <p class="card-description">Learn how to create and organize Stream Deck profiles for different workflows.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Foundation</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/profile-backout.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck profile backout system.PNG" alt="Profile Backout" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Profile Backout System</h3>
+                            <p class="card-description">Navigate between profiles and create a hierarchical structure.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Navigation</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/multi-action.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck multi action to move between profiles.PNG" alt="Multi Action" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Multi-Action Profile Switching</h3>
+                            <p class="card-description">Use multi-actions to switch between profiles efficiently.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Automation</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/page-jump.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="main streamdeck jump page design.PNG" alt="Page Jump" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Page Jump Design</h3>
+                            <p class="card-description">Create intuitive page navigation for complex workflows.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Navigation</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Button Configuration Section -->
+        <div id="button-config" class="category-section">
+            <h2 class="category-title">🎨 Button Configuration & Design</h2>
+            <div class="cards-grid">
+                <a href="pages/colored-buttons.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck colored buttons.PNG" alt="Colored Buttons" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Colored Button Organization</h3>
+                            <p class="card-description">Use colors to organize and identify button functions quickly.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Design</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/gradient-colors.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="none_colid but_gradient_colors to implement_streamdeck.PNG" alt="Gradient Colors" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Gradient Color Implementation</h3>
+                            <p class="card-description">Create visually appealing gradient backgrounds for buttons.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Design</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/vertical-horizontal.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="color the buttons to make it work vertical and horizontal.PNG" alt="Layout Design" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Vertical & Horizontal Layouts</h3>
+                            <p class="card-description">Design button layouts that work in both orientations.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Layout</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/hotkey-setup.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="main hot key setup scene.PNG" alt="Hotkey Setup" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Hotkey Configuration</h3>
+                            <p class="card-description">Map hotkeys to Stream Deck buttons for quick access.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Setup</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- DaVinci Resolve Section -->
+        <div id="davinci-resolve" class="category-section">
+            <h2 class="category-title">🎬 DaVinci Resolve Integration</h2>
+            <div class="cards-grid">
+                <a href="pages/davinci-profile.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck for the davinci resolve profile with  icons.PNG" alt="DaVinci Profile" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">DaVinci Resolve Profile</h3>
+                            <p class="card-description">Complete Stream Deck profile setup for DaVinci Resolve editing.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Video Editing</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/timeline-markers.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="timeline management with markers and colors.PNG" alt="Timeline Management" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Timeline Markers & Colors</h3>
+                            <p class="card-description">Manage timeline markers and clip colors efficiently.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Workflow</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/color-grading.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="color grade with stream deck knobs.PNG" alt="Color Grading" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Color Grading with Knobs</h3>
+                            <p class="card-description">Use Stream Deck+ knobs for precise color grading control.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-hard">Advanced</span>
+                                <span class="badge">Stream Deck+</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/keyboard-integration.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="blackmagic keyboard and the streamdeck setup to color the clips.PNG" alt="Keyboard Setup" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Keyboard Integration</h3>
+                            <p class="card-description">Combine Blackmagic keyboard with Stream Deck for optimal workflow.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-hard">Advanced</span>
+                                <span class="badge">Hardware</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Advanced Features Section -->
+        <div id="advanced" class="category-section">
+            <h2 class="category-title">⚡ Advanced Features</h2>
+            <div class="cards-grid">
+                <a href="pages/streamdeck-plus.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck plus and knobs.PNG" alt="Stream Deck Plus" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Stream Deck+ Features</h3>
+                            <p class="card-description">Leverage rotary knobs and touch strips for advanced control.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Stream Deck+</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/workspace-setup.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="streamdeck workspace concept.PNG" alt="Workspace" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Workspace Optimization</h3>
+                            <p class="card-description">Physical setup and ergonomic placement of Stream Deck devices.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Setup</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/analog-notes.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="analog_take_notes_for_streamdeck implementation.PNG" alt="Analog Notes" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Analog Planning Method</h3>
+                            <p class="card-description">Use analog notes to plan Stream Deck configurations before implementation.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span class="badge">Planning</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/pages-setup.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="stream deck with pages setup.PNG" alt="Pages Setup" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Multi-Page Configuration</h3>
+                            <p class="card-description">Organize complex workflows across multiple pages.</p>
+                            <div class="card-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span class="badge">Organization</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Stream Deck Automation Project - Rifat Erdem Sahin</p>
+            <p>MLOps/DevOps & Video Editing Workflows</p>
+            <div class="quick-links">
+                <a href="../claude.md">Documentation</a>
+                <a href="../1_Real_Unknown/objectives.md">Objectives</a>
+                <a href="../2_Environment/roadmap.md">Roadmap</a>
+                <a href="../7_Testing_known/test-plan.md">Test Plan</a>
+                <a href="../backups/README.md">Backup Guide</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

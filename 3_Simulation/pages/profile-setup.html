@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setup Basics - Stream Deck Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-bar {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-bar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .content-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+            color: #a8d0ff;
+        }
+
+        .image-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .prerequisites {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .prerequisites h3 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+
+        .prerequisites ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .prerequisites li {
+            margin: 8px 0;
+        }
+
+        .checklist {
+            background: rgba(255, 152, 0, 0.2);
+            border-left: 4px solid #FF9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .checklist h3 {
+            color: #FF9800;
+            margin-top: 0;
+        }
+
+        .checklist-item {
+            margin: 12px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-top: 5px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .tips {
+            background: rgba(33, 150, 243, 0.2);
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tips h3 {
+            color: #2196F3;
+            margin-top: 0;
+        }
+
+        .warning {
+            background: rgba(244, 67, 54, 0.2);
+            border-left: 4px solid #F44336;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning h3 {
+            color: #F44336;
+            margin-top: 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #ffd700;
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin: 5px 5px 5px 0;
+        }
+
+        .badge-easy { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .badge-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .badge-hard { background: rgba(244, 67, 54, 0.3); color: #F44336; }
+        .badge-info { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .page-navigation a {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .page-navigation a:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .nav-group { width: 100%; }
+            .page-navigation { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../claude.md">📚 Documentation</a>
+            </div>
+            <div class="nav-group">
+                <a href="#prerequisites">Prerequisites</a>
+                <a href="#checklist">Checklist</a>
+                <a href="#implementation">Implementation</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-section">
+            <h1>📋 Profile Setup Basics</h1>
+
+            <div>
+                <span class="badge badge-easy">Easy</span>
+                <span class="badge badge-info">Foundation</span>
+                <span class="badge badge-info">15 min</span>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                Learn how to create and organize Stream Deck profiles for different workflows.
+                Profiles allow you to switch between different button configurations instantly,
+                making it easy to have separate setups for DevOps, video editing, and other tasks.
+            </p>
+
+            <!-- Image -->
+            <div class="image-container">
+                <img src="../streamdeck_profile_setup.PNG" alt="Stream Deck Profile Setup">
+            </div>
+
+            <!-- Prerequisites -->
+            <div id="prerequisites" class="prerequisites">
+                <h3>✅ Prerequisites</h3>
+                <ul>
+                    <li><strong>Hardware:</strong> Stream Deck device (XL, Standard, Mini, or +)</li>
+                    <li><strong>Software:</strong> Stream Deck software installed (latest version)</li>
+                    <li><strong>Operating System:</strong> Windows 10/11 or macOS</li>
+                    <li><strong>Time Required:</strong> 15-20 minutes</li>
+                    <li><strong>Knowledge Level:</strong> Beginner - No prior experience needed</li>
+                    <li><strong>Optional:</strong> Custom icons prepared (PNG format, 72x72px recommended)</li>
+                </ul>
+            </div>
+
+            <!-- Implementation Steps -->
+            <div id="implementation">
+                <h2>📝 Implementation Steps</h2>
+
+                <h3><span class="step-number">1</span> Open Stream Deck Software</h3>
+                <p>Launch the Stream Deck application on your computer. Ensure your Stream Deck device is connected via USB.</p>
+
+                <h3><span class="step-number">2</span> Create a New Profile</h3>
+                <p>Click the dropdown menu at the top (it says "Default" initially) and select <strong>"+ New Profile"</strong>. Give it a meaningful name like "DevOps-Primary" or "Video-Editing-Main".</p>
+
+                <h3><span class="step-number">3</span> Configure Profile Settings</h3>
+                <ul style="margin-left: 40px;">
+                    <li>Set profile name</li>
+                    <li>Choose device type (if you have multiple Stream Decks)</li>
+                    <li>Set default brightness</li>
+                    <li>Configure profile switching method</li>
+                </ul>
+
+                <h3><span class="step-number">4</span> Organize Your Profiles</h3>
+                <p>Create separate profiles for:</p>
+                <ul style="margin-left: 40px;">
+                    <li>DevOps/MLOps tasks (Docker, Git, etc.)</li>
+                    <li>Video editing (DaVinci Resolve)</li>
+                    <li>AI tools (OpenAI, XAI, OpenRouter)</li>
+                    <li>General utilities</li>
+                </ul>
+
+                <h3><span class="step-number">5</span> Test Profile Switching</h3>
+                <p>Switch between profiles using the dropdown menu or a dedicated profile switch button to ensure smooth transitions.</p>
+            </div>
+
+            <!-- Checklist -->
+            <div id="checklist" class="checklist">
+                <h3>✔️ Implementation Checklist</h3>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Stream Deck software installed and updated to latest version</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Stream Deck device connected and recognized by software</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Created at least 2 profiles with meaningful names</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">Configured profile-specific settings (brightness, rotation)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5">
+                    <label for="check5">Added a profile switch button on each profile</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check6">
+                    <label for="check6">Tested switching between profiles manually</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check7">
+                    <label for="check7">Organized profiles in logical order</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="check8">
+                    <label for="check8">Documented profile structure for future reference</label>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="tips">
+                <h3>💡 Pro Tips</h3>
+                <ul>
+                    <li><strong>Naming Convention:</strong> Use descriptive names like "DevOps-Primary", "Video-Main", "AI-Tools" for clarity</li>
+                    <li><strong>Backup Profiles:</strong> Regularly export your profiles via Settings → Backup</li>
+                    <li><strong>Visual Consistency:</strong> Use similar color schemes within related profiles</li>
+                    <li><strong>Quick Access:</strong> Put a "Home" or "Main Menu" button on every profile</li>
+                    <li><strong>Device-Specific:</strong> If using multiple Stream Decks, assign specific profiles to specific devices</li>
+                </ul>
+            </div>
+
+            <!-- Warnings -->
+            <div class="warning">
+                <h3>⚠️ Common Pitfalls to Avoid</h3>
+                <ul>
+                    <li><strong>Too Many Profiles:</strong> Start with 3-4 profiles. Too many can become confusing</li>
+                    <li><strong>No Backups:</strong> Always backup before making major changes</li>
+                    <li><strong>Generic Names:</strong> Avoid names like "Profile 1", "Test" - be specific</li>
+                    <li><strong>Missing Return Buttons:</strong> Always include a way to navigate back to main profile</li>
+                </ul>
+            </div>
+
+            <!-- Related Pages -->
+            <h2>🔗 Related Topics</h2>
+            <div class="page-navigation">
+                <a href="profile-backout.html">
+                    ➡️ Next: Profile Backout System
+                </a>
+                <a href="multi-action.html">
+                    Multi-Action Profiles
+                </a>
+                <a href="../index.html">
+                    ⬅️ Back to Index
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Save checkbox state to localStorage
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const savedState = localStorage.getItem(checkbox.id);
+            if (savedState === 'true') {
+                checkbox.checked = true;
+            }
+
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(this.id, this.checked);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaVinci Resolve Profile - Stream Deck Automation</title>
+    <link rel="stylesheet" href="page-template.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .content-section { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 30px; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.8em; margin: 25px 0 15px 0; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 20px 0 10px 0; color: #a8d0ff; }
+        .image-container { width: 100%; max-width: 900px; margin: 30px auto; border: 3px solid #ffd700; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .image-container img { width: 100%; height: auto; display: block; }
+        .prerequisites { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .prerequisites h3 { color: #4CAF50; margin-top: 0; }
+        .prerequisites ul { margin-left: 20px; margin-top: 10px; }
+        .prerequisites li { margin: 8px 0; }
+        .checklist { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .checklist h3 { color: #FF9800; margin-top: 0; }
+        .checklist-item { margin: 12px 0; display: flex; align-items: start; gap: 10px; }
+        .checklist-item input[type="checkbox"] { margin-top: 5px; width: 20px; height: 20px; cursor: pointer; }
+        .checklist-item label { flex: 1; cursor: pointer; }
+        .tips { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tips h3 { color: #2196F3; margin-top: 0; }
+        .warning { background: rgba(244, 67, 54, 0.2); border-left: 4px solid #F44336; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning h3 { color: #F44336; margin-top: 0; }
+        .step-number { display: inline-block; width: 30px; height: 30px; background: #ffd700; color: #000; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
+        .badge { display: inline-block; padding: 5px 15px; border-radius: 15px; font-size: 0.9em; margin: 5px 5px 5px 0; }
+        .badge-medium { background: rgba(255, 152, 0, 0.3); color: #FF9800; }
+        .badge-info { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        .page-navigation { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; flex-wrap: wrap; }
+        .page-navigation a { flex: 1; min-width: 200px; padding: 15px 20px; background: rgba(255, 255, 255, 0.1); border: 2px solid #ffd700; border-radius: 10px; text-align: center; text-decoration: none; color: #fff; transition: all 0.3s; }
+        .page-navigation a:hover { background: rgba(255, 215, 0, 0.2); transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../claude.md">📚 Documentation</a>
+            </div>
+            <div class="nav-group">
+                <a href="#prerequisites">Prerequisites</a>
+                <a href="#checklist">Checklist</a>
+                <a href="#implementation">Implementation</a>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h1>🎬 DaVinci Resolve Profile Setup</h1>
+
+            <div>
+                <span class="badge badge-medium">Medium</span>
+                <span class="badge badge-info">Video Editing</span>
+                <span class="badge badge-info">45 min</span>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                Create a complete Stream Deck profile optimized for DaVinci Resolve video editing.
+                This profile includes buttons for timeline management, clip organization, color grading,
+                and all essential editing operations with custom icons for quick identification.
+            </p>
+
+            <div class="image-container">
+                <img src="../streamdeck for the davinci resolve profile with  icons.PNG" alt="DaVinci Resolve Profile">
+            </div>
+
+            <div id="prerequisites" class="prerequisites">
+                <h3>✅ Prerequisites</h3>
+                <ul>
+                    <li><strong>Software Required:</strong> DaVinci Resolve 18+ installed</li>
+                    <li><strong>Stream Deck:</strong> Any model (XL recommended for video editing)</li>
+                    <li><strong>Icons:</strong> Custom icons downloaded or created (72x72px PNG)</li>
+                    <li><strong>Knowledge:</strong> Basic DaVinci Resolve experience</li>
+                    <li><strong>Time:</strong> 30-45 minutes for initial setup</li>
+                    <li><strong>Reference:</strong> DaVinci Resolve keyboard shortcuts list</li>
+                    <li><strong>Optional:</strong> Slideshow FX plugin installed</li>
+                </ul>
+            </div>
+
+            <div id="implementation">
+                <h2>📝 Implementation Steps</h2>
+
+                <h3><span class="step-number">1</span> Create DaVinci Profile</h3>
+                <p>In Stream Deck software, create a new profile named "DaVinci-Resolve-Main" and set it to auto-switch when DaVinci Resolve is active.</p>
+
+                <h3><span class="step-number">2</span> Map Essential Editing Keys</h3>
+                <p>Configure hotkeys for most-used operations:</p>
+                <ul style="margin-left: 40px;">
+                    <li><strong>Cut (Blade):</strong> Map to Ctrl+B or Cmd+B</li>
+                    <li><strong>Ripple Delete:</strong> Forward Delete key</li>
+                    <li><strong>Add Marker:</strong> M key</li>
+                    <li><strong>Go to In Point:</strong> Shift+I</li>
+                    <li><strong>Go to Out Point:</strong> Shift+O</li>
+                </ul>
+
+                <h3><span class="step-number">3</span> Setup Timeline Navigation</h3>
+                <ul style="margin-left: 40px;">
+                    <li>Frame forward/backward (Arrow keys)</li>
+                    <li>Next/previous edit point (Up/Down arrows)</li>
+                    <li>Zoom in/out timeline (+ / -)</li>
+                    <li>Fit timeline to view (Shift+Z)</li>
+                </ul>
+
+                <h3><span class="step-number">4</span> Configure Color Clip Markers</h3>
+                <p>Map buttons for quick clip coloring (see simulation image for color layout):</p>
+                <ul style="margin-left: 40px;">
+                    <li>Red, Orange, Yellow clips for flagging</li>
+                    <li>Green for approved clips</li>
+                    <li>Blue, Purple for categorization</li>
+                </ul>
+
+                <h3><span class="step-number">5</span> Add Export Presets</h3>
+                <p>Create multi-action buttons that:</p>
+                <ul style="margin-left: 40px;">
+                    <li>Open Deliver page</li>
+                    <li>Select preset (YouTube, Instagram, etc.)</li>
+                    <li>Start render</li>
+                </ul>
+
+                <h3><span class="step-number">6</span> Organize with Pages</h3>
+                <ul style="margin-left: 40px;">
+                    <li><strong>Page 1:</strong> Main editing controls</li>
+                    <li><strong>Page 2:</strong> Color grading shortcuts</li>
+                    <li><strong>Page 3:</strong> Fairlight audio controls</li>
+                    <li><strong>Page 4:</strong> Export and delivery</li>
+                </ul>
+
+                <h3><span class="step-number">7</span> Add Custom Icons</h3>
+                <p>Use recognizable icons for each function - color-code by category (editing, audio, color, export).</p>
+            </div>
+
+            <div id="checklist" class="checklist">
+                <h3>✔️ Implementation Checklist</h3>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv1">
+                    <label for="dv1">DaVinci Resolve installed and tested</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv2">
+                    <label for="dv2">Created dedicated DaVinci Resolve profile in Stream Deck</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv3">
+                    <label for="dv3">Mapped all essential editing hotkeys (cut, delete, markers)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv4">
+                    <label for="dv4">Configured timeline navigation buttons</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv5">
+                    <label for="dv5">Set up color clip markers with visual color coding</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv6">
+                    <label for="dv6">Added page navigation for different editing modes</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv7">
+                    <label for="dv7">Created export preset buttons with multi-actions</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv8">
+                    <label for="dv8">Added custom icons for all buttons</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv9">
+                    <label for="dv9">Tested all buttons in actual editing session</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv10">
+                    <label for="dv10">Set up auto-profile switching when DaVinci opens</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dv11">
+                    <label for="dv11">Created backup of profile configuration</label>
+                </div>
+            </div>
+
+            <div class="tips">
+                <h3>💡 Pro Tips</h3>
+                <ul>
+                    <li><strong>Muscle Memory:</strong> Keep button positions consistent across pages</li>
+                    <li><strong>Visual Hierarchy:</strong> Use larger buttons for most-used functions</li>
+                    <li><strong>Color Psychology:</strong> Red for record/destructive actions, green for safe operations</li>
+                    <li><strong>Keyboard Integration:</strong> Complement, don't replace keyboard shortcuts you already know</li>
+                    <li><strong>Test Workflow:</strong> Do a full edit using only Stream Deck to identify gaps</li>
+                    <li><strong>Plugin Access:</strong> Create buttons for frequently-used effects and transitions</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Important Notes</h3>
+                <ul>
+                    <li><strong>Hotkey Conflicts:</strong> Check DaVinci's keyboard customization for conflicts</li>
+                    <li><strong>Version Compatibility:</strong> Some shortcuts change between DaVinci versions</li>
+                    <li><strong>Mac vs Windows:</strong> Remember Cmd vs Ctrl key differences</li>
+                    <li><strong>Profile Backup:</strong> Export profile after major changes</li>
+                    <li><strong>Performance:</strong> Too many multi-actions can cause lag - keep them simple</li>
+                </ul>
+            </div>
+
+            <h2>🔗 Related Topics</h2>
+            <div class="page-navigation">
+                <a href="timeline-markers.html">Timeline Markers & Colors</a>
+                <a href="color-grading.html">Color Grading Setup</a>
+                <a href="../index.html">⬅️ Back to Index</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const savedState = localStorage.getItem(checkbox.id);
+            if (savedState === 'true') checkbox.checked = true;
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(this.id, this.checked);
+            });
+        });
+    </script>
+</body>
+</html>
