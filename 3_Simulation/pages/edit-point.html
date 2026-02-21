@@ -56,6 +56,8 @@
             .example-grid { grid-template-columns: 1fr; }
         }
     </style>
+<link rel="stylesheet" href="../../5_Symbols/configs/learning-assessment.css">
+<script src="../../5_Symbols/scripts/learning-assessment.js"></script>
 </head>
 <body>
     <div class="container">
@@ -309,5 +311,97 @@
         }
     </script>
     <script src="learner-checklist.js"></script>
+<!-- Learning Assessment Component -->
+<!-- Include this HTML snippet in any page for self-evaluation -->
+<!-- Requires: learning-assessment.css and learning-assessment.js -->
+
+<!-- Remembered Banner -->
+<div class="learning-remembered-banner" id="learning-remembered-banner">
+    <div class="learning-banner-content">
+        <span class="learning-banner-emoji">🧠</span>
+        <span class="learning-banner-text">This page is remembered! 🎯</span>
+        <span class="learning-banner-close" onclick="closeLearningBanner()">×</span>
+    </div>
+</div>
+
+<!-- Learning Assessment Panel -->
+<div class="learning-assessment-panel" id="learning-assessment-panel">
+    <div class="learning-panel-header">
+        <div class="learning-panel-title">🎓 Self-Assessment</div>
+        <button class="learning-collapse-btn" onclick="toggleLearningPanel()">−</button>
+    </div>
+
+    <div class="learning-panel-content">
+        <div class="learning-progress-bar">
+            <div class="learning-progress-fill" id="learning-progress-fill"></div>
+        </div>
+
+        <div class="bloom-item" data-level="remember">
+            <input type="checkbox" class="bloom-checkbox" id="bloom-remember" onchange="toggleLearningLevel('remember')">
+            <label for="bloom-remember" class="bloom-label">
+                <span class="custom-checkbox"></span>
+                <div>
+                    <div class="bloom-emoji">🧠</div>
+                    <div class="bloom-text">Key concepts and facts</div>
+                    <div class="bloom-level">🧠 REMEMBER</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="bloom-item" data-level="understand">
+            <input type="checkbox" class="bloom-checkbox" id="bloom-understand" onchange="toggleLearningLevel('understand')">
+            <label for="bloom-understand" class="bloom-label">
+                <span class="custom-checkbox"></span>
+                <div>
+                    <div class="bloom-emoji">💡</div>
+                    <div class="bloom-text">How concepts interconnect</div>
+                    <div class="bloom-level">💡 UNDERSTAND</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="bloom-item" data-level="analyze">
+            <input type="checkbox" class="bloom-checkbox" id="bloom-analyze" onchange="toggleLearningLevel('analyze')">
+            <label for="bloom-analyze" class="bloom-label">
+                <span class="custom-checkbox"></span>
+                <div>
+                    <div class="bloom-emoji">🔍</div>
+                    <div class="bloom-text">Break down complex ideas</div>
+                    <div class="bloom-level">🔍 ANALYZE</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="bloom-item" data-level="evaluate">
+            <input type="checkbox" class="bloom-checkbox" id="bloom-evaluate" onchange="toggleLearningLevel('evaluate')">
+            <label for="bloom-evaluate" class="bloom-label">
+                <span class="custom-checkbox"></span>
+                <div>
+                    <div class="bloom-emoji">⚖️</div>
+                    <div class="bloom-text">Assess effectiveness and make judgments</div>
+                    <div class="bloom-level">⚖️ EVALUATE</div>
+                </div>
+            </label>
+            </div>
+
+            <div class="bloom-item" data-level="create">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-create" onchange="toggleLearningLevel('create')">
+                <label for="bloom-create" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🚀</div>
+                        <div class="bloom-text">Develop new applications and solutions</div>
+                        <div class="bloom-level">🚀 CREATE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="learning-completion-message" id="learning-completion-message">
+                🎉 Great job! You've mastered this content!
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
