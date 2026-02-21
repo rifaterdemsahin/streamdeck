@@ -77,6 +77,7 @@ class LearningAssessment {
 
         this.updateProgress();
         this.injectRoadmapLink();
+        this.injectRoadmapNavLink();
     }
 
     injectRoadmapLink() {
@@ -96,6 +97,24 @@ class LearningAssessment {
         linkDiv.style.cssText = 'text-align: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 215, 0, 0.3);';
         linkDiv.innerHTML = '<a href="learning-roadmap.html" class="roadmap-link" style="color: #ffd700; text-decoration: none; font-weight: bold; font-size: 0.95em; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; transition: all 0.3s;" onmouseover="this.style.background=\'rgba(255, 215, 0, 0.3)\'" onmouseout="this.style.background=\'rgba(255, 215, 0, 0.15)\'">🗺️ View Learning Roadmap</a>';
         panelContent.appendChild(linkDiv);
+    }
+
+    injectRoadmapNavLink() {
+        // Don't add if we're already on the roadmap page
+        if (window.location.pathname.includes('learning-roadmap')) return;
+
+        // Find the top nav bar (nav-links container or nav-bar)
+        const navContainer = document.querySelector('.nav-links') || document.querySelector('.nav-bar');
+        if (!navContainer) return;
+
+        // Check if roadmap link already exists in nav
+        if (navContainer.querySelector('.roadmap-nav-link')) return;
+
+        const roadmapLink = document.createElement('a');
+        roadmapLink.href = 'learning-roadmap.html';
+        roadmapLink.className = 'roadmap-nav-link';
+        roadmapLink.textContent = '🗺️ Learning Roadmap';
+        navContainer.appendChild(roadmapLink);
     }
 
     toggleLevel(level) {
