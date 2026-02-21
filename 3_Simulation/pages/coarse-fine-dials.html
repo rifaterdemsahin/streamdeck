@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coarse & Fine Dials - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+
+        .content-area { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 40px; margin-bottom: 20px; }
+
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 2em; margin: 30px 0 15px 0; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.5em; margin: 25px 0 15px 0; color: #a8d0ff; }
+        h4 { font-size: 1.2em; margin: 20px 0 10px 0; color: #a8d0ff; }
+
+        p { margin-bottom: 15px; font-size: 1.1em; }
+
+        .video-container { position: relative; width: 100%; max-width: 900px; margin: 30px auto; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .info-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .info-box h3 { margin-top: 0; color: #2196F3; }
+
+        .tip-box { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tip-box h3 { margin-top: 0; color: #4CAF50; }
+
+        .warning-box { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box h3 { margin-top: 0; color: #FF9800; }
+
+        .definition { background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        .definition strong { color: #ffd700; font-size: 1.2em; }
+
+        ul, ol { margin: 15px 0 15px 30px; }
+        li { margin-bottom: 10px; font-size: 1.05em; }
+
+        .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .comparison-card { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.3); }
+        .comparison-card h4 { color: #ffd700; margin-bottom: 10px; }
+        .comparison-card.coarse { border-color: #FF9800; background: rgba(255, 152, 0, 0.1); }
+        .comparison-card.coarse h4 { color: #FF9800; }
+        .comparison-card.fine { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .comparison-card.fine h4 { color: #4CAF50; }
+
+        .streamdeck-section { background: rgba(138, 43, 226, 0.2); border: 2px solid #8A2BE2; padding: 25px; margin: 30px 0; border-radius: 10px; }
+        .streamdeck-section h3 { color: #BB86FC; }
+
+        .external-link { display: inline-block; margin: 10px 0; padding: 10px 20px; background: rgba(33, 150, 243, 0.3); border: 2px solid #2196F3; border-radius: 5px; color: #fff; text-decoration: none; transition: all 0.3s; }
+        .external-link:hover { background: rgba(33, 150, 243, 0.5); transform: translateY(-2px); }
+
+        .visual-diagram { background: rgba(0, 0, 0, 0.3); padding: 30px; border-radius: 10px; margin: 20px 0; border: 2px solid rgba(255, 215, 0, 0.2); }
+        .visual-diagram pre { color: #a8d0ff; font-family: 'Courier New', monospace; font-size: 0.95em; line-height: 1.8; overflow-x: auto; }
+
+        .highlight-box { background: rgba(186, 104, 200, 0.2); border: 2px solid #BA68C8; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        .highlight-box h3 { color: #BA68C8; margin-top: 0; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            .content-area { padding: 20px; }
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html">⬅ Back to Index</a>
+            <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            <a href="color-grading.html">🎨 Color Grading</a>
+            <a href="streamdeck-plus.html">➕ Stream Deck+</a>
+        </div>
+
+        <div class="content-area">
+            <h1>🎛️ Coarse & Fine Dials</h1>
+            <p style="font-size: 1.2em; color: #a8d0ff;">Master precision control with coarse and fine adjustment dials in DaVinci Resolve's Inspection page</p>
+
+            <div class="definition">
+                <strong>What are Coarse & Fine Dials?</strong>
+                <p>In DaVinci Resolve, <strong>coarse and fine dials</strong> provide two levels of precision control for color grading and other adjustments. <strong>Coarse adjustments</strong> make large, quick changes, while <strong>fine adjustments</strong> provide precise, incremental control for detailed work. These are prominently featured in the <strong>Inspection page</strong> for detailed color correction.</p>
+            </div>
+
+            <h2>📺 Video Tutorial</h2>
+            <p>Watch this demonstration of coarse and fine dial usage in DaVinci Resolve's Inspection page:</p>
+
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/wpeqkG89nqM?start=914"
+                    title="Coarse and Fine Dials in DaVinci Resolve"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <a href="https://youtu.be/wpeqkG89nqM?t=914" class="external-link" target="_blank">
+                🔗 Open Video in New Tab (starts at 15:14)
+            </a>
+
+            <div class="highlight-box">
+                <h3>🔍 Inspection Page Usage</h3>
+                <p><strong>The Inspection page</strong> is where coarse and fine dials shine in DaVinci Resolve. Located in the Color page, the Inspection page provides detailed control over:</p>
+                <ul>
+                    <li><strong>RGB Balance:</strong> Adjust red, green, and blue channels individually</li>
+                    <li><strong>Lift, Gamma, Gain:</strong> Fine-tune shadows, midtones, and highlights</li>
+                    <li><strong>Temperature & Tint:</strong> Precise white balance correction</li>
+                    <li><strong>Hue, Saturation, Luminance:</strong> Detailed color adjustments</li>
+                </ul>
+                <p style="margin-top: 15px;"><em>Coarse and fine controls allow you to make both broad strokes and surgical adjustments in the same workspace.</em></p>
+            </div>
+
+            <h2>⚖️ Coarse vs Fine Adjustments</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-card coarse">
+                    <h4>🔶 Coarse Adjustments</h4>
+                    <p><strong>Step Size:</strong> Large increments (e.g., 5-10 units)</p>
+                    <p><strong>Speed:</strong> Fast, broad changes</p>
+                    <p><strong>Use When:</strong></p>
+                    <ul>
+                        <li>Initial color correction</li>
+                        <li>Rough exposure adjustments</li>
+                        <li>Quick white balance fixes</li>
+                        <li>Getting close to target values</li>
+                    </ul>
+                    <p><strong>Example:</strong> Quickly bring down overexposed highlights from 100 to 50</p>
+                </div>
+
+                <div class="comparison-card fine">
+                    <h4>🔷 Fine Adjustments</h4>
+                    <p><strong>Step Size:</strong> Small increments (e.g., 0.1-1 unit)</p>
+                    <p><strong>Speed:</strong> Slow, precise control</p>
+                    <p><strong>Use When:</strong>  </p>
+                    <ul>
+                        <li>Final polish and refinement</li>
+                        <li>Matching shots precisely</li>
+                        <li>Subtle skin tone adjustments</li>
+                        <li>Achieving exact target values</li>
+                    </ul>
+                    <p><strong>Example:</strong> Tweaking skin tone from 49.8 to 50.2 for perfect match</p>
+                </div>
+            </div>
+
+            <h2>🎨 Inspection Page Controls</h2>
+
+            <div class="visual-diagram">
+                <h3 style="color: #ffd700; margin-bottom: 15px;">Typical Inspection Page Layout:</h3>
+                <pre>
+┌─────────────────────────────────────────────────┐
+│           INSPECTION PAGE (COLOR)               │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  LIFT (Shadows)         GAMMA (Midtones)       │
+│  ┌─────────┐           ┌─────────┐             │
+│  │ COARSE  │           │ COARSE  │             │
+│  │  [===]  │           │  [===]  │             │
+│  └─────────┘           └─────────┘             │
+│  ┌─────────┐           ┌─────────┐             │
+│  │  FINE   │           │  FINE   │             │
+│  │  [===]  │           │  [===]  │             │
+│  └─────────┘           └─────────┘             │
+│                                                 │
+│  GAIN (Highlights)      OFFSET (Overall)       │
+│  ┌─────────┐           ┌─────────┐             │
+│  │ COARSE  │           │ COARSE  │             │
+│  │  [===]  │           │  [===]  │             │
+│  └─────────┘           └─────────┘             │
+│  ┌─────────┐           ┌─────────┐             │
+│  │  FINE   │           │  FINE   │             │
+│  │  [===]  │           │  [===]  │             │
+│  └─────────┘           └─────────┘             │
+│                                                 │
+└─────────────────────────────────────────────────┘
+                </pre>
+            </div>
+
+            <h2>🎯 When to Use Each Type</h2>
+
+            <h3>Coarse Dial Workflow:</h3>
+            <div class="info-box">
+                <ol>
+                    <li><strong>Initial Assessment:</strong> Use coarse to quickly survey the adjustment range</li>
+                    <li><strong>Rough Correction:</strong> Get values into the ballpark with large movements</li>
+                    <li><strong>Speed Over Precision:</strong> When exact values aren't critical yet</li>
+                    <li><strong>Exploration:</strong> Quickly test different looks and settings</li>
+                </ol>
+                <p><strong>Typical Workflow:</strong> Start with coarse → Get close → Switch to fine → Perfect it</p>
+            </div>
+
+            <h3>Fine Dial Workflow:</h3>
+            <div class="info-box">
+                <ol>
+                    <li><strong>Final Refinement:</strong> After coarse adjustments, polish with fine control</li>
+                    <li><strong>Shot Matching:</strong> Match color/exposure between shots precisely</li>
+                    <li><strong>Subtle Changes:</strong> Imperceptible adjustments that add up</li>
+                    <li><strong>Target Values:</strong> Hit specific numeric targets exactly</li>
+                </ol>
+                <p><strong>Typical Workflow:</strong> Coarse done → Fine-tune → Compare → Adjust → Repeat</p>
+            </div>
+
+            <h2>⌨️ Keyboard Modifiers for Precision</h2>
+
+            <div class="info-box">
+                <h3>Modifier Keys (works with mouse wheel/trackpad):</h3>
+                <ul>
+                    <li><strong>No Modifier:</strong> Normal adjustment speed</li>
+                    <li><strong>Shift + Scroll:</strong> Coarse adjustments (faster, larger steps)</li>
+                    <li><strong>Alt/Opt + Scroll:</strong> Fine adjustments (slower, smaller steps)</li>
+                    <li><strong>Ctrl/Cmd + Scroll:</strong> Very fine adjustments (ultra-precise)</li>
+                    <li><strong>Double-click:</strong> Reset to default value</li>
+                    <li><strong>Right-click → Reset:</strong> Reset individual parameter</li>
+                </ul>
+            </div>
+
+            <h2>💡 Pro Tips for Coarse & Fine Control</h2>
+
+            <div class="tip-box">
+                <h3>Professional Workflow Strategies:</h3>
+                <ul>
+                    <li><strong>Coarse first, always:</strong> Never start with fine adjustments - use coarse to get 80% there</li>
+                    <li><strong>Watch your scopes:</strong> Use waveform/vectorscope to guide adjustments</li>
+                    <li><strong>Make small fine moves:</strong> Fine adjustments should be barely visible individually</li>
+                    <li><strong>Compare constantly:</strong> Toggle before/after to verify fine adjustments are improvements</li>
+                    <li><strong>Use reference stills:</strong> Gallery stills help you judge if fine adjustments are working</li>
+                    <li><strong>Know your limits:</strong> If fine adjustments aren't working, go back to coarse</li>
+                    <li><strong>Keyboard shortcuts:</strong> Learn modifier keys to switch between coarse/fine without UI</li>
+                </ul>
+            </div>
+
+            <h2>🎮 Stream Deck+ Integration</h2>
+
+            <div class="streamdeck-section">
+                <h3>Perfect Use Case for Rotary Dials!</h3>
+
+                <p>The <strong>Stream Deck+</strong> rotary dials are IDEAL for coarse and fine control in the Inspection page:</p>
+
+                <h4>Dial Configuration:</h4>
+                <ul>
+                    <li><strong>Dial 1 (Left):</strong> Lift/Shadows - Coarse mode by default</li>
+                    <li><strong>Dial 2 (Center-Left):</strong> Gamma/Midtones - Coarse mode by default</li>
+                    <li><strong>Dial 3 (Center-Right):</strong> Gain/Highlights - Coarse mode by default</li>
+                    <li><strong>Dial 4 (Right):</strong> Master/Offset - Coarse mode by default</li>
+                </ul>
+
+                <h4>Touch Actions:</h4>
+                <ul>
+                    <li><strong>Press Dial:</strong> Toggle between coarse and fine mode</li>
+                    <li><strong>Long Press:</strong> Reset to default value</li>
+                    <li><strong>Touch Screen:</strong> Display current value and mode (Coarse/Fine)</li>
+                </ul>
+
+                <h4>Advanced Multi-Actions:</h4>
+                <ul>
+                    <li><strong>Quick Color Match:</strong> Enable fine mode → Adjust → Compare → Repeat</li>
+                    <li><strong>Inspection Preset:</strong> Load inspection page → Enable fine mode on all dials</li>
+                    <li><strong>Reset All:</strong> Reset all Lift/Gamma/Gain values to defaults</li>
+                </ul>
+
+                <h4>Suggested Button Layout:</h4>
+                <div class="visual-diagram">
+                    <pre>
+Stream Deck+ Layout - Inspection Page:
+
+DIALS (Rotary Controls):
+[LIFT]     [GAMMA]    [GAIN]     [OFFSET]
+ Coarse     Coarse     Coarse     Coarse
+(Press = Toggle Fine Mode)
+
+BUTTONS (Below Dials):
+[Fine All] [Coarse Al][Reset All][Compare]
+[Lift R]   [Gamma R]  [Gain R]   [Offset R]
+[Red]      [Green]    [Blue]     [RGB]
+[Temp +]   [Temp -]   [Tint +]   [Tint -]
+                    </pre>
+                </div>
+            </div>
+
+            <h2>🎬 Common Use Cases</h2>
+
+            <h3>1. Skin Tone Matching</h3>
+            <div class="info-box">
+                <p><strong>Scenario:</strong> Matching actor's skin tone across two shots</p>
+                <p><strong>Workflow:</strong></p>
+                <ol>
+                    <li><strong>Coarse:</strong> Adjust gamma to get overall brightness close</li>
+                    <li><strong>Coarse:</strong> Tweak tint/temperature to get color family right</li>
+                    <li><strong>Fine:</strong> Precisely match specific skin tone hue</li>
+                    <li><strong>Fine:</strong> Adjust saturation in tiny increments</li>
+                    <li><strong>Fine:</strong> Final luminance tweaks for perfect match</li>
+                </ol>
+                <p><strong>Result:</strong> Imperceptible skin tone match across cuts</p>
+            </div>
+
+            <h3>2. White Balance Correction</h3>
+            <div class="info-box">
+                <p><strong>Scenario:</strong> Fixing white balance on incorrectly shot footage</p>
+                <p><strong>Workflow:</strong></p>
+                <ol>
+                    <li><strong>Coarse:</strong> Temperature dial - swing warm/cool to find range</li>
+                    <li><strong>Coarse:</strong> Tint dial - add green/magenta broadly</li>
+                    <li><strong>Fine:</strong> Temperature - dial in exact neutral point</li>
+                    <li><strong>Fine:</strong> Tint - remove any color cast</li>
+                </ol>
+                <p><strong>Result:</strong> Perfectly neutral whites and grays</p>
+            </div>
+
+            <h3>3. Exposure Recovery</h3>
+            <div class="info-box">
+                <p><strong>Scenario:</strong> Recovering overexposed highlights</p>
+                <p><strong>Workflow:</strong></p>
+                <ol>
+                    <li><strong>Coarse:</strong> Gain - pull down highlights significantly</li>
+                    <li><strong>Coarse:</strong> Gamma - adjust midtones to compensate</li>
+                    <li><strong>Fine:</strong> Gain - precisely recover just below clipping</li>
+                    <li><strong>Fine:</strong> Gamma - maintain contrast without crushing</li>
+                </ol>
+                <p><strong>Result:</strong> Maximum highlight detail without artifacts</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Common Mistakes:</h3>
+                <ul>
+                    <li><strong>Starting with fine:</strong> Wastes time - always start coarse</li>
+                    <li><strong>Over-adjusting in fine mode:</strong> If you're making huge fine adjustments, switch to coarse</li>
+                    <li><strong>Ignoring the reset:</strong> If you've gone too far, reset and start over</li>
+                    <li><strong>Not using reference:</strong> Fine adjustments are meaningless without comparison</li>
+                    <li><strong>Forgetting mode:</strong> Check if you're in coarse or fine mode before adjusting</li>
+                </ul>
+            </div>
+
+            <h2>🎓 Practice Exercises</h2>
+
+            <div class="tip-box">
+                <h3>Exercise 1: Coarse to Fine Workflow (10 minutes)</h3>
+                <ol>
+                    <li>Open a clip in the Color page → Inspection mode</li>
+                    <li>Make a drastic change using coarse controls (e.g., make it very blue)</li>
+                    <li>Use coarse to get it back to roughly normal</li>
+                    <li>Switch to fine and perfect the adjustment</li>
+                    <li>Goal: Feel the difference in control precision</li>
+                </ol>
+            </div>
+
+            <div class="tip-box">
+                <h3>Exercise 2: Shot Matching (15 minutes)</h3>
+                <ol>
+                    <li>Select two shots with slightly different white balance</li>
+                    <li>Use coarse controls to get them in the same ballpark</li>
+                    <li>Switch to fine mode for all controls</li>
+                    <li>Make tiny adjustments until they match perfectly</li>
+                    <li>Toggle between shots to verify imperceptible transition</li>
+                </ol>
+            </div>
+
+            <div class="tip-box">
+                <h3>Exercise 3: Stream Deck+ Dial Practice (20 minutes)</h3>
+                <ol>
+                    <li>Configure Stream Deck+ dials for Lift/Gamma/Gain</li>
+                    <li>Practice switching modes by pressing the dial</li>
+                    <li>Make coarse adjustments with rotation</li>
+                    <li>Toggle to fine mode and refine</li>
+                    <li>Goal: Muscle memory for mode switching and control feel</li>
+                </ol>
+            </div>
+
+            <h2>🔗 Related Features</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>Color Grading with Knobs</h4>
+                    <p>Stream Deck+ knobs provide tactile control for color wheels and other grading tools.</p>
+                    <a href="color-grading.html" style="color: #2196F3;">Learn More →</a>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>Stream Deck+ Features</h4>
+                    <p>Comprehensive guide to Stream Deck+ rotary controls and touch strips.</p>
+                    <a href="streamdeck-plus.html" style="color: #2196F3;">Learn More →</a>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>DaVinci Resolve Profile</h4>
+                    <p>Complete Stream Deck profile setup for DaVinci Resolve including Inspection page.</p>
+                    <a href="davinci-profile.html" style="color: #2196F3;">Learn More →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area" style="text-align: center;">
+            <h3>Related Pages</h3>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+                <a href="color-grading.html" class="external-link">🎨 Color Grading</a>
+                <a href="streamdeck-plus.html" class="external-link">➕ Stream Deck+</a>
+                <a href="davinci-profile.html" class="external-link">🎬 DaVinci Profile</a>
+                <a href="timeline-zoom-navigation.html" class="external-link">🔍 Timeline Navigation</a>
+                <a href="../index.html" class="external-link">🏠 Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Video analytics
+        const iframe = document.querySelector('iframe');
+        if (iframe) {
+            console.log('Coarse and fine dials tutorial loaded at 15:14');
+        }
+    </script>
+    <script src="learner-checklist.js"></script>
+</body>
+</html>

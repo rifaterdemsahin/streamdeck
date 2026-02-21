@@ -6,29 +6,447 @@
     <title>Stream Deck+ Features - Stream Deck Automation</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; text-align: center; }
-        .coming-soon { background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 60px 40px; }
-        h1 { font-size: 3em; margin-bottom: 20px; color: #ffd700; }
-        p { font-size: 1.3em; margin: 20px 0; }
-        .nav-links { display: flex; gap: 15px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
-        .nav-links a { color: #fff; text-decoration: none; padding: 12px 25px; background: rgba(255, 215, 0, 0.2); border: 2px solid #ffd700; border-radius: 8px; transition: all 0.3s; }
-        .nav-links a:hover { background: rgba(255, 215, 0, 0.3); transform: translateY(-2px); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+
+        /* Device diagram */
+        .device-frame { background: #1a1a1a; border-radius: 20px; padding: 30px; max-width: 700px; margin: 20px auto; border: 3px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .lcd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .lcd-btn { aspect-ratio: 1; background: linear-gradient(135deg, #2a5298, #1e3c72); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.85em; text-align: center; border: 2px solid #444; transition: all 0.3s; cursor: pointer; padding: 8px; }
+        .lcd-btn:hover { border-color: #ffd700; transform: scale(1.05); }
+        .lcd-btn .btn-icon { font-size: 1.5em; margin-bottom: 4px; }
+        .lcd-btn .btn-label { font-size: 0.75em; color: #a8d0ff; }
+        .touch-strip { background: linear-gradient(90deg, #1e3c72, #2196F3, #1e3c72); height: 30px; border-radius: 15px; margin: 15px 0; border: 2px solid #444; position: relative; overflow: hidden; }
+        .touch-strip::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%); }
+        .touch-label { text-align: center; font-size: 0.8em; color: #a8d0ff; margin-bottom: 10px; }
+        .knob-row { display: flex; justify-content: space-around; margin-top: 15px; }
+        .knob-item { text-align: center; }
+        .knob-circle { width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #555, #222); border: 3px solid #ffd700; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1); }
+        .knob-circle .knob-dot { width: 6px; height: 6px; border-radius: 50%; background: #ffd700; }
+        .knob-label { font-size: 0.7em; color: #a8d0ff; max-width: 80px; }
+
+        /* Spec table */
+        .spec-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .spec-table th, .spec-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .spec-table th { color: #ffd700; background: rgba(0,0,0,0.3); font-weight: 600; }
+        .spec-table tr:hover { background: rgba(255,255,255,0.05); }
+
+        /* Feature cards */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+
+        /* Related pages */
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .related-card { display: block; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 20px; text-decoration: none; color: #fff; border: 2px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+        .related-card:hover { border-color: #ffd700; transform: translateY(-3px); background: rgba(255,215,0,0.08); }
+        .related-card .rc-icon { font-size: 1.8em; margin-bottom: 8px; display: block; }
+        .related-card .rc-title { font-weight: bold; color: #ffd700; margin-bottom: 6px; font-size: 1.05em; }
+        .related-card .rc-desc { font-size: 0.85em; color: #a8d0ff; }
+
+        /* Comparison */
+        .compare-row { display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap; }
+        .compare-col { flex: 1; min-width: 250px; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 20px; border: 2px solid rgba(255,255,255,0.1); }
+        .compare-col h3 { text-align: center; margin-bottom: 12px; }
+        .compare-col ul { list-style: none; padding: 0; }
+        .compare-col ul li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9em; }
+        .compare-col ul li::before { content: '•'; color: #ffd700; margin-right: 8px; }
+        .compare-col.highlight { border-color: #ffd700; background: rgba(255,215,0,0.08); }
+
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .lcd-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .related-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="coming-soon">
-            <h1>🎛️ Stream Deck+ Features</h1>
-            <p>Unlock the power of Stream Deck+ with rotary knobs, touch strip, and haptic feedback for advanced control in video editing and DevOps.</p>
-            <p style="font-size: 1em; color: #a8d0ff;">Detailed implementation guide coming soon!</p>
-            <div class="nav-links">
-                <a href="../index.html">⬅️ Back to Index</a>
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
                 <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
-                <a href="keyboard-integration.html">⬅️ Previous</a>
-                <a href="workspace-setup.html">Next ➡️</a>
+                <a href="../../search.html">🔍 Search</a>
             </div>
         </div>
+
+        <div class="hero">
+            <h1>🎛️ Stream Deck+ Features</h1>
+            <p class="subtitle">Unlock the power of rotary knobs, touch strip, and haptic feedback for advanced control</p>
+            <p style="color: #ddd; margin-top: 10px;">The Stream Deck+ goes beyond buttons — it adds 4 infinite rotary encoders with haptic detents, a capacitive touch strip, and 8 customizable LCD keys, making it the ultimate companion for video editing and DevOps workflows.</p>
+        </div>
+
+        <!-- Device Overview -->
+        <div class="section">
+            <h2>🖥️ Device Overview</h2>
+            <p style="color: #ddd; margin-bottom: 20px;">Interactive diagram of the Stream Deck+ hardware layout:</p>
+
+            <div class="device-frame">
+                <div class="lcd-grid">
+                    <div class="lcd-btn">
+                        <span class="btn-icon">✂️</span>
+                        <span class="btn-label">Insert</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">📝</span>
+                        <span class="btn-label">Overwrite</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">📐</span>
+                        <span class="btn-label">Fit to Fill</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">⏮️</span>
+                        <span class="btn-label">Ripple Start</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">⏭️</span>
+                        <span class="btn-label">Ripple End</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">🎬</span>
+                        <span class="btn-label">Blade</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">↩️</span>
+                        <span class="btn-label">Undo</span>
+                    </div>
+                    <div class="lcd-btn">
+                        <span class="btn-icon">↪️</span>
+                        <span class="btn-label">Redo</span>
+                    </div>
+                </div>
+
+                <div class="touch-label">▲ 8 Customizable LCD Keys</div>
+
+                <div class="touch-strip"></div>
+                <div class="touch-label">▲ Capacitive Touch Strip with LCD</div>
+
+                <div class="knob-row">
+                    <div class="knob-item">
+                        <div class="knob-circle"><span class="knob-dot"></span></div>
+                        <div class="knob-label">🐢 Jog</div>
+                    </div>
+                    <div class="knob-item">
+                        <div class="knob-circle"><span class="knob-dot"></span></div>
+                        <div class="knob-label">🔀 Slip Audio</div>
+                    </div>
+                    <div class="knob-item">
+                        <div class="knob-circle"><span class="knob-dot"></span></div>
+                        <div class="knob-label">🔊 Volume</div>
+                    </div>
+                    <div class="knob-item">
+                        <div class="knob-circle"><span class="knob-dot"></span></div>
+                        <div class="knob-label">🎛️ SlideFX</div>
+                    </div>
+                </div>
+                <div class="touch-label" style="margin-top: 12px;">▲ 4 Infinite Rotary Encoders with Haptic Feedback</div>
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="section">
+            <h2>📋 Specifications</h2>
+            <table class="spec-table">
+                <tr><th>Feature</th><th>Detail</th></tr>
+                <tr><td>LCD Keys</td><td>8 customizable keys with full-color LCD displays</td></tr>
+                <tr><td>Rotary Encoders</td><td>4 infinite-rotation dials with push-to-click</td></tr>
+                <tr><td>Touch Strip</td><td>Capacitive touch with integrated LCD display</td></tr>
+                <tr><td>Haptic Feedback</td><td>Adjustable haptic detents on each knob</td></tr>
+                <tr><td>Connectivity</td><td>USB-C</td></tr>
+                <tr><td>Faceplate</td><td>Removable magnetic faceplate</td></tr>
+                <tr><td>Stand</td><td>Adjustable built-in stand</td></tr>
+                <tr><td>Dimensions</td><td>140 × 138 × 110 mm</td></tr>
+                <tr><td>Software</td><td>Stream Deck software v6.0+</td></tr>
+                <tr><td>Compatibility</td><td>Windows 10+ / macOS 12+</td></tr>
+            </table>
+        </div>
+
+        <!-- What makes SD+ special -->
+        <div class="section">
+            <h2>✨ What Makes the Stream Deck+ Special</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">The Stream Deck+ combines three input types in one device — buttons, knobs, and touch — giving you far more control surface per square centimeter than a standard Stream Deck:</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎛️</div>
+                    <div class="label">Rotary Knobs</div>
+                    <div class="desc">Infinite rotation for smooth, analog-style adjustments — perfect for jog, volume, color grading</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👆</div>
+                    <div class="label">Push-to-Click</div>
+                    <div class="desc">Each knob doubles as a button — click to reset, toggle, or confirm actions</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <div class="label">Touch Strip</div>
+                    <div class="desc">Swipe left/right for timeline scrubbing, page navigation, or custom gestures</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🫨</div>
+                    <div class="label">Haptic Detents</div>
+                    <div class="desc">Feel each step — configurable haptic feedback gives physical precision to digital controls</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖼️</div>
+                    <div class="label">LCD Keys</div>
+                    <div class="desc">8 keys with full-color customizable icons — dynamic labels that change with context</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🧲</div>
+                    <div class="label">Magnetic Faceplate</div>
+                    <div class="desc">Removable magnetic faceplate for easy customization and future accessories</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SD+ vs SD XL -->
+        <div class="section">
+            <h2>⚖️ Stream Deck+ vs Stream Deck XL</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">They serve different roles. Use them together for maximum control:</p>
+
+            <div class="compare-row">
+                <div class="compare-col highlight">
+                    <h3>🎛️ Stream Deck+ (This Device)</h3>
+                    <ul>
+                        <li>8 LCD buttons</li>
+                        <li>4 rotary encoders with haptic</li>
+                        <li>Touch strip with LCD</li>
+                        <li>Best for: analog controls, fine adjustments</li>
+                        <li>Jog, volume, color knobs</li>
+                        <li>Compact footprint</li>
+                    </ul>
+                </div>
+                <div class="compare-col">
+                    <h3>⌨️ Stream Deck XL</h3>
+                    <ul>
+                        <li>32 LCD buttons</li>
+                        <li>No knobs or touch strip</li>
+                        <li>Pure button grid</li>
+                        <li>Best for: macros, launchers, multi-action</li>
+                        <li>Profiles, shortcuts, scripts</li>
+                        <li>Larger footprint</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Best Setup:</strong> Use the <strong>Stream Deck XL</strong> for buttons, shortcuts, and macros — and the <strong>Stream Deck+</strong> for rotary controls, audio levels, and fine-tuning. Together they cover both digital (on/off) and analog (continuous) interaction.
+            </div>
+        </div>
+
+        <!-- Knob Workflow: Audio Editing -->
+        <div class="section">
+            <h2>🎙️ Recommended Knob Layout: Audio Editing</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">The 4 knobs follow a logical left-to-right workflow for DaVinci Resolve audio editing:</p>
+
+            <table class="spec-table">
+                <tr><th>Knob</th><th>Function</th><th>CW (Clockwise)</th><th>CCW (Counter-CW)</th><th>Click</th></tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 1</td>
+                    <td>🐢 Jog</td>
+                    <td>Next frame →</td>
+                    <td>← Prev frame</td>
+                    <td>Play/Pause</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 2</td>
+                    <td>🔀 Slip Audio</td>
+                    <td>Slip right →</td>
+                    <td>← Slip left</td>
+                    <td>Reset slip</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 3</td>
+                    <td>🔊 Raise/Lower Audio</td>
+                    <td>Volume up (+1 dB)</td>
+                    <td>Volume down (-1 dB)</td>
+                    <td>Reset to 0 dB</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 4</td>
+                    <td>🎛️ SlideFX / Pan</td>
+                    <td>Pan right</td>
+                    <td>Pan left</td>
+                    <td>Center pan</td>
+                </tr>
+            </table>
+
+            <div class="tip-box">
+                <strong>💡 Why this order?</strong> The workflow goes: <strong>Navigate (Jog)</strong> → <strong>Position content (Slip)</strong> → <strong>Set volume (Raise/Lower)</strong> → <strong>Place in stereo field (Pan)</strong>. Each step depends on the previous one being done first.
+            </div>
+        </div>
+
+        <!-- Knob Workflow: Color Grading -->
+        <div class="section">
+            <h2>🎨 Alternative Knob Layout: Color Grading</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">Switch profiles for the Color/Grading page in DaVinci Resolve:</p>
+
+            <table class="spec-table">
+                <tr><th>Knob</th><th>Function</th><th>CW</th><th>CCW</th><th>Click</th></tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 1</td>
+                    <td>☀️ Exposure</td>
+                    <td>Brighter</td>
+                    <td>Darker</td>
+                    <td>Reset</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 2</td>
+                    <td>🌡️ Temperature</td>
+                    <td>Warmer</td>
+                    <td>Cooler</td>
+                    <td>Reset</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 3</td>
+                    <td>🎨 Saturation</td>
+                    <td>More saturated</td>
+                    <td>Desaturated</td>
+                    <td>Reset</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700; font-weight: bold;">Knob 4</td>
+                    <td>🔲 Contrast</td>
+                    <td>More contrast</td>
+                    <td>Flatter</td>
+                    <td>Reset</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Touch Strip -->
+        <div class="section">
+            <h2>📱 Touch Strip Use Cases</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⏩</div>
+                    <div class="label">Timeline Scrub</div>
+                    <div class="desc">Swipe left/right on the touch strip to scrub through the timeline</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📄</div>
+                    <div class="label">Page Navigation</div>
+                    <div class="desc">Swipe to switch between Stream Deck button pages</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔊</div>
+                    <div class="label">Master Volume</div>
+                    <div class="desc">Swipe to control system or application master volume</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏷️</div>
+                    <div class="label">Dynamic Labels</div>
+                    <div class="desc">The LCD under the touch strip displays context-aware labels for each knob</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Pages -->
+        <div class="section">
+            <h2>📚 Related Stream Deck+ Guides</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">Dive deeper into specific Stream Deck+ features:</p>
+
+            <div class="related-grid">
+                <a href="jog-shuttle.html" class="related-card">
+                    <span class="rc-icon">🐢🚀</span>
+                    <div class="rc-title">Jog vs Shuttle</div>
+                    <div class="rc-desc">Understand the difference between jog (frame-by-frame) and shuttle (variable speed) knob modes</div>
+                </a>
+                <a href="raise-lower-audio.html" class="related-card">
+                    <span class="rc-icon">🔊</span>
+                    <div class="rc-title">Raise & Lower Audio</div>
+                    <div class="rc-desc">Use a knob to adjust clip-level audio volume — and why it comes after Slip Audio</div>
+                </a>
+                <a href="nudge-clip.html" class="related-card">
+                    <span class="rc-icon">↔️</span>
+                    <div class="rc-title">Nudge Clip</div>
+                    <div class="rc-desc">Move clips left/right on the timeline one frame at a time with a rotary knob</div>
+                </a>
+                <a href="knob-click-color-clips.html" class="related-card">
+                    <span class="rc-icon">🎨</span>
+                    <div class="rc-title">Knob Click to Color Clips</div>
+                    <div class="rc-desc">Click a knob to instantly apply color labels to timeline clips</div>
+                </a>
+                <a href="cut-page-slidefx.html" class="related-card">
+                    <span class="rc-icon">🎞️</span>
+                    <div class="rc-title">Cut Page + SlideFX</div>
+                    <div class="rc-desc">Complete SD+ profile for DaVinci Resolve cut page with SlideFX plugin on knobs</div>
+                </a>
+                <a href="streamdeck-plus-extension.html" class="related-card">
+                    <span class="rc-icon">🧩</span>
+                    <div class="rc-title">SD+ Extension Plugin</div>
+                    <div class="rc-desc">Install and configure the DaVinci Resolve Stream Deck+ extension for native integration</div>
+                </a>
+                <a href="color-grading.html" class="related-card">
+                    <span class="rc-icon">🌈</span>
+                    <div class="rc-title">Color Grading</div>
+                    <div class="rc-desc">Use knobs for exposure, temperature, saturation, and contrast adjustments</div>
+                </a>
+                <a href="analog-notes.html" class="related-card">
+                    <span class="rc-icon">📝</span>
+                    <div class="rc-title">Analog Controls Notes</div>
+                    <div class="rc-desc">Design notes and ideas for rotary encoder and touch strip workflows</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="section">
+            <h2>🚀 Getting Started</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">Set up your Stream Deck+ for DaVinci Resolve in 5 minutes:</p>
+
+            <ol style="list-style: none; padding: 0;">
+                <li style="padding: 12px 15px; margin: 8px 0; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</span>
+                    <div><strong style="color: #ffd700;">Install Stream Deck Software</strong><br>Download from <em>elgato.com/downloads</em> — version 6.0 or later required for SD+ features.</div>
+                </li>
+                <li style="padding: 12px 15px; margin: 8px 0; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</span>
+                    <div><strong style="color: #ffd700;">Install the DaVinci Resolve Plugin</strong><br>In the Stream Deck Store, search for "DaVinci Resolve" and install the official plugin.</div>
+                </li>
+                <li style="padding: 12px 15px; margin: 8px 0; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</span>
+                    <div><strong style="color: #ffd700;">Create an SD+ Profile</strong><br>Create a new profile in the Stream Deck software for your Stream Deck+ device. Assign it to DaVinci Resolve.</div>
+                </li>
+                <li style="padding: 12px 15px; margin: 8px 0; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">4</span>
+                    <div><strong style="color: #ffd700;">Map Buttons & Knobs</strong><br>Assign edit actions to the 8 LCD keys and configure the 4 knobs for your workflow (see knob layouts above).</div>
+                </li>
+                <li style="padding: 12px 15px; margin: 8px 0; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">5</span>
+                    <div><strong style="color: #ffd700;">Test & Refine</strong><br>Open DaVinci Resolve, test each button and knob, adjust haptic strength in Stream Deck settings. Iterate until it feels right.</div>
+                </li>
+            </ol>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
     </div>
     <script src="learner-checklist.js"></script>
 </body>
