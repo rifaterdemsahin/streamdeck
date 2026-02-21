@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unboxing Experience - Stream Deck Plus - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 400px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 9/16; display: block; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        .box-contents { list-style: none; padding: 0; }
+        .box-contents li { padding: 14px 18px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: center; gap: 12px; font-size: 1.05em; }
+        .step-list { list-style: none; padding: 0; }
+        .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #2196F3; display: flex; align-items: flex-start; gap: 12px; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .highlight-box { background: rgba(255, 215, 0, 0.15); border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center; }
+        .highlight-box h3 { color: #ffd700; margin-bottom: 10px; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .swipe-demo { background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 30px; text-align: center; margin: 20px 0; }
+        .swipe-arrows { font-size: 3em; margin: 15px 0; color: #ffd700; letter-spacing: 20px; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .video-container { max-width: 300px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>📦 Unboxing the Stream Deck +</h1>
+            <p class="subtitle">First look at the Stream Deck Plus — buttons, dials, touchscreen, and the swipe action</p>
+            <p style="color: #ddd; margin-top: 10px;">An unboxing experience showcasing what's inside the box, initial setup, and discovering the unique swipe touch strip.</p>
+        </div>
+
+        <!-- Video -->
+        <div class="section">
+            <h2>🎬 Unboxing Video</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">Watch the full Stream Deck + unboxing experience:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/nz2lRdCMzas"
+                    title="Stream Deck Plus Unboxing"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://www.youtube.com/shorts/nz2lRdCMzas?feature=share" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- What's In the Box -->
+        <div class="section">
+            <h2>📦 What's In the Box</h2>
+            <ul class="box-contents">
+                <li>🎮 Stream Deck + unit (8 LCD buttons + 4 rotary dials + touch strip)</li>
+                <li>🔌 USB-C to USB-A cable (1.5 m / ~5 ft)</li>
+                <li>📄 Quick Start Guide</li>
+                <li>🛡️ Safety & Warranty card</li>
+                <li>🖊️ Elgato branding sticker</li>
+            </ul>
+        </div>
+
+        <!-- Stream Deck + Features -->
+        <div class="section">
+            <h2>⚡ Stream Deck + Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🔘</div>
+                    <div class="label">8 LCD Keys</div>
+                    <div class="desc">Customizable LCD buttons with dynamic icons and labels</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎛️</div>
+                    <div class="label">4 Rotary Dials</div>
+                    <div class="desc">Infinite-turn encoders for volume, zoom, scroll, color grading</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <div class="label">Touch Strip</div>
+                    <div class="desc">Capacitive touch display between the dials for swipe gestures</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔌</div>
+                    <div class="label">USB-C</div>
+                    <div class="desc">Modern USB-C connectivity for fast, reliable data transfer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Swipe Action -->
+        <div class="section">
+            <h2>👆 The Swipe Action</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">One of the standout features of the Stream Deck + is the <strong style="color: #ffd700;">touch strip swipe action</strong> — a capacitive strip between the rotary dials that responds to swipe gestures.</p>
+
+            <div class="swipe-demo">
+                <h3>Swipe Gestures</h3>
+                <div class="swipe-arrows">⬅ ➡</div>
+                <p style="color: #a8d0ff;">Swipe left or right on the touch strip to trigger actions</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⬅️</div>
+                    <div class="label">Swipe Left</div>
+                    <div class="desc">Navigate to previous page, undo, scrub backward on timeline</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">➡️</div>
+                    <div class="label">Swipe Right</div>
+                    <div class="desc">Navigate to next page, redo, scrub forward on timeline</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👆</div>
+                    <div class="label">Tap</div>
+                    <div class="desc">Single tap to trigger a configured action (play/pause, mute, etc.)</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <div class="label">Long Press</div>
+                    <div class="desc">Hold for secondary actions or toggling modes</div>
+                </div>
+            </div>
+
+            <div class="tip-box" style="margin-top: 20px;">
+                <strong>💡 Tip:</strong> In the Stream Deck software, configure touch strip actions under the "Touch Strip" section when a Stream Deck + is connected. You can assign different actions for swipe left, swipe right, and tap.
+            </div>
+        </div>
+
+        <!-- First Setup Steps -->
+        <div class="section">
+            <h2>🛠️ First-Time Setup</h2>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Download Stream Deck Software</strong><br>
+                        Go to <a href="https://www.elgato.com/downloads" target="_blank" rel="noopener" style="color: #a8d0ff;">elgato.com/downloads</a> and install the latest Stream Deck software for your OS.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Connect via USB-C</strong><br>
+                        Plug the included USB-C cable into the Stream Deck + and your computer. The device powers on immediately.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Device Auto-Detection</strong><br>
+                        The Stream Deck software will automatically detect the + model and show the 8-button layout with dial and touch strip controls.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Configure Your First Button</strong><br>
+                        Drag an action (e.g., Website, Hotkey, or Multi-Action) onto any of the 8 LCD keys. Customize the icon and label.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Set Up the Dials</strong><br>
+                        Click on any dial slot and assign a rotary action — volume control, zoom, brightness, or any supported plugin action.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Configure the Swipe Strip</strong><br>
+                        Click the touch strip area and assign swipe-left, swipe-right, and tap actions. Try page navigation for a great first experience.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Highlight -->
+        <div class="highlight-box">
+            <h3>🌟 First Impressions</h3>
+            <p style="color: #ddd;">The Stream Deck + brings a tactile, premium feel with its combination of LCD keys, infinite rotary encoders, and the innovative touch strip. The swipe action alone makes navigating between pages and controlling timelines incredibly intuitive.</p>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

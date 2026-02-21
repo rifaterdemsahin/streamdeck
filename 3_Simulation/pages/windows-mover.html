@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Mover Plugin - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 400px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 9/16; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { counter-increment: step-counter; border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .warning-box { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .warning-box strong { color: #FF9800; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .video-container { max-width: 300px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🪟 Windows Mover Plugin</h1>
+            <p class="subtitle">Automate window positioning and management directly from your Stream Deck</p>
+            <p style="color: #ddd; margin-top: 10px;">Instantly snap, move, and resize application windows with a single button press — perfect for multi-monitor setups and productivity workflows.</p>
+        </div>
+
+        <!-- Video Demo -->
+        <div class="section">
+            <h2>🎬 Video Demo</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">Watch the Windows Mover plugin in action on a Stream Deck setup:</p>
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/XyoIATkGwjU?start=24" 
+                    title="Windows Mover Plugin Demo" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://www.youtube.com/shorts/XyoIATkGwjU?t=24&feature=share" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- What It Does -->
+        <div class="section">
+            <h2>⚡ What It Does</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📐</div>
+                    <div class="label">Snap Windows</div>
+                    <div class="desc">Snap any window to predefined screen positions (left half, right half, corners, etc.)</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖥️</div>
+                    <div class="label">Multi-Monitor</div>
+                    <div class="desc">Move windows between multiple monitors with one press</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">↔️</div>
+                    <div class="label">Resize</div>
+                    <div class="desc">Resize windows to exact pixel dimensions or percentage of screen</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📋</div>
+                    <div class="label">Save Layouts</div>
+                    <div class="desc">Save and restore complete window arrangements for different workflows</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎯</div>
+                    <div class="label">App-Specific</div>
+                    <div class="desc">Target specific applications by name or process</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⌨️</div>
+                    <div class="label">Custom Positions</div>
+                    <div class="desc">Define custom X, Y, Width, Height for precise placement</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="section">
+            <h2>📋 Prerequisites</h2>
+            <ul class="prereq-list">
+                <li>Windows 10 or Windows 11 (plugin is Windows-only)</li>
+                <li>Stream Deck hardware (any model: Mini, Classic, XL, or +)</li>
+                <li>Stream Deck software v6.0 or later installed and running</li>
+                <li>Elgato account (for Stream Deck Store access)</li>
+                <li>At least one additional application to manage (e.g., browser, editor, terminal)</li>
+                <li>Multi-monitor setup recommended for best results (but not required)</li>
+            </ul>
+
+            <div class="warning-box">
+                <strong>⚠️ Note:</strong> The Windows Mover plugin is Windows-only. macOS and Linux users should look at alternative tools like Rectangle (macOS) or i3 tiling (Linux).
+            </div>
+        </div>
+
+        <!-- Steps to Implement -->
+        <div class="section">
+            <h2>🛠️ Steps to Implement</h2>
+
+            <h3>Phase 1: Install the Plugin</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Open Stream Deck Software</strong><br>
+                        Launch the Elgato Stream Deck application from your system tray or Start menu.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Open the Stream Deck Store</strong><br>
+                        Click the <code>More Actions...</code> button at the bottom-right of the Stream Deck app, or click the store icon in the top bar.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Search for "Window Mover"</strong><br>
+                        In the Store search bar, type <code>Window Mover</code> or <code>Windows Mover</code>. You can also browse the <strong>System</strong> category.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Install the Plugin</strong><br>
+                        Click <strong>Install</strong> on the Windows Mover plugin. The plugin will appear in your actions list under <code>Custom</code> or <code>System</code>.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 2: Configure Window Positions</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Drag the Action to a Button</strong><br>
+                        From the actions panel, drag <code>Window Mover</code> onto an empty Stream Deck button.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Set the Target Application</strong><br>
+                        In the action's settings, enter the application name or process (e.g., <code>chrome</code>, <code>code</code>, <code>resolve</code>). You can also use window title matching.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <div class="step-content">
+                        <strong>Define Position & Size</strong><br>
+                        Set the target position: <code>X</code>, <code>Y</code> coordinates and <code>Width</code>, <code>Height</code> in pixels. Use preset positions like "Left Half", "Right Half", "Top-Left Quarter", etc., if available.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">8</span>
+                    <div class="step-content">
+                        <strong>Select Target Monitor</strong><br>
+                        If you have multiple monitors, choose which display the window should move to (Monitor 1, 2, 3, etc.).
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 3: Create a Layout Profile</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">9</span>
+                    <div class="step-content">
+                        <strong>Create Multiple Buttons</strong><br>
+                        Set up one button per window position. For example: "Browser → Left", "Editor → Right", "Terminal → Bottom".
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">10</span>
+                    <div class="step-content">
+                        <strong>Add Custom Icons</strong><br>
+                        Assign recognizable icons to each button — use the app icon + an arrow indicating direction for quick identification.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">11</span>
+                    <div class="step-content">
+                        <strong>Use Multi-Actions for Full Layouts</strong><br>
+                        Combine multiple Window Mover actions into a single <strong>Multi-Action</strong> button. One press can arrange your entire workspace: browser left, editor right, terminal bottom.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">12</span>
+                    <div class="step-content">
+                        <strong>Test & Fine-Tune</strong><br>
+                        Press each button and adjust X/Y/Width/Height values until windows land exactly where you want them. Note your screen resolution for reference.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Create separate Stream Deck pages for different workflow layouts — one for coding, one for video editing, one for meetings. Use Page Jump buttons to switch between them.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Pair Window Mover with Multi-Actions to open an application AND position it in one button press. Add a small delay between actions for reliability.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Use Windows display scaling settings to ensure pixel coordinates are consistent. If using 150% scaling, your effective resolution may differ from native.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

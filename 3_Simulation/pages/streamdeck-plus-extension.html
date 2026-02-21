@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Deck Plus Extension Stand - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 400px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 9/16; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        .highlight-box { background: rgba(255, 215, 0, 0.15); border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center; }
+        .highlight-box h3 { color: #ffd700; margin-bottom: 10px; }
+        .spec-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .spec-table th, .spec-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .spec-table th { color: #ffd700; font-weight: bold; background: rgba(0, 0, 0, 0.2); }
+        .spec-table td { color: #ddd; }
+        .spec-table tr:hover td { background: rgba(255, 255, 255, 0.05); }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .video-container { max-width: 300px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🧩 Stream Deck + Extension Stand</h1>
+            <p class="subtitle">Elevate your Stream Deck Plus with the official extension accessory</p>
+            <p style="color: #ddd; margin-top: 10px;">The extension stand adds height, improves viewing angles, and gives your Stream Deck + a more professional, integrated desk presence.</p>
+        </div>
+
+        <!-- Video -->
+        <div class="section">
+            <h2>🎬 Extension Stand in Action</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">See the Stream Deck + extension stand setup and usage:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/eBi26UNLUp4"
+                    title="Stream Deck Plus Extension Stand"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://www.youtube.com/shorts/eBi26UNLUp4?feature=share" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- What Is It -->
+        <div class="section">
+            <h2>⚡ What Is the Extension Stand?</h2>
+            <p style="color: #ddd; margin-bottom: 20px;">The Stream Deck + Extension Stand is an accessory that raises and repositions the Stream Deck + for better ergonomics, visibility, and desk integration. It provides a steeper viewing angle so the LCD keys and touch strip are easier to see and reach.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📐</div>
+                    <div class="label">Better Angle</div>
+                    <div class="desc">Raises the device for a more ergonomic, eye-friendly viewing position</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏗️</div>
+                    <div class="label">Stable Base</div>
+                    <div class="desc">Weighted base prevents tipping when pressing buttons or turning dials</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔌</div>
+                    <div class="label">Cable Routing</div>
+                    <div class="desc">Integrated cable management keeps your USB-C cable hidden and tidy</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <div class="label">Sleek Design</div>
+                    <div class="desc">Matches the Stream Deck + aesthetic with premium matte finish</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖥️</div>
+                    <div class="label">Desk Space</div>
+                    <div class="desc">Elevates the device to free up desk space underneath</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔧</div>
+                    <div class="label">Tool-Free</div>
+                    <div class="desc">Snap-on installation — no screws or tools required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="section">
+            <h2>📏 Specifications</h2>
+            <table class="spec-table">
+                <tr><th>Feature</th><th>Detail</th></tr>
+                <tr><td>Compatibility</td><td>Stream Deck + (exclusively)</td></tr>
+                <tr><td>Material</td><td>ABS plastic with soft-touch finish</td></tr>
+                <tr><td>Color</td><td>Black (matches Stream Deck +)</td></tr>
+                <tr><td>Installation</td><td>Tool-free, magnetic / snap-on attachment</td></tr>
+                <tr><td>Cable Management</td><td>Built-in channel for USB-C cable</td></tr>
+                <tr><td>Viewing Angle</td><td>Raises the device approximately 30–40°</td></tr>
+                <tr><td>Anti-Slip</td><td>Rubber pads on the base for desk grip</td></tr>
+            </table>
+        </div>
+
+        <!-- Setup Steps -->
+        <div class="section">
+            <h2>🛠️ Setup Steps</h2>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Unpack the Extension Stand</strong><br>
+                        Remove the extension stand from its packaging. It comes as a single piece — no assembly needed.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Disconnect the Stream Deck +</strong><br>
+                        Unplug the USB-C cable from the back of your Stream Deck + to make attachment easier.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Attach the Stand</strong><br>
+                        Align the Stream Deck + with the extension stand's cradle and press down until it clicks/snaps into place. The fit should be snug with no wobble.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Route the Cable</strong><br>
+                        Reconnect the USB-C cable and route it through the stand's built-in cable channel. This keeps the wire hidden behind the device.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Position on Desk</strong><br>
+                        Place the assembled unit at a comfortable reach distance. The elevated angle should give you clear visibility of all LCD keys, dials, and the touch strip.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Verify Stability</strong><br>
+                        Press buttons and turn dials firmly to ensure the stand holds steady. The rubber pads should prevent any sliding on the desk surface.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Before/After -->
+        <div class="highlight-box">
+            <h3>🌟 Before vs After</h3>
+            <p style="color: #ddd;">Without the extension stand, the Stream Deck + sits flat on the desk at a low angle, making the touchscreen and dials harder to see. With the stand, everything is raised to eye level for quick, comfortable access — especially useful during long editing or streaming sessions.</p>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Position the elevated Stream Deck + next to your keyboard at roughly the same height for natural hand movement between typing and button pressing.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> The extension stand pairs perfectly with a Stream Deck XL on a flat surface beside it — giving you an elevated + for dials/touch and a flat XL for buttons.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> If using a 3D-printed mount for your XL, consider designing a matching riser for the + extension stand to keep both devices at the same height.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

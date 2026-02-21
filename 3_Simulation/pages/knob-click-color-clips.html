@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knob Click &amp; Color the Clips - Stream Deck Plus - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 720px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 16/9; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .warning-box { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .warning-box strong { color: #FF9800; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        .color-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+        .color-chip { width: 60px; height: 60px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.3); transition: transform 0.2s; cursor: default; }
+        .color-chip:hover { transform: scale(1.15); }
+        .knob-diagram { display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap; }
+        .knob { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #444, #222); border: 3px solid #666; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8em; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.1); transition: all 0.3s; cursor: default; }
+        .knob:hover { border-color: #ffd700; box-shadow: 0 5px 25px rgba(255,215,0,0.3), inset 0 2px 5px rgba(255,255,255,0.1); }
+        .knob .action { font-weight: bold; color: #ffd700; font-size: 1.1em; }
+        .knob .detail { color: #a8d0ff; font-size: 0.85em; margin-top: 4px; }
+        .highlight-box { background: rgba(255, 215, 0, 0.15); border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center; }
+        .highlight-box h3 { color: #ffd700; margin-bottom: 10px; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .knob-diagram { gap: 15px; }
+            .knob { width: 75px; height: 75px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🎛️ Knob Click & Color the Clips</h1>
+            <p class="subtitle">Use Stream Deck + rotary knob clicks to color-code timeline clips in DaVinci Resolve</p>
+            <p style="color: #ddd; margin-top: 10px;">A powerful workflow combining the tactile knob-click action with DaVinci Resolve's clip coloring system — organize your timeline visually with a single press.</p>
+        </div>
+
+        <!-- Video -->
+        <div class="section">
+            <h2>🎬 Video Walkthrough</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">Watch the knob click and clip coloring workflow in DaVinci Resolve:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/wpeqkG89nqM?start=339"
+                    title="Stream Deck Plus Knob Click - Color the Clips"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://youtu.be/wpeqkG89nqM?t=339" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- Knob Actions Explained -->
+        <div class="section">
+            <h2>🎛️ Understanding Knob Actions</h2>
+            <p style="color: #ddd; margin-bottom: 20px;">Each Stream Deck + rotary knob supports three distinct actions — <strong style="color: #ffd700;">rotate</strong>, <strong style="color: #ffd700;">click (press)</strong>, and <strong style="color: #ffd700;">long press</strong>. This guide focuses on the <em>click</em> action to trigger clip color assignments.</p>
+
+            <div class="knob-diagram">
+                <div class="knob">
+                    <span class="action">🔄 Rotate</span>
+                    <span class="detail">Scroll / Adjust</span>
+                </div>
+                <div class="knob" style="border-color: #ffd700;">
+                    <span class="action">👆 Click</span>
+                    <span class="detail">Color Clip</span>
+                </div>
+                <div class="knob">
+                    <span class="action">⏱️ Hold</span>
+                    <span class="detail">Reset / Clear</span>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <div class="label">Rotate</div>
+                    <div class="desc">Scroll through the timeline, adjust volume, or scrub playhead position</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👆</div>
+                    <div class="label">Click (Press)</div>
+                    <div class="desc">Apply a DaVinci Resolve clip color to the selected clip on the timeline</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⏱️</div>
+                    <div class="label">Long Press</div>
+                    <div class="desc">Clear the clip color or toggle between color states</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Palette -->
+        <div class="section">
+            <h2>🎨 DaVinci Resolve Clip Colors</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">DaVinci Resolve offers 16 clip colors. Assign each knob click to a specific color to tag clips by category during editing:</p>
+
+            <div class="color-strip">
+                <div class="color-chip" style="background: #ff4444;">Red</div>
+                <div class="color-chip" style="background: #ff8800;">Orange</div>
+                <div class="color-chip" style="background: #ffcc00; color: #333;">Yellow</div>
+                <div class="color-chip" style="background: #44bb44;">Green</div>
+                <div class="color-chip" style="background: #00bbcc;">Teal</div>
+                <div class="color-chip" style="background: #4488ff;">Blue</div>
+                <div class="color-chip" style="background: #8844ff;">Purple</div>
+                <div class="color-chip" style="background: #ff44aa;">Pink</div>
+                <div class="color-chip" style="background: #aa6633;">Brown</div>
+                <div class="color-chip" style="background: #88cc44;">Lime</div>
+                <div class="color-chip" style="background: #44ddff;">Cyan</div>
+                <div class="color-chip" style="background: #cc44ff;">Violet</div>
+            </div>
+
+            <h3>Suggested Color Meanings</h3>
+            <div class="feature-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+                <div class="feature-card" style="border-left: 4px solid #ff4444;">
+                    <div class="label" style="color: #ff4444;">🔴 Red</div>
+                    <div class="desc">Needs re-shoot or major fix</div>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #ff8800;">
+                    <div class="label" style="color: #ff8800;">🟠 Orange</div>
+                    <div class="desc">B-roll / supplementary</div>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #ffcc00;">
+                    <div class="label" style="color: #ffcc00;">🟡 Yellow</div>
+                    <div class="desc">Needs review / attention</div>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #44bb44;">
+                    <div class="label" style="color: #44bb44;">🟢 Green</div>
+                    <div class="desc">Approved / final take</div>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #4488ff;">
+                    <div class="label" style="color: #4488ff;">🔵 Blue</div>
+                    <div class="desc">Music / audio clip</div>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #8844ff;">
+                    <div class="label" style="color: #8844ff;">🟣 Purple</div>
+                    <div class="desc">Graphics / titles overlay</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="section">
+            <h2>📋 Prerequisites</h2>
+            <ul class="prereq-list">
+                <li>Stream Deck + (required — the rotary knobs are exclusive to this model)</li>
+                <li>Stream Deck software v6.0 or later</li>
+                <li>DaVinci Resolve 18+ (Free or Studio edition)</li>
+                <li>DaVinci Resolve Stream Deck plugin (from the Elgato Store or Marketplace)</li>
+                <li>A project with clips on the timeline to color</li>
+            </ul>
+        </div>
+
+        <!-- Steps -->
+        <div class="section">
+            <h2>🛠️ Steps to Set Up</h2>
+
+            <h3>Phase 1: Install the DaVinci Resolve Plugin</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Open Stream Deck Store</strong><br>
+                        In the Stream Deck software, click <code>More Actions...</code> or the Store icon. Search for <code>DaVinci Resolve</code>.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Install the Plugin</strong><br>
+                        Install the official DaVinci Resolve plugin. It adds Resolve-specific actions including clip color, timeline navigation, and page switching.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Restart Stream Deck Software</strong><br>
+                        After installation, restart the Stream Deck software to ensure the plugin loads correctly.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 2: Configure Knob Click for Clip Colors</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Select a Dial Slot</strong><br>
+                        In the Stream Deck software, click on one of the 4 dial/knob slots at the bottom of the Stream Deck + layout.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Assign the Click Action</strong><br>
+                        Under the <strong>"Press"</strong> (click) action for the dial, drag a <code>Hotkey</code> action or the DaVinci Resolve <code>Clip Color</code> action. Configure it to send the keyboard shortcut that sets the desired clip color in Resolve.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Set the DaVinci Resolve Hotkey</strong><br>
+                        In DaVinci Resolve, go to <code>DaVinci Resolve → Keyboard Customization</code>. Search for "Clip Color" and assign a unique hotkey to each color (e.g., <code>Ctrl+Shift+1</code> for Red, <code>Ctrl+Shift+2</code> for Orange, etc.).
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <div class="step-content">
+                        <strong>Map Hotkey to Knob Click</strong><br>
+                        Back in Stream Deck, set the knob click to send the matching hotkey. For example: Knob 1 click → <code>Ctrl+Shift+1</code> → Red clip color.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 3: Set Up All Four Knobs</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">8</span>
+                    <div class="step-content">
+                        <strong>Assign Colors to Each Knob</strong><br>
+                        Configure all 4 knobs with your most-used clip colors:<br>
+                        • Knob 1 Click → 🔴 Red (needs fix)<br>
+                        • Knob 2 Click → 🟢 Green (approved)<br>
+                        • Knob 3 Click → 🔵 Blue (audio/music)<br>
+                        • Knob 4 Click → 🟡 Yellow (review needed)
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">9</span>
+                    <div class="step-content">
+                        <strong>Configure Rotate Actions</strong><br>
+                        Optionally, set the rotate action for each knob to something complementary — e.g., timeline scrub, volume adjust, or zoom.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">10</span>
+                    <div class="step-content">
+                        <strong>Set Touch Strip Labels</strong><br>
+                        Customize the touch strip display between the dials to show which color each knob is mapped to — the LCD strip shows the current assignment visually.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">11</span>
+                    <div class="step-content">
+                        <strong>Test in DaVinci Resolve</strong><br>
+                        Open a project, select a clip on the timeline, and click each knob. The selected clip should change to the assigned color instantly.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Workflow -->
+        <div class="highlight-box">
+            <h3>🎬 Editing Workflow</h3>
+            <p style="color: #ddd;">Select a clip → Click the knob → Clip is colored instantly. No right-click menus, no keyboard combos — just a satisfying physical click. Use <strong>Rotate</strong> to scrub to the next clip, then <strong>Click</strong> again to color it. You'll fly through timeline organization.</p>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Use the <strong>long press</strong> action on each knob to clear/reset the clip color back to default — perfect for when you change your mind.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Create a second Stream Deck page with knobs mapped to the remaining clip colors (Teal, Purple, Pink, Brown) for access to the full palette.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Pair this with the LCD buttons above the knobs — assign each button to select specific tracks or switch between Edit/Color/Fairlight pages in Resolve.
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Note:</strong> DaVinci Resolve keyboard shortcuts must be configured <em>first</em> inside Resolve before the Stream Deck knob clicks will work. The default Resolve layout may not have clip color hotkeys assigned.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

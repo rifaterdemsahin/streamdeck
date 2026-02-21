@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Edit Points - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+
+        .content-area { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 40px; margin-bottom: 20px; }
+
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 2em; margin: 30px 0 15px 0; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.5em; margin: 25px 0 15px 0; color: #a8d0ff; }
+
+        p { margin-bottom: 15px; font-size: 1.1em; }
+
+        .video-container { position: relative; width: 100%; max-width: 900px; margin: 30px auto; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .info-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .info-box h3 { margin-top: 0; color: #2196F3; }
+
+        .tip-box { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tip-box h3 { margin-top: 0; color: #4CAF50; }
+
+        .warning-box { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box h3 { margin-top: 0; color: #FF9800; }
+
+        .definition { background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        .definition strong { color: #ffd700; font-size: 1.2em; }
+
+        ul, ol { margin: 15px 0 15px 30px; }
+        li { margin-bottom: 10px; font-size: 1.05em; }
+
+        .example-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .example-card { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.3); }
+        .example-card h4 { color: #ffd700; margin-bottom: 10px; }
+
+        .streamdeck-section { background: rgba(138, 43, 226, 0.2); border: 2px solid #8A2BE2; padding: 25px; margin: 30px 0; border-radius: 10px; }
+        .streamdeck-section h3 { color: #BB86FC; }
+
+        .external-link { display: inline-block; margin: 10px 0; padding: 10px 20px; background: rgba(33, 150, 243, 0.3); border: 2px solid #2196F3; border-radius: 5px; color: #fff; text-decoration: none; transition: all 0.3s; }
+        .external-link:hover { background: rgba(33, 150, 243, 0.5); transform: translateY(-2px); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            .content-area { padding: 20px; }
+            .example-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html">⬅ Back to Index</a>
+            <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+            <a href="davinci-profile.html">🎬 DaVinci Profile</a>
+        </div>
+
+        <div class="content-area">
+            <h1>✂️ Understanding Edit Points in Video Editing</h1>
+            <p style="font-size: 1.2em; color: #a8d0ff;">Master the fundamental concept of edit points and how to automate them with Stream Deck</p>
+
+            <div class="definition">
+                <strong>What is an Edit Point?</strong>
+                <p>An <strong>edit point</strong> is the precise moment in your timeline where you want to make a cut, insert footage, or perform an editing operation. It's the foundation of all video editing workflows and determines where clips are split, trimmed, or joined together.</p>
+            </div>
+
+            <h2>📺 Video Tutorial</h2>
+            <p>Watch this excellent explanation of edit points and how to work with them in DaVinci Resolve:</p>
+
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/wpeqkG89nqM?start=617"
+                    title="Understanding Edit Points in DaVinci Resolve"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <a href="https://youtu.be/wpeqkG89nqM?t=617" class="external-link" target="_blank">
+                🔗 Open Video in New Tab (starts at 10:17)
+            </a>
+
+            <h2>🎯 Types of Edit Points</h2>
+
+            <div class="example-grid">
+                <div class="example-card">
+                    <h4>1. In Point (I)</h4>
+                    <p>The beginning of a clip selection. Marks where you want footage to start playing or where you want to begin an edit.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>2. Out Point (O)</h4>
+                    <p>The ending of a clip selection. Marks where you want footage to stop playing or where you want to end an edit.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>3. Playhead Position</h4>
+                    <p>The current position in your timeline. Used as a reference point for making cuts and inserting clips.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>4. Cut Point</h4>
+                    <p>A position where you split a clip into two separate segments. Creates two edit points at once.</p>
+                </div>
+            </div>
+
+            <h2>⌨️ Common Edit Point Operations</h2>
+
+            <div class="info-box">
+                <h3>Essential Keyboard Shortcuts</h3>
+                <ul>
+                    <li><strong>I</strong> - Set In Point</li>
+                    <li><strong>O</strong> - Set Out Point</li>
+                    <li><strong>X</strong> - Mark Clip (sets both In and Out points)</li>
+                    <li><strong>Ctrl/Cmd + B</strong> - Blade/Cut at playhead (creates edit point)</li>
+                    <li><strong>Q</strong> - Trim to In Point</li>
+                    <li><strong>W</strong> - Trim to Out Point</li>
+                    <li><strong>Up/Down Arrow</strong> - Jump between edit points</li>
+                </ul>
+            </div>
+
+            <h2>🎬 Edit Point Workflows</h2>
+
+            <h3>1. Three-Point Editing</h3>
+            <p>The most common editing technique using edit points:</p>
+            <ol>
+                <li><strong>Mark your source:</strong> Set In and Out points on the clip in your source viewer</li>
+                <li><strong>Mark your timeline:</strong> Position playhead or set In point in timeline</li>
+                <li><strong>Perform edit:</strong> Insert, overwrite, or replace at the edit point</li>
+            </ol>
+
+            <h3>2. Ripple Editing</h3>
+            <p>Edit one side of an edit point while automatically adjusting the timeline to prevent gaps:</p>
+            <ul>
+                <li>Trim from the edit point without leaving black gaps</li>
+                <li>All subsequent clips move to accommodate the change</li>
+                <li>Maintains sync and timeline continuity</li>
+            </ul>
+
+            <h3>3. Roll Editing</h3>
+            <p>Adjust an edit point by simultaneously trimming the end of one clip and the start of the next:</p>
+            <ul>
+                <li>Move the edit point between two clips</li>
+                <li>Maintains total timeline duration</li>
+                <li>Useful for fine-tuning cut timing</li>
+            </ul>
+
+            <div class="tip-box">
+                <h3>💡 Pro Tips for Working with Edit Points</h3>
+                <ul>
+                    <li><strong>Use markers:</strong> Place markers at potential edit points during review</li>
+                    <li><strong>Zoom in:</strong> Get frame-accurate precision when setting edit points</li>
+                    <li><strong>Snap to edit points:</strong> Enable timeline snapping to quickly align to existing edit points</li>
+                    <li><strong>Audio waveforms:</strong> Use audio waveforms to visually identify natural edit points</li>
+                    <li><strong>J-K-L editing:</strong> Combine playback controls with edit points for faster workflow</li>
+                </ul>
+            </div>
+
+            <div class="streamdeck-section">
+                <h3>🎮 Automating Edit Points with Stream Deck</h3>
+
+                <h4>Essential Edit Point Buttons:</h4>
+                <ul>
+                    <li><strong>Mark In/Out:</strong> Single button press to set In or Out points</li>
+                    <li><strong>Mark Clip:</strong> Instantly mark entire clip under playhead</li>
+                    <li><strong>Blade All:</strong> Cut all tracks at playhead position</li>
+                    <li><strong>Jump to Edit:</strong> Navigate to previous/next edit point</li>
+                    <li><strong>Trim Tools:</strong> Quick access to ripple, roll, and slip tools</li>
+                    <li><strong>Clear In/Out:</strong> Remove edit point markers</li>
+                </ul>
+
+                <h4>Advanced Multi-Actions:</h4>
+                <ul>
+                    <li><strong>Smart Edit:</strong> Mark clip → Insert into timeline → Clear markers</li>
+                    <li><strong>Quick Cut:</strong> Blade at playhead → Delete right side → Ripple delete</li>
+                    <li><strong>Precision Trim:</strong> Jump to edit point → Enable trim mode → Nudge 1 frame</li>
+                    <li><strong>Review Loop:</strong> Set In/Out around edit point → Enable loop playback</li>
+                </ul>
+
+                <h4>Stream Deck+ Dial Functions:</h4>
+                <ul>
+                    <li><strong>Jog Dial:</strong> Frame-by-frame navigation to find perfect edit point</li>
+                    <li><strong>Shuttle:</strong> Variable speed playback to review edit points</li>
+                    <li><strong>Trim Offset:</strong> Adjust edit point position in real-time</li>
+                </ul>
+            </div>
+
+            <h2>🔧 Edit Point Best Practices</h2>
+
+            <div class="warning-box">
+                <h3>⚠️ Common Mistakes to Avoid</h3>
+                <ul>
+                    <li><strong>Cutting on movement:</strong> Edit points work best during moments of stillness</li>
+                    <li><strong>Ignoring audio:</strong> Always consider audio when placing edit points</li>
+                    <li><strong>Too many cuts:</strong> Not every moment needs an edit point</li>
+                    <li><strong>Forgetting to clear markers:</strong> Old In/Out points can cause confusion</li>
+                    <li><strong>Not using snapping:</strong> Enable snap for precise edit point alignment</li>
+                </ul>
+            </div>
+
+            <h3>Industry Standards:</h3>
+            <ol>
+                <li><strong>Action on cut:</strong> Place edit points where there's on-screen action or movement</li>
+                <li><strong>Audio bridge:</strong> Let audio carry across edit points for smoother transitions</li>
+                <li><strong>Motivated cuts:</strong> Edit points should have a reason (new angle, emphasis, pacing)</li>
+                <li><strong>L-cuts and J-cuts:</strong> Offset audio and video edit points for natural flow</li>
+                <li><strong>Beat and rhythm:</strong> Place edit points to match music or natural pacing</li>
+            </ol>
+
+            <h2>📊 Edit Point Terminology Reference</h2>
+
+            <div class="example-grid">
+                <div class="example-card">
+                    <h4>Hard Cut</h4>
+                    <p>Direct transition from one clip to another at the edit point with no transition effect.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>Soft Cut</h4>
+                    <p>Edit point with a short dissolve or transition to smooth the change.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>Jump Cut</h4>
+                    <p>Edit point within the same shot that creates a noticeable "jump" in time.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>Match Cut</h4>
+                    <p>Edit point that connects two similar compositions or actions across different shots.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>L-Cut</h4>
+                    <p>Audio from the first clip extends past the video edit point into the next clip.</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>J-Cut</h4>
+                    <p>Audio from the second clip starts before the video edit point.</p>
+                </div>
+            </div>
+
+            <h2>🚀 Next Steps</h2>
+
+            <div class="info-box">
+                <h3>Continue Learning:</h3>
+                <ul>
+                    <li><a href="davinci-profile.html" style="color: #2196F3;">Set up your DaVinci Resolve Stream Deck profile</a></li>
+                    <li><a href="timeline-markers.html" style="color: #2196F3;">Learn about timeline markers and organization</a></li>
+                    <li><a href="hotkey-setup.html" style="color: #2196F3;">Configure hotkeys for edit point operations</a></li>
+                    <li><a href="keyboard-integration.html" style="color: #2196F3;">Integrate with Blackmagic keyboard</a></li>
+                </ul>
+            </div>
+
+            <div class="tip-box">
+                <h3>💡 Practice Exercise</h3>
+                <p><strong>30-Minute Edit Point Challenge:</strong></p>
+                <ol>
+                    <li>Import a 5-minute clip into DaVinci Resolve</li>
+                    <li>Watch through once, placing markers at interesting moments</li>
+                    <li>Create a 1-minute highlight using only 3-point editing</li>
+                    <li>Practice navigating between edit points using keyboard shortcuts</li>
+                    <li>Refine edit points using ripple and roll tools</li>
+                    <li>Export and review your work</li>
+                </ol>
+                <p><em>Goal: Build muscle memory for edit point operations before automating with Stream Deck.</em></p>
+            </div>
+        </div>
+
+        <div class="content-area" style="text-align: center;">
+            <h3>Related Pages</h3>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+                <a href="davinci-profile.html" class="external-link">🎬 DaVinci Profile</a>
+                <a href="timeline-markers.html" class="external-link">📍 Timeline Markers</a>
+                <a href="hotkey-setup.html" class="external-link">⌨️ Hotkey Setup</a>
+                <a href="profile-creator.html" class="external-link">🎨 Profile Creator</a>
+                <a href="../index.html" class="external-link">🏠 Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Video analytics tracking (placeholder)
+        const iframe = document.querySelector('iframe');
+        if (iframe) {
+            console.log('Edit Point tutorial video loaded at timestamp 10:17');
+        }
+    </script>
+</body>
+</html>

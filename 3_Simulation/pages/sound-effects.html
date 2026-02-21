@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Effects - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 400px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 9/16; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        .sound-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 15px; }
+        .sound-btn { background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 12px; padding: 18px 10px; text-align: center; cursor: default; transition: all 0.3s; }
+        .sound-btn:hover { border-color: #ffd700; background: rgba(255, 215, 0, 0.15); transform: scale(1.05); }
+        .sound-btn .emoji { font-size: 2em; display: block; margin-bottom: 6px; }
+        .sound-btn .name { font-size: 0.85em; color: #a8d0ff; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .video-container { max-width: 300px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .sound-board { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🔊 Sound Effects on Stream Deck</h1>
+            <p class="subtitle">Turn your Stream Deck into an instant soundboard for streaming, meetings, and content creation</p>
+            <p style="color: #ddd; margin-top: 10px;">Play sound effects, music stingers, and audio clips with a single button press — perfect for livestreams, podcasts, and video calls.</p>
+        </div>
+
+        <!-- Video Demo -->
+        <div class="section">
+            <h2>🎬 Sound Effects Demo</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">See Stream Deck sound effects in action:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/33YluhbCU_Q?start=12"
+                    title="Stream Deck Sound Effects Demo"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://www.youtube.com/shorts/33YluhbCU_Q?t=12&feature=share" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- Example Soundboard -->
+        <div class="section">
+            <h2>🎛️ Example Soundboard Layout</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">A typical Stream Deck soundboard page with common effects:</p>
+            <div class="sound-board">
+                <div class="sound-btn"><span class="emoji">👏</span><span class="name">Applause</span></div>
+                <div class="sound-btn"><span class="emoji">🥁</span><span class="name">Drum Roll</span></div>
+                <div class="sound-btn"><span class="emoji">📯</span><span class="name">Airhorn</span></div>
+                <div class="sound-btn"><span class="emoji">😂</span><span class="name">Laugh Track</span></div>
+                <div class="sound-btn"><span class="emoji">🔔</span><span class="name">Ding</span></div>
+                <div class="sound-btn"><span class="emoji">💥</span><span class="name">Explosion</span></div>
+                <div class="sound-btn"><span class="emoji">🎵</span><span class="name">Intro Music</span></div>
+                <div class="sound-btn"><span class="emoji">📢</span><span class="name">Alert</span></div>
+                <div class="sound-btn"><span class="emoji">🦗</span><span class="name">Crickets</span></div>
+                <div class="sound-btn"><span class="emoji">🎉</span><span class="name">Celebration</span></div>
+                <div class="sound-btn"><span class="emoji">😱</span><span class="name">Gasp</span></div>
+                <div class="sound-btn"><span class="emoji">🔇</span><span class="name">Mute All</span></div>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="section">
+            <h2>⚡ Use Cases</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎙️</div>
+                    <div class="label">Livestreaming</div>
+                    <div class="desc">React to chat, play stingers, trigger alerts during live broadcasts</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎧</div>
+                    <div class="label">Podcasting</div>
+                    <div class="desc">Play intro/outro music, transition sounds, and segment bumpers</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💻</div>
+                    <div class="label">Video Calls</div>
+                    <div class="desc">Add fun reactions during team meetings — applause, drumroll, crickets</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎬</div>
+                    <div class="label">Content Creation</div>
+                    <div class="desc">Preview sound effects while editing videos in DaVinci Resolve</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎮</div>
+                    <div class="label">Gaming</div>
+                    <div class="desc">Play sound effects in voice chat for comedic reactions</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📊</div>
+                    <div class="label">Presentations</div>
+                    <div class="desc">Enhance presentations with well-timed audio cues</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="section">
+            <h2>📋 Prerequisites</h2>
+            <ul class="prereq-list">
+                <li>Stream Deck hardware (any model)</li>
+                <li>Stream Deck software v6.0 or later</li>
+                <li>Audio files in supported formats: <code>.mp3</code>, <code>.wav</code>, <code>.ogg</code>, <code>.flac</code></li>
+                <li>Audio output device configured (speakers, headphones, or virtual audio cable)</li>
+                <li>Optional: VB-Audio VoiceMeeter or similar for routing sound to specific apps</li>
+            </ul>
+        </div>
+
+        <!-- Steps -->
+        <div class="section">
+            <h2>🛠️ Steps to Set Up</h2>
+
+            <h3>Phase 1: Prepare Audio Files</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Gather Sound Effects</strong><br>
+                        Download royalty-free sound effects from sites like <a href="https://freesound.org" target="_blank" rel="noopener" style="color: #a8d0ff;">Freesound.org</a>, <a href="https://mixkit.co/free-sound-effects/" target="_blank" rel="noopener" style="color: #a8d0ff;">Mixkit</a>, or <a href="https://www.zapsplat.com" target="_blank" rel="noopener" style="color: #a8d0ff;">ZapSplat</a>.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Organize into a Folder</strong><br>
+                        Create a dedicated folder like <code>C:\StreamDeck\SoundEffects\</code> and sort files by category (reactions, music, alerts).
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Normalize Audio Levels</strong><br>
+                        Use Audacity or a similar tool to normalize all clips to the same volume level (-3 dB recommended) so nothing is unexpectedly loud.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 2: Configure Stream Deck</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Open Stream Deck Software</strong><br>
+                        Launch the Elgato Stream Deck application.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Find the Sound Board Action</strong><br>
+                        In the actions panel, expand <code>Stream Deck</code> → look for <strong>"Sound Board"</strong> or <strong>"Play Audio"</strong>. Alternatively, install the <strong>Audio Soundboard</strong> plugin from the Store.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Drag to a Button</strong><br>
+                        Drag the Sound Board action onto an empty button. In the settings panel, click <strong>Browse</strong> and select your audio file.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <div class="step-content">
+                        <strong>Set Audio Output</strong><br>
+                        Choose which audio device plays the sound — your default speakers, a virtual cable (for streaming), or a specific output.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">8</span>
+                    <div class="step-content">
+                        <strong>Customize the Button Icon</strong><br>
+                        Add a recognizable icon or emoji to each button so you can identify sounds at a glance. Use the built-in icon library or upload custom images.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 3: Advanced Setup</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">9</span>
+                    <div class="step-content">
+                        <strong>Create a Dedicated Soundboard Page</strong><br>
+                        Add a new page on your Stream Deck profile dedicated entirely to sound effects. Use a <strong>Page Jump</strong> button to navigate to it quickly.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">10</span>
+                    <div class="step-content">
+                        <strong>Add a Stop All Button</strong><br>
+                        Configure one button to stop all currently playing audio — essential for cutting a sound short if needed.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">11</span>
+                    <div class="step-content">
+                        <strong>Set Up Volume Control (Stream Deck +)</strong><br>
+                        If using a Stream Deck +, assign a rotary dial to control the soundboard volume. Twist to adjust, press to mute.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> For streaming, use a virtual audio cable (VB-Audio, VoiceMeeter) to route sound effects into your broadcast software (OBS, Streamlabs) without playing through your speakers.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Keep clips short (1–5 seconds) for reaction sounds. Longer clips work for intro music and ambient backgrounds.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Color-code your soundboard buttons — green for positive reactions, red for alerts, blue for music, yellow for comedy.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>

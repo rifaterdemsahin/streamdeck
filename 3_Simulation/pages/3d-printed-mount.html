@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Printed Mount for Stream Deck XL - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .video-container { position: relative; width: 100%; max-width: 400px; margin: 25px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 3px solid #ffd700; }
+        .video-container iframe { width: 100%; aspect-ratio: 9/16; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .video-container { max-width: 300px; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🖨️ 3D Printed Mount for Stream Deck XL</h1>
+            <p class="subtitle">A unique desk setup with a custom 3D-printed location for the Stream Deck XL</p>
+            <p style="color: #ddd; margin-top: 10px;">Maximize desk space and ergonomics by integrating your Stream Deck XL into a purpose-built 3D-printed mount or enclosure.</p>
+        </div>
+
+        <!-- Video Demo -->
+        <div class="section">
+            <h2>🎬 Unique Setup Showcase</h2>
+            <p style="margin-bottom: 15px; color: #ddd;">See the custom 3D-printed Stream Deck XL mount in action:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/TACKYO1H-SQ"
+                    title="3D Printed Stream Deck XL Mount"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">
+                <a href="https://www.youtube.com/shorts/TACKYO1H-SQ?feature=share" target="_blank" rel="noopener" style="color: #a8d0ff;">▶ Watch on YouTube</a>
+            </p>
+        </div>
+
+        <!-- Why 3D Print -->
+        <div class="section">
+            <h2>⚡ Why a 3D Printed Mount?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📐</div>
+                    <div class="label">Perfect Fit</div>
+                    <div class="desc">Custom-designed to the exact dimensions of the Stream Deck XL (182 × 112 × 21 mm)</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖥️</div>
+                    <div class="label">Desk Integration</div>
+                    <div class="desc">Flush-mount into your desk surface or attach to monitor arms and shelves</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📏</div>
+                    <div class="label">Ergonomic Angle</div>
+                    <div class="desc">Choose the exact tilt angle (15°–45°) for comfortable button access</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔌</div>
+                    <div class="label">Cable Management</div>
+                    <div class="desc">Built-in cable routing channels to keep USB-C cables hidden and tidy</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <div class="label">Custom Colors</div>
+                    <div class="desc">Print in any filament color to match your desk aesthetic</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔧</div>
+                    <div class="label">Modular Design</div>
+                    <div class="desc">Stackable and modular — add mounts for multiple devices side by side</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="section">
+            <h2>📋 Prerequisites</h2>
+            <ul class="prereq-list">
+                <li>Stream Deck XL (or measurements of your specific model)</li>
+                <li>Access to a 3D printer (FDM recommended — Ender 3, Prusa, Bambu Lab, etc.)</li>
+                <li>PLA or PETG filament (PETG for extra durability)</li>
+                <li>3D modeling software (Fusion 360, TinkerCAD, or download a pre-made STL)</li>
+                <li>Calipers or ruler for precise measurements</li>
+                <li>Sandpaper (220–400 grit) for post-processing</li>
+                <li>USB-C cable long enough for your desk routing</li>
+            </ul>
+        </div>
+
+        <!-- Steps -->
+        <div class="section">
+            <h2>🛠️ Steps to Build</h2>
+
+            <h3>Phase 1: Design or Download</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Measure Your Stream Deck XL</strong><br>
+                        Use calipers to measure the exact dimensions including the rubber feet and USB-C port location. The XL is approximately <code>182 × 112 × 21 mm</code>.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Choose a Design Approach</strong><br>
+                        Option A: Download a pre-made STL from <a href="https://www.thingiverse.com" target="_blank" rel="noopener" style="color: #a8d0ff;">Thingiverse</a> or <a href="https://www.printables.com" target="_blank" rel="noopener" style="color: #a8d0ff;">Printables</a> — search for "Stream Deck XL mount".<br>
+                        Option B: Design your own in Fusion 360 or TinkerCAD for a fully custom fit.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Add Cable Channel</strong><br>
+                        Ensure your design includes a <code>12 mm</code> wide channel at the rear for the USB-C cable to exit cleanly.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 2: Print</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Slice the Model</strong><br>
+                        Import the STL into your slicer (Cura, PrusaSlicer, Bambu Studio). Recommended settings: <code>0.2 mm</code> layer height, <code>20% infill</code>, <code>3 perimeters</code>.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Print the Mount</strong><br>
+                        Print with the flat base down. Use supports if tilt angle exceeds 45°. Typical print time: 4–8 hours depending on size and infill.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Post-Process</strong><br>
+                        Remove supports, sand rough edges with 220-grit sandpaper, then smooth with 400-grit. Optionally, apply a coat of spray paint or clear coat.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 3: Install</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">7</span>
+                    <div class="step-content">
+                        <strong>Test Fit</strong><br>
+                        Place the Stream Deck XL into the mount. It should sit snugly without wobble. Sand tight spots if needed.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">8</span>
+                    <div class="step-content">
+                        <strong>Route the Cable</strong><br>
+                        Connect the USB-C cable and route it through the cable channel. Secure with adhesive cable clips if needed.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">9</span>
+                    <div class="step-content">
+                        <strong>Position on Desk</strong><br>
+                        Place the mounted Stream Deck at a comfortable reach distance. Add anti-slip pads to the bottom of the mount to prevent sliding.
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Print a test piece of just the cradle area first to verify fit before committing to a full 6-hour print.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Use PETG filament if the mount will be near a window or heat source — PLA can warp above 50°C.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Design a dual mount to hold two Stream Deck XLs side by side for the ultimate command center setup.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+</body>
+</html>
