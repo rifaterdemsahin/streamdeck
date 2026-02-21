@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cut Page &amp; SlideFX Extension - Stream Deck Plus - Stream Deck Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .nav-bar { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .nav-bar a { color: #fff; text-decoration: none; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 215, 0, 0.3); }
+        .nav-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 40px; margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 15px; color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        h2 { font-size: 1.5em; margin-bottom: 15px; color: #ffd700; border-bottom: 2px solid #ffd700; padding-bottom: 8px; }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #a8d0ff; }
+        .subtitle { font-size: 1.2em; color: #a8d0ff; margin-bottom: 10px; }
+        .section { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 25px; }
+        .image-preview { margin: 25px auto; border: 3px solid #ffd700; border-radius: 12px; overflow: hidden; max-width: 800px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+        .image-preview img { width: 100%; height: auto; display: block; }
+        .prereq-list, .step-list { list-style: none; padding: 0; }
+        .prereq-list li, .step-list li { padding: 12px 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.08); border-radius: 8px; border-left: 4px solid #ffd700; display: flex; align-items: flex-start; gap: 12px; }
+        .prereq-list li::before { content: '✅'; flex-shrink: 0; font-size: 1.1em; }
+        .step-list li { border-left-color: #2196F3; }
+        .step-number { background: #2196F3; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9em; }
+        .step-content { flex: 1; }
+        .step-content strong { color: #ffd700; }
+        .step-content code { background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #7eaadc; }
+        .tip-box { background: rgba(33, 150, 243, 0.2); border-left: 4px solid #2196F3; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .tip-box strong { color: #2196F3; }
+        .warning-box { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #FF9800; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .warning-box strong { color: #FF9800; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .feature-card { background: rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px; text-align: center; border: 2px solid transparent; transition: all 0.3s; }
+        .feature-card:hover { border-color: #ffd700; transform: translateY(-3px); }
+        .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .feature-card .label { font-weight: bold; color: #ffd700; margin-bottom: 5px; }
+        .feature-card .desc { font-size: 0.9em; color: #a8d0ff; }
+        .layout-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 600px; margin: 20px auto; }
+        .layout-btn { background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 15px 8px; text-align: center; font-size: 0.85em; transition: all 0.3s; }
+        .layout-btn:hover { border-color: #ffd700; }
+        .layout-btn .btn-icon { font-size: 1.6em; display: block; margin-bottom: 5px; }
+        .layout-btn .btn-label { color: #a8d0ff; font-size: 0.8em; }
+        .layout-row-top { grid-column: span 4; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .layout-row-bottom { grid-column: span 4; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .dial-area { grid-column: span 4; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.3); }
+        .dial-btn { background: linear-gradient(135deg, rgba(128, 0, 255, 0.3), rgba(128, 0, 255, 0.15)); border: 2px solid rgba(128, 0, 255, 0.5); border-radius: 50%; width: 70px; height: 70px; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 1.5em; }
+        .dial-label { text-align: center; margin-top: 6px; font-size: 0.75em; color: #a8d0ff; }
+        .highlight-box { background: rgba(255, 215, 0, 0.15); border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center; }
+        .highlight-box h3 { color: #ffd700; margin-bottom: 10px; }
+        .lcd-strip { background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px; grid-column: span 4; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; text-align: center; font-size: 0.75em; color: #a8d0ff; }
+        .lcd-strip span { background: rgba(255, 255, 255, 0.05); padding: 6px 4px; border-radius: 4px; }
+        footer { text-align: center; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-top: 30px; color: #a8d0ff; font-size: 0.9em; }
+        footer a { color: #ffd700; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .layout-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-group">
+                <a href="../index.html">⬅ Back to Index</a>
+                <a href="../../index.html">🏠 Home</a>
+            </div>
+            <div class="nav-group">
+                <a href="../../markdown_renderer.html#claude.md">📚 Documentation</a>
+                <a href="../../search.html">🔍 Search</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>🎬 Cut Page & SlideFX Extension</h1>
+            <p class="subtitle">DaVinci Resolve's Cut Page mapped to your Stream Deck + with the SlideFX plugin</p>
+            <p style="color: #ddd; margin-top: 10px;">The screenshot shows a complete DaVinci Editing profile on Stream Deck + — 8 LCD buttons, 4 touch-strip segments, and 4 rotary knobs with the SlideFX extension for fast editing workflows.</p>
+        </div>
+
+        <!-- Screenshot Reference -->
+        <div class="section">
+            <h2>📸 Layout Overview</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">This is the <strong style="color: #ffd700;">Davinci Editing SD+ Mac</strong> profile — a purpose-built Stream Deck + layout for the DaVinci Resolve Cut & Edit pages:</p>
+
+            <!-- Visual reconstruction of the screenshot -->
+            <div class="layout-grid">
+                <!-- Row 1: Top 4 buttons -->
+                <div class="layout-btn" style="border-color: rgba(0, 150, 255, 0.5);">
+                    <span class="btn-icon">⬅</span>
+                    <span class="btn-label">Main</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">📥</span>
+                    <span class="btn-label">Insert</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">📤</span>
+                    <span class="btn-label">Overwrite</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">↔</span>
+                    <span class="btn-label">Fit To Fill</span>
+                </div>
+
+                <!-- Row 2: Bottom 4 buttons -->
+                <div class="layout-btn">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-label">Ripple Overwrite</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">✂️</span>
+                    <span class="btn-label">Ripple Cut</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">❌</span>
+                    <span class="btn-label">Ripple Delete</span>
+                </div>
+                <div class="layout-btn">
+                    <span class="btn-icon">📎</span>
+                    <span class="btn-label">Append At End</span>
+                </div>
+
+                <!-- Touch strip -->
+                <div class="lcd-strip">
+                    <span>🎛️ JKL</span>
+                    <span>🖼️ Select Clip</span>
+                    <span>🔷 →◆</span>
+                    <span>☰ Timeline</span>
+                </div>
+
+                <!-- Dials -->
+                <div class="dial-area">
+                    <div>
+                        <div class="dial-btn">🤖</div>
+                        <div class="dial-label">Knob 1</div>
+                    </div>
+                    <div>
+                        <div class="dial-btn">🤖</div>
+                        <div class="dial-label">Knob 2</div>
+                    </div>
+                    <div>
+                        <div class="dial-btn">🤖</div>
+                        <div class="dial-label">Knob 3</div>
+                    </div>
+                    <div>
+                        <div class="dial-btn">🤖</div>
+                        <div class="dial-label">Knob 4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What's on this page -->
+        <div class="section">
+            <h2>🔍 What's on This Page</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">The "Davinci Editing SD+ Mac" profile packs three distinct zones into the Stream Deck +, each optimized for Cut/Edit page workflows:</p>
+
+            <h3>🔲 Top Row — Source Operations (4 buttons)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⬅</div>
+                    <div class="label">Main (Back)</div>
+                    <div class="desc">Returns to the main Stream Deck profile — your home page across all profiles</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📥</div>
+                    <div class="label">Insert</div>
+                    <div class="desc">Inserts source clip at playhead, pushing existing clips right on the timeline</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📤</div>
+                    <div class="label">Overwrite</div>
+                    <div class="desc">Overwrites timeline content with source clip at the current playhead position</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">↔</div>
+                    <div class="label">Fit To Fill</div>
+                    <div class="desc">Speed-ramps the source clip to fit exactly within in/out marks on the timeline</div>
+                </div>
+            </div>
+
+            <h3>🔲 Bottom Row — Ripple Editing (4 buttons)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <div class="label">Ripple Overwrite</div>
+                    <div class="desc">Replaces a timeline clip and automatically closes the gap if durations differ</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">✂️</div>
+                    <div class="label">Ripple Cut</div>
+                    <div class="desc">Cuts the clip at playhead and removes the left portion, closing the gap</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">❌</div>
+                    <div class="label">Ripple Delete</div>
+                    <div class="desc">Deletes the selected clip and ripples all subsequent clips to fill the space</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📎</div>
+                    <div class="label">Append At End</div>
+                    <div class="desc">Adds the source clip to the very end of the timeline — great for assembly edits</div>
+                </div>
+            </div>
+
+            <h3>📺 Touch Strip — Navigation Controls (4 segments)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎛️</div>
+                    <div class="label">JKL Shuttle</div>
+                    <div class="desc">Tap to engage JKL shuttle control for variable-speed playback forward and reverse</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🖼️</div>
+                    <div class="label">Select Clip</div>
+                    <div class="desc">Selects the clip under the playhead — essential before applying any edit operation</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔷</div>
+                    <div class="label">Go To Marker</div>
+                    <div class="desc">Jumps to the next or previous marker on the timeline for quick navigation</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">☰</div>
+                    <div class="label">Timeline View</div>
+                    <div class="desc">Toggles timeline display options like track height and zoom level</div>
+                </div>
+            </div>
+
+            <h3>🎛️ Rotary Knobs — SlideFX Plugin (4 dials)</h3>
+            <p style="color: #ddd; margin-bottom: 10px;">The purple 🤖 robot icons indicate the <strong style="color: #ffd700;">SlideFX extension</strong> is assigned to all four knobs. SlideFX adds AI-powered slide transition controls directly to the dials.</p>
+        </div>
+
+        <!-- Why it matters -->
+        <div class="section">
+            <h2>⭐ Why This Matters for Stream Deck +</h2>
+
+            <div class="highlight-box">
+                <h3>The Stream Deck + Advantage</h3>
+                <p style="color: #ddd;">Unlike the standard Stream Deck (buttons only), the Stream Deck + adds <strong style="color: #ffd700;">rotary knobs</strong> and a <strong style="color: #ffd700;">touch strip</strong> — making it the only Stream Deck that can handle all three interaction types DaVinci Resolve needs: press, turn, and swipe.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <div class="label">Faster Edits</div>
+                    <div class="desc">One-tap insert, overwrite, and ripple operations replace multi-click menu navigation</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🧠</div>
+                    <div class="label">Muscle Memory</div>
+                    <div class="desc">Fixed physical button positions build editing speed through repetition — no searching for shortcuts</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎛️</div>
+                    <div class="label">Analog + Digital</div>
+                    <div class="desc">Knobs provide continuous analog control (scrub, volume) while buttons handle discrete actions (cut, delete)</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤖</div>
+                    <div class="label">SlideFX AI</div>
+                    <div class="desc">The SlideFX plugin on all 4 knobs adds intelligent transition control — rotate to preview, click to apply</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📺</div>
+                    <div class="label">Visual Feedback</div>
+                    <div class="desc">LCD buttons and touch strip show current state, active tools, and clip info in real time</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📄</div>
+                    <div class="label">Profile Switching</div>
+                    <div class="desc">The "Main" back button lets you jump between Cut, Color, Fairlight, and Deliver profiles instantly</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SlideFX Deep Dive -->
+        <div class="section">
+            <h2>🤖 SlideFX Extension — What It Does</h2>
+            <p style="color: #ddd; margin-bottom: 15px;">The SlideFX plugin (shown as purple robot icons on all 4 knobs) extends DaVinci Resolve editing with AI-assisted slide transitions:</p>
+
+            <ul class="prereq-list">
+                <li>Rotate any knob to scrub through transition styles in real time</li>
+                <li>Click a knob to apply the selected transition to the clip under the playhead</li>
+                <li>Each knob can be configured for a different transition category (dissolve, wipe, push, slide)</li>
+                <li>The LCD touch strip updates to show the active transition name and duration</li>
+                <li>Works with both the Cut page and Edit page in DaVinci Resolve</li>
+            </ul>
+
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Map each knob to a different transition family — Knob 1: Dissolves, Knob 2: Wipes, Knob 3: Pushes, Knob 4: Custom slides. Rotate to browse, click to apply.
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="section">
+            <h2>📋 Prerequisites</h2>
+            <ul class="prereq-list">
+                <li>Stream Deck + (required for knobs and touch strip)</li>
+                <li>Stream Deck software v6.0 or later</li>
+                <li>DaVinci Resolve 18+ (Free or Studio)</li>
+                <li>DaVinci Resolve Stream Deck plugin (Elgato Marketplace)</li>
+                <li>SlideFX plugin (optional — for the rotary knob transitions)</li>
+                <li>macOS or Windows</li>
+            </ul>
+        </div>
+
+        <!-- Setup Steps -->
+        <div class="section">
+            <h2>🛠️ How to Recreate This Layout</h2>
+
+            <h3>Phase 1: Create the Profile</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Create a New Profile</strong><br>
+                        In Stream Deck, click the dropdown at top → <code>New Profile</code>. Name it <code>Davinci Editing SD+ Mac</code>. Set it to activate when DaVinci Resolve launches.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Set Up the Main (Back) Button</strong><br>
+                        Drag a <code>Switch Profile</code> action to the top-left button. Point it to your main/home profile. Set icon to a blue arrow.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 2: Map the Edit Actions</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Assign Source Operations (Top Row)</strong><br>
+                        Drag DaVinci Resolve plugin actions for <code>Insert</code>, <code>Overwrite</code>, and <code>Fit to Fill</code> to buttons 2–4 in the top row.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Assign Ripple Actions (Bottom Row)</strong><br>
+                        Drag <code>Ripple Overwrite</code>, <code>Ripple Cut</code>, <code>Ripple Delete</code>, and <code>Append at End</code> to the bottom 4 buttons.
+                    </div>
+                </li>
+            </ol>
+
+            <h3>Phase 3: Configure Touch Strip & Knobs</h3>
+            <ol class="step-list">
+                <li>
+                    <span class="step-number">5</span>
+                    <div class="step-content">
+                        <strong>Set Touch Strip Segments</strong><br>
+                        Click each of the 4 touch strip areas. Assign: JKL shuttle, Select Clip, Go to Marker, and Timeline View respectively.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <div class="step-content">
+                        <strong>Install SlideFX Plugin</strong><br>
+                        Go to the Elgato Marketplace in Stream Deck → search <code>SlideFX</code> → Install. Restart Stream Deck software.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <div class="step-content">
+                        <strong>Assign SlideFX to All 4 Knobs</strong><br>
+                        Drag the SlideFX action to each of the 4 dial slots. Configure each knob's category (dissolve, wipe, push, slide).
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Pro Tips</h2>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> The Cut page in DaVinci Resolve is designed for speed. Combine it with this Stream Deck + profile and you can assemble a rough cut without ever touching the keyboard.
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Use <strong>Ripple Delete</strong> as your most-used button during first-pass editing — it removes unwanted clips and closes gaps in one action.
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ Note:</strong> The SlideFX plugin icons appear as purple robots (🤖). If they show as generic icons, restart the Stream Deck software or reinstall the plugin.
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="../index.html">Simulations</a> · <a href="../../index.html">Home</a> · <a href="../../search.html">Search</a> · <a href="https://github.com/rifaterdemsahin/streamdeck" target="_blank" rel="noopener">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 Rifat Erdem Sahin · MIT License</p>
+        </footer>
+    </div>
+    <script src="learner-checklist.js"></script>
+</body>
+</html>
