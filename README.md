@@ -2,11 +2,42 @@
 
 Comprehensive automation system for Stream Deck devices focused on MLOps/DevOps workflows and video editing tasks.
 
-## 🚀 Quick Links
+## 🚀 Quick Navigation
 
-- **Visual Simulations:** [3_Simulation/index.html](3_Simulation/index.html) - Interactive implementation guides
-- **Main Documentation:** [claude.md](claude.md) - Complete project documentation
-- **Project Website:** <https://rifaterdemsahin.github.io/streamdeck/>
+| Category | Link | Description |
+|----------|------|-------------|
+| 🎮 **Visual Guides** | [Open Simulations](3_Simulation/index.html) | Interactive implementation guides with checklists |
+| 📚 **Documentation** | [Main Docs](claude.md) | Complete project documentation |
+| 🌐 **Website** | [GitHub Pages](https://rifaterdemsahin.github.io/streamdeck/) | Live project website |
+| 🎯 **Objectives** | [OKRs](1_Real_Unknown/objectives.md) | Project goals and key results |
+| 🗺️ **Roadmap** | [Development Plan](2_Environment/roadmap.md) | 7-phase implementation roadmap |
+| ⚙️ **Setup** | [Installation Guide](4_Formula/setup-guide.md) | Get started in 15 minutes |
+| 💾 **Backup** | [Disaster Recovery](backups/README.md) | Backup and restore system |
+| ✅ **Testing** | [Test Plan](7_Testing_known/test-plan.md) | Validation and testing strategy |
+| 🔍 **Help** | [Troubleshooting](6_Semblance/error-catalog.md) | Common errors and solutions |
+
+## ⚡ Fast Jumps
+
+**By Task:**
+
+- [🎨 Button Design](3_Simulation/pages/colored-buttons.html) | [🎬 DaVinci Setup](3_Simulation/pages/davinci-profile.html) | [📋 Profile Config](3_Simulation/pages/profile-setup.html)
+
+**By Folder:**
+
+- [1️⃣ Real](1_Real_Unknown/objectives.md) | [2️⃣ Environment](2_Environment/roadmap.md) | [3️⃣ Simulation](3_Simulation/index.html) | [4️⃣ Formula](4_Formula/setup-guide.md) | [5️⃣ Symbols](5_Symbols/scripts/) | [6️⃣ Semblance](6_Semblance/error-catalog.md) | [7️⃣ Testing](7_Testing_known/test-plan.md)
+
+**Quick Actions:**
+
+```powershell
+# Backup configurations
+python 5_Symbols\scripts\backup_streamdeck.py
+
+# Restore from backup
+python 5_Symbols\scripts\restore_streamdeck.py
+
+# Check Docker status
+python 5_Symbols\scripts\docker_status.py
+```
 
 ## 📚 Project Structure (7-Folder Methodology)
 
