@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Trim Mode & Mouse Locations - Stream Deck Automation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e0e7ff;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .content-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #a8d0ff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #e0e7ff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 140, 0, 0.2) 100%);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .mouse-diagram {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .timeline-visual {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%);
+            height: 80px;
+            border-radius: 10px;
+            position: relative;
+            margin: 20px 0;
+            border: 2px solid #a8d0ff;
+        }
+
+        .trim-zone {
+            position: absolute;
+            height: 100%;
+            background: rgba(255, 215, 0, 0.3);
+            border: 2px solid #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .trim-zone.left {
+            left: 0;
+            width: 25%;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .trim-zone.center {
+            left: 25%;
+            width: 50%;
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+
+        .trim-zone.right {
+            right: 0;
+            width: 25%;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .comparison-card.standard {
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+
+        .comparison-card.dynamic {
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #a8d0ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .shortcut-table th {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .shortcut-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcut-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .streamdeck-layout {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        .sd-button {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 0.9em;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sd-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .sd-button-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 2px solid #ffd700;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .streamdeck-layout { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✂️ Dynamic Trim Mode & Mouse Locations</h1>
+            <p class="subtitle">Master precise trimming with context-aware mouse positioning</p>
+            <span class="badge">DaVinci Resolve</span>
+            <span class="badge">Edit Page</span>
+        </header>
+
+        <!-- Video Tutorial Section -->
+        <div class="content-section">
+            <h2>📹 Video Tutorial</h2>
+            <p>Watch this essential guide on Dynamic Trim Mode and how mouse location affects your editing workflow:</p>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/53sUnRdwJug?start=43"
+                    title="Dynamic Trim Mode & Mouse Locations"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="margin-top: 15px;">
+                <strong>🔗 Full Video:</strong>
+                <a href="https://youtu.be/53sUnRdwJug?t=43" target="_blank" style="color: #ffd700;">
+                    Watch on YouTube (starts at 0:43)
+                </a>
+            </p>
+        </div>
+
+        <!-- What is Dynamic Trim Mode -->
+        <div class="content-section">
+            <h2>🎯 What is Dynamic Trim Mode?</h2>
+
+            <div class="highlight-box">
+                <h3>⚡ The Game-Changing Editing Feature</h3>
+                <p><strong>Dynamic Trim Mode</strong> is an intelligent editing mode in DaVinci Resolve that automatically determines <em>which edit point to trim</em> based on your <strong>mouse cursor position</strong>.</p>
+                <p style="margin-top: 10px;">Instead of manually selecting which clip edge to trim, you simply position your mouse near the edit point, and Resolve intelligently chooses the appropriate trim action.</p>
+            </div>
+
+            <h3>🔄 How It Works</h3>
+            <p>When Dynamic Trim Mode is active, the timeline is divided into intelligent zones:</p>
+
+            <div class="timeline-visual">
+                <div class="trim-zone left">← Trim Left</div>
+                <div class="trim-zone center">Move/Slip</div>
+                <div class="trim-zone right">Trim Right →</div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📍 Left Zone (Incoming Clip)</h4>
+                    <p><strong>Mouse Position:</strong> Left 1/4 of clip</p>
+                    <p><strong>Action:</strong> Trims the outgoing frame of the previous clip (incoming edit)</p>
+                    <p><strong>Use Case:</strong> Adjust where the previous clip ends</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>📍 Center Zone (Clip Body)</h4>
+                    <p><strong>Mouse Position:</strong> Middle 50% of clip</p>
+                    <p><strong>Action:</strong> Move clip position or slip content</p>
+                    <p><strong>Use Case:</strong> Reposition clip or adjust internal timing</p>
+                </div>
+
+                <div class="feature-card">
+                    <h4>📍 Right Zone (Outgoing Clip)</h4>
+                    <p><strong>Mouse Position:</strong> Right 1/4 of clip</p>
+                    <p><strong>Action:</strong> Trims the incoming frame of the next clip (outgoing edit)</p>
+                    <p><strong>Use Case:</strong> Adjust where the current clip ends</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mouse Location Importance -->
+        <div class="content-section">
+            <h2>🖱️ Why Mouse Location Matters</h2>
+
+            <div class="highlight-box">
+                <h3>💡 The Critical Concept</h3>
+                <p>In Dynamic Trim Mode, <strong>your mouse cursor position determines the trim behavior</strong>—not which clip you have selected!</p>
+                <p style="margin-top: 10px;">This is fundamentally different from traditional editing where you must explicitly select an edit point before trimming.</p>
+            </div>
+
+            <h3>📐 The Three-Zone System</h3>
+
+            <div class="mouse-diagram">
+                <h4 style="color: #ffd700; margin-bottom: 20px;">Mouse Position Zones</h4>
+                <svg width="100%" height="150" viewBox="0 0 600 150">
+                    <!-- Timeline bar -->
+                    <rect x="50" y="50" width="500" height="50" fill="rgba(255,255,255,0.1)" stroke="#a8d0ff" stroke-width="2" rx="5"/>
+
+                    <!-- Left zone -->
+                    <rect x="50" y="50" width="125" height="50" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="112" y="80" fill="#fff" text-anchor="middle" font-size="14">Left Trim</text>
+
+                    <!-- Center zone -->
+                    <rect x="175" y="50" width="250" height="50" fill="rgba(76,175,80,0.3)" stroke="#4CAF50" stroke-width="2"/>
+                    <text x="300" y="80" fill="#fff" text-anchor="middle" font-size="14">Move/Slip</text>
+
+                    <!-- Right zone -->
+                    <rect x="425" y="50" width="125" height="50" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="487" y="80" fill="#fff" text-anchor="middle" font-size="14">Right Trim</text>
+
+                    <!-- Labels -->
+                    <text x="112" y="130" fill="#ffd700" text-anchor="middle" font-size="12">25%</text>
+                    <text x="300" y="130" fill="#4CAF50" text-anchor="middle" font-size="12">50%</text>
+                    <text x="487" y="130" fill="#ffd700" text-anchor="middle" font-size="12">25%</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Comparison: Standard vs Dynamic -->
+        <div class="content-section">
+            <h2>⚖️ Standard Trim vs Dynamic Trim</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-card standard">
+                    <h3 style="color: #F44336;">🔴 Standard Trim Mode</h3>
+                    <ul>
+                        <li><strong>Selection Required:</strong> Must click exact edit point</li>
+                        <li><strong>Manual Mode:</strong> Choose Ripple, Roll, Slip, or Slide</li>
+                        <li><strong>Tool Switching:</strong> Change tools for different operations</li>
+                        <li><strong>Slower Workflow:</strong> More clicks and tool changes</li>
+                        <li><strong>Learning Curve:</strong> Must remember each tool's purpose</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card dynamic">
+                    <h3 style="color: #4CAF50;">🟢 Dynamic Trim Mode</h3>
+                    <ul>
+                        <li><strong>No Selection:</strong> Just hover near edit point</li>
+                        <li><strong>Auto-Detection:</strong> Mode chosen by mouse position</li>
+                        <li><strong>One Tool:</strong> All trim operations in one mode</li>
+                        <li><strong>Faster Workflow:</strong> Immediate trimming action</li>
+                        <li><strong>Intuitive:</strong> Natural mouse movement = action</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enabling Dynamic Trim Mode -->
+        <div class="content-section">
+            <h2>⚙️ Enabling Dynamic Trim Mode</h2>
+
+            <h3>Method 1: Keyboard Shortcut</h3>
+            <div class="workflow-step">
+                <p><strong>Windows:</strong> Press <code>Shift + T</code></p>
+                <p><strong>Mac:</strong> Press <code>Shift + T</code></p>
+                <p style="margin-top: 10px; color: #a8d0ff;">💡 Press again to toggle off</p>
+            </div>
+
+            <h3>Method 2: Toolbar Button</h3>
+            <div class="workflow-step">
+                <ol>
+                    <li>Look for the <strong>Trim Mode</strong> button in the Edit page toolbar</li>
+                    <li>Click to enable Dynamic Trim Mode</li>
+                    <li>Icon will highlight when active</li>
+                    <li>Click again to disable</li>
+                </ol>
+            </div>
+
+            <h3>Method 3: Menu Selection</h3>
+            <div class="workflow-step">
+                <ol>
+                    <li>Navigate to <strong>Trim → Dynamic Trim Mode</strong></li>
+                    <li>Checkmark indicates active status</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Stream Deck Integration -->
+        <div class="content-section">
+            <h2>🎮 Stream Deck Automation</h2>
+
+            <div class="highlight-box">
+                <h3>⚡ One-Button Dynamic Trim Toggle</h3>
+                <p>Configure a Stream Deck button to instantly toggle Dynamic Trim Mode on/off:</p>
+            </div>
+
+            <h3>Recommended Button Layout</h3>
+            <div class="streamdeck-layout">
+                <div class="sd-button">
+                    <div class="sd-button-icon">✂️</div>
+                    Dynamic Trim
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">⬅️</div>
+                    Ripple Left
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">➡️</div>
+                    Ripple Right
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">↔️</div>
+                    Roll Edit
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">🎯</div>
+                    Slip Clip
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">🔄</div>
+                    Slide Clip
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">⌨️</div>
+                    Trim +10
+                </div>
+                <div class="sd-button">
+                    <div class="sd-button-icon">⌨️</div>
+                    Trim -10
+                </div>
+            </div>
+
+            <h3>Setup Instructions</h3>
+            <div class="workflow-step">
+                <h4>Step 1: Create Hotkey Action</h4>
+                <ol>
+                    <li>Open Stream Deck software</li>
+                    <li>Drag "Hotkey" action to desired button</li>
+                    <li>Set hotkey to <code>Shift + T</code></li>
+                    <li>Name button "Dynamic Trim"</li>
+                </ol>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Step 2: Add Visual Feedback (Optional)</h4>
+                <ol>
+                    <li>Use Multi-Action to combine hotkey with visual state</li>
+                    <li>Add icon showing scissors or trim symbol</li>
+                    <li>Configure button to show active/inactive states</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Practical Workflows -->
+        <div class="content-section">
+            <h2>🚀 Practical Workflows</h2>
+
+            <h3>Workflow 1: Quick Interview Tightening</h3>
+            <div class="workflow-step">
+                <ol>
+                    <li><strong>Enable Dynamic Trim</strong> (Shift + T or Stream Deck button)</li>
+                    <li><strong>Hover left side</strong> of clip to trim incoming edit</li>
+                    <li><strong>Drag left</strong> to extend previous clip</li>
+                    <li><strong>Drag right</strong> to shorten previous clip</li>
+                    <li><strong>Move to right side</strong> to trim outgoing edit</li>
+                    <li><strong>Drag to adjust</strong> current clip end point</li>
+                </ol>
+            </div>
+
+            <h3>Workflow 2: Multi-Cam Sync Adjustment</h3>
+            <div class="workflow-step">
+                <ol>
+                    <li><strong>Enable Dynamic Trim Mode</strong></li>
+                    <li><strong>Hover center</strong> of clip to slip content</li>
+                    <li><strong>Drag left/right</strong> to adjust internal timing</li>
+                    <li><strong>Keep duration constant</strong> while adjusting sync</li>
+                </ol>
+            </div>
+
+            <h3>Workflow 3: Music Beat Alignment</h3>
+            <div class="workflow-step">
+                <ol>
+                    <li><strong>Play timeline</strong> to identify beat points</li>
+                    <li><strong>Enable Dynamic Trim</strong></li>
+                    <li><strong>Hover right edge</strong> of clip before beat</li>
+                    <li><strong>Trim precisely</strong> to music beat</li>
+                    <li><strong>Repeat</strong> for next clip's left edge</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="content-section">
+            <h2>⌨️ Essential Keyboard Shortcuts</h2>
+
+            <table class="shortcut-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Windows</th>
+                        <th>Mac</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Toggle Dynamic Trim Mode</td>
+                        <td>Shift + T</td>
+                        <td>Shift + T</td>
+                    </tr>
+                    <tr>
+                        <td>Trim 1 Frame Left</td>
+                        <td>, (comma)</td>
+                        <td>, (comma)</td>
+                    </tr>
+                    <tr>
+                        <td>Trim 1 Frame Right</td>
+                        <td>. (period)</td>
+                        <td>. (period)</td>
+                    </tr>
+                    <tr>
+                        <td>Trim 10 Frames Left</td>
+                        <td>Shift + ,</td>
+                        <td>Shift + ,</td>
+                    </tr>
+                    <tr>
+                        <td>Trim 10 Frames Right</td>
+                        <td>Shift + .</td>
+                        <td>Shift + .</td>
+                    </tr>
+                    <tr>
+                        <td>Smart Insert Mode</td>
+                        <td>Shift + F1</td>
+                        <td>Shift + F1</td>
+                    </tr>
+                    <tr>
+                        <td>Ripple Overwrite</td>
+                        <td>Shift + F2</td>
+                        <td>Shift + F2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="content-section">
+            <h2>💡 Pro Tips</h2>
+
+            <div class="tip-box">
+                <h4>🎯 Master Mouse Precision</h4>
+                <ul>
+                    <li><strong>Zoom in timeline</strong> (Ctrl/Cmd + =) for frame-accurate trimming</li>
+                    <li><strong>Use Caps Lock</strong> to temporarily disable snapping</li>
+                    <li><strong>Watch cursor icon</strong> change to indicate active trim zone</li>
+                    <li><strong>Practice zone boundaries</strong> to develop muscle memory</li>
+                </ul>
+            </div>
+
+            <div class="tip-box">
+                <h4>⚡ Speed Techniques</h4>
+                <ul>
+                    <li><strong>JKL playback</strong> + Dynamic Trim = ultra-fast editing</li>
+                    <li><strong>Leave mode active</strong> for entire editing session</li>
+                    <li><strong>Combine with marking</strong> (I/O keys) for precise work</li>
+                    <li><strong>Use numeric trim</strong> (type numbers) for exact frame counts</li>
+                </ul>
+            </div>
+
+            <div class="tip-box">
+                <h4>🎬 When NOT to Use Dynamic Trim</h4>
+                <ul>
+                    <li><strong>Complex multi-layer edits</strong> - Use traditional tools for precision</li>
+                    <li><strong>Linked audio/video selection issues</strong> - Disable for independent control</li>
+                    <li><strong>VFX-heavy timelines</strong> - Better control with manual trim tools</li>
+                    <li><strong>When teaching others</strong> - Standard mode is clearer for learning</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Common Issues -->
+        <div class="content-section">
+            <h2>⚠️ Troubleshooting Common Issues</h2>
+
+            <div class="workflow-step">
+                <h4>Issue: Trim not working as expected</h4>
+                <p><strong>Solution:</strong></p>
+                <ul>
+                    <li>Check mouse position - you may be in wrong zone</li>
+                    <li>Verify Dynamic Trim Mode is enabled (toolbar icon highlighted)</li>
+                    <li>Ensure clip isn't locked or on locked track</li>
+                    <li>Check for ripple lock conflicts</li>
+                </ul>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Issue: Accidentally moving clips instead of trimming</h4>
+                <p><strong>Solution:</strong></p>
+                <ul>
+                    <li>Mouse is in center zone (50%) - move to edge zones (25%)</li>
+                    <li>Zoom in timeline for more precise zone positioning</li>
+                    <li>Hover near edit point, not clip center</li>
+                </ul>
+            </div>
+
+            <div class="workflow-step">
+                <h4>Issue: Wrong clip edge being trimmed</h4>
+                <p><strong>Solution:</strong></p>
+                <ul>
+                    <li>Watch cursor icon change (incoming vs outgoing arrow)</li>
+                    <li>Move mouse to opposite side of edit point</li>
+                    <li>Remember: Left zone = incoming, Right zone = outgoing</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Related Pages -->
+        <div class="content-section">
+            <h2>🔗 Related Pages</h2>
+            <ul style="font-size: 1.1em;">
+                <li><a href="edit-point.html" style="color: #ffd700;">Understanding Edit Points</a></li>
+                <li><a href="timeline-zoom-navigation.html" style="color: #ffd700;">Timeline Zoom & Navigation</a></li>
+                <li><a href="hotkey-setup.html" style="color: #ffd700;">Hotkey Configuration</a></li>
+                <li><a href="davinci-profile.html" style="color: #ffd700;">DaVinci Resolve Profile Setup</a></li>
+                <li><a href="keyboard-integration.html" style="color: #ffd700;">Keyboard Integration</a></li>
+            </ul>
+        </div>
+
+        <a href="../index.html" class="back-link">← Back to Gallery</a>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

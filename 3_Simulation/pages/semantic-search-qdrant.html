@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Search with Qdrant - Stream Deck Automation</title>
+    <link rel="stylesheet" href="page-template.css">
+    <link rel="stylesheet" href="../../5_Symbols/configs/learning-assessment.css">
+    <script src="../../5_Symbols/scripts/learning-assessment.js"></script>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="../index.html">⬅️ Back to Index</a>
+        <a href="../../CLAUDE.md">📚 Documentation</a>
+        <a href="../../4_Formula/qdrant-semantic-search-guide.md">📖 Full Guide</a>
+        <a href="ai-query.html">⬅️ AI Query</a>
+        <a href="docker-status.html">Docker Status ➡️</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>🔍 Semantic Code Search with Qdrant</h1>
+            <div class="badges">
+                <span class="badge medium">Medium</span>
+                <span class="badge ai">AI/MLOps</span>
+                <span class="badge time">⏱️ 15 min</span>
+            </div>
+            <p class="description">
+                AI-powered semantic search for your codebase using vector embeddings.
+                Find code by meaning, not just keywords. Powered by Qdrant vector database
+                and Ollama's nomic-embed-text model (768 dimensions).
+            </p>
+        </header>
+
+        <section class="prerequisites">
+            <h2>📋 Prerequisites</h2>
+            <div class="prereq-list">
+                <div class="prereq-item">✅ Python 3.8+ with qdrant-client installed</div>
+                <div class="prereq-item">✅ Qdrant running at http://localhost:6333</div>
+                <div class="prereq-item">✅ Ollama installed with nomic-embed-text:v1.5 model</div>
+                <div class="prereq-item">✅ Codebase indexed (run check_and_index.py)</div>
+                <div class="prereq-item">✅ Stream Deck with at least 2 free buttons</div>
+            </div>
+        </section>
+
+        <section class="implementation">
+            <h2>🛠️ Implementation Steps</h2>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Install and Start Services</h3>
+                    <p><strong>Install Qdrant:</strong></p>
+                    <div class="code-block">
+# Using Docker (recommended)
+docker pull qdrant/qdrant
+docker run -p 6333:6333 -v $(pwd)/qdrant_storage:/qdrant/storage qdrant/qdrant
+
+# Or download from https://qdrant.tech/
+                    </div>
+                    <p><strong>Install Ollama and Model:</strong></p>
+                    <div class="code-block">
+# Download Ollama from https://ollama.ai
+# Then pull the embedding model:
+ollama pull nomic-embed-text:v1.5
+
+# Verify it's running
+curl http://localhost:11434/api/tags
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Tip:</strong> Both services must be running for semantic search to work.
+                        Check health with: curl http://localhost:6333 and curl http://localhost:11434
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Index Your Codebase</h3>
+                    <p>Run the indexing script to create vector embeddings of your code:</p>
+                    <div class="code-block">
+# Navigate to your project
+cd /path/to/your/project
+
+# Run the indexer
+python 4_Formula\check_and_index.py
+
+# This will:
+# - Scan all code files (.py, .js, .md, etc.)
+# - Chunk them into 1000-character segments
+# - Generate 768-dimensional embeddings
+# - Store in Qdrant collection 'kilocode_codebase'
+                    </div>
+                    <p><strong>What gets indexed:</strong></p>
+                    <ul>
+                        <li>Source code: Python, JavaScript, TypeScript, Java, C++, etc.</li>
+                        <li>Documentation: Markdown, RST, TXT files</li>
+                        <li>Configuration: JSON, YAML, TOML, INI files</li>
+                        <li>Scripts: Shell, PowerShell, Bash files</li>
+                    </ul>
+                    <div class="warning-box">
+                        <strong>⚠️ Note:</strong> Indexing takes ~2-5 minutes for 100 files.
+                        Large codebases (1000+ files) may take 20-40 minutes on first run.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Configure Stream Deck Button #1: Semantic Search</h3>
+                    <div class="button-config">
+                        <div class="button-visual">
+                            <div class="streamdeck-button purple">
+                                <div class="button-icon">🔍</div>
+                                <div class="button-text">Search<br/>Code</div>
+                            </div>
+                        </div>
+                        <div class="button-settings">
+                            <p><strong>Button Configuration:</strong></p>
+                            <ul>
+                                <li><strong>Action:</strong> System > Open</li>
+                                <li><strong>Application:</strong> python</li>
+                                <li><strong>Arguments:</strong> <code>C:\path\to\streamdeck\5_Symbols\scripts\semantic_search.py</code></li>
+                                <li><strong>Icon:</strong> 🔍 (magnifying glass)</li>
+                                <li><strong>Title:</strong> "Search Code" or "Find"</li>
+                                <li><strong>Color:</strong> Purple (AI/ML category)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 How it works:</strong>
+                        <ol>
+                            <li>Copy your search query to clipboard (e.g., "docker restart container")</li>
+                            <li>Press the button</li>
+                            <li>Script generates embedding for your query</li>
+                            <li>Qdrant finds semantically similar code chunks</li>
+                            <li>Results copied back to clipboard with file paths and scores</li>
+                            <li>Notification shows number of results found</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Configure Stream Deck Button #2: Qdrant Stats</h3>
+                    <div class="button-config">
+                        <div class="button-visual">
+                            <div class="streamdeck-button purple">
+                                <div class="button-icon">📊</div>
+                                <div class="button-text">Qdrant<br/>Stats</div>
+                            </div>
+                        </div>
+                        <div class="button-settings">
+                            <p><strong>Button Configuration:</strong></p>
+                            <ul>
+                                <li><strong>Action:</strong> System > Open</li>
+                                <li><strong>Application:</strong> python</li>
+                                <li><strong>Arguments:</strong> <code>C:\path\to\streamdeck\5_Symbols\scripts\qdrant_stats.py</code></li>
+                                <li><strong>Icon:</strong> 📊 (bar chart)</li>
+                                <li><strong>Title:</strong> "Qdrant Stats" or "Index Info"</li>
+                                <li><strong>Color:</strong> Purple (AI/ML category)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><strong>Statistics Displayed:</strong></p>
+                    <ul>
+                        <li>Total chunks indexed</li>
+                        <li>Total files processed</li>
+                        <li>Language distribution (Python, JS, etc.)</li>
+                        <li>Collection health status</li>
+                        <li>Vector dimensions and distance metric</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Test Semantic Search</h3>
+                    <p><strong>Example searches to try:</strong></p>
+                    <div class="code-block">
+# Basic functionality search
+"How do I check Docker container status?"
+
+# Implementation details
+"Git commit and push workflow"
+
+# Error handling patterns
+"Error logging and notification system"
+
+# Configuration queries
+"AI API key configuration"
+
+# Feature discovery
+"Backup and restore Stream Deck settings"
+
+# Multi-word concepts
+"semantic vector embeddings for code search"
+                    </div>
+                    <p><strong>Expected workflow:</strong></p>
+                    <ol>
+                        <li>Copy one of the queries above (Ctrl+C)</li>
+                        <li>Press "Search Code" button</li>
+                        <li>Wait ~1-2 seconds for processing</li>
+                        <li>See notification: "Found 5 results. Copied to clipboard."</li>
+                        <li>Paste results (Ctrl+V) to see formatted output</li>
+                    </ol>
+                    <div class="tip-box">
+                        <strong>💡 Understanding Scores:</strong>
+                        <ul>
+                            <li><strong>0.8-1.0:</strong> Highly relevant, exact semantic match</li>
+                            <li><strong>0.6-0.8:</strong> Very relevant, strong conceptual match</li>
+                            <li><strong>0.4-0.6:</strong> Moderately relevant, related concepts</li>
+                            <li><strong>0.2-0.4:</strong> Loosely related</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3>Advanced: Programmatic Usage</h3>
+                    <p>Use QdrantManager directly in your Python scripts:</p>
+                    <div class="code-block">
+from utils.qdrant_manager import QdrantManager
+
+# Initialize
+manager = QdrantManager()
+
+# Health check
+healthy, msg = manager.health_check()
+print(f"Status: {healthy} - {msg}")
+
+# Search with filters
+results = manager.search(
+    query="docker container operations",
+    limit=5,
+    score_threshold=0.5,
+    language_filter="py"  # Only Python files
+)
+
+# Format and display
+print(manager.format_results(results))
+
+# Get statistics
+stats = manager.get_statistics()
+print(f"Indexed: {stats['total_chunks']} chunks")
+print(f"Files: {stats['total_files']}")
+print(f"Languages: {stats['languages']}")
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="checklist">
+            <h2>✅ Completion Checklist</h2>
+            <div class="checklist-grid">
+                <label class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <span>Qdrant running and accessible at http://localhost:6333</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <span>Ollama running with nomic-embed-text:v1.5 model</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <span>Codebase indexed successfully (check_and_index.py completed)</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <span>Semantic Search button configured on Stream Deck</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check5">
+                    <span>Qdrant Stats button configured on Stream Deck</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check6">
+                    <span>Tested search with sample query - results returned</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check7">
+                    <span>Verified statistics display (chunks, files, languages)</span>
+                </label>
+                <label class="checklist-item">
+                    <input type="checkbox" id="check8">
+                    <span>Understood similarity scores and result interpretation</span>
+                </label>
+            </div>
+        </section>
+
+        <section class="tips">
+            <h2>💡 Tips & Best Practices</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3>🎯 Query Writing</h3>
+                    <p><strong>Good:</strong> "How to restart Docker containers"</p>
+                    <p><strong>Poor:</strong> Single words like "docker" or code syntax</p>
+                    <p>Use natural language questions or descriptions of what you're looking for.</p>
+                </div>
+                <div class="tip-card">
+                    <h3>🔄 Re-indexing</h3>
+                    <p>Re-run indexing when:</p>
+                    <ul>
+                        <li>You add new files to codebase</li>
+                        <li>Major code refactoring</li>
+                        <li>Starting new project phase</li>
+                    </ul>
+                </div>
+                <div class="tip-card">
+                    <h3>⚡ Performance</h3>
+                    <p>Typical search: 100-300ms</p>
+                    <p>If slow, check:</p>
+                    <ul>
+                        <li>Ollama service running locally</li>
+                        <li>Qdrant has sufficient memory</li>
+                        <li>Reduce limit parameter (use 3-5 results)</li>
+                    </ul>
+                </div>
+                <div class="tip-card">
+                    <h3>🔒 Privacy</h3>
+                    <p><strong>100% Local:</strong></p>
+                    <ul>
+                        <li>All embeddings generated locally via Ollama</li>
+                        <li>No cloud API calls</li>
+                        <li>Data stays in qdrant_storage/ folder</li>
+                        <li>Perfect for sensitive codebases</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="troubleshooting">
+            <h2>🔧 Troubleshooting</h2>
+            <div class="trouble-item">
+                <h3>❌ "Cannot connect to Qdrant"</h3>
+                <p><strong>Solution:</strong></p>
+                <div class="code-block">
+# Check if Qdrant is running
+curl http://localhost:6333
+
+# Start Qdrant (Docker)
+docker start qdrant
+# Or restart the service
+                </div>
+            </div>
+            <div class="trouble-item">
+                <h3>❌ "Embedding model not found"</h3>
+                <p><strong>Solution:</strong></p>
+                <div class="code-block">
+# List installed models
+ollama list
+
+# Pull the model
+ollama pull nomic-embed-text:v1.5
+                </div>
+            </div>
+            <div class="trouble-item">
+                <h3>❌ "Collection is empty / No results found"</h3>
+                <p><strong>Solution:</strong></p>
+                <div class="code-block">
+# Check if codebase was indexed
+python 5_Symbols\scripts\qdrant_stats.py
+
+# If 0 chunks, run indexing
+python 4_Formula\check_and_index.py
+                </div>
+            </div>
+            <div class="trouble-item">
+                <h3>❌ "Results not relevant"</h3>
+                <p><strong>Solutions:</strong></p>
+                <ul>
+                    <li>Try broader, more descriptive queries</li>
+                    <li>Lower score threshold (default 0.5, try 0.3)</li>
+                    <li>Use natural language instead of code syntax</li>
+                    <li>Increase limit to see more results</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="related">
+            <h2>🔗 Related Pages</h2>
+            <div class="related-grid">
+                <a href="ai-query.html" class="related-card">
+                    <h3>🤖 AI Query Tool</h3>
+                    <p>Combine search results with AI for code explanations</p>
+                </a>
+                <a href="docker-status.html" class="related-card">
+                    <h3>🐳 Docker Status</h3>
+                    <p>Example of what you might search for</p>
+                </a>
+                <a href="../index.html" class="related-card">
+                    <h3>🏠 All Simulations</h3>
+                    <p>Browse all Stream Deck automation guides</p>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Learning Assessment Panel -->
+    <div class="learning-remembered-banner" id="learning-remembered-banner">
+        <div class="learning-banner-content">
+            <span class="learning-banner-emoji">🧠</span>
+            <span class="learning-banner-text">This page is remembered! 🎯</span>
+            <span class="learning-banner-close" onclick="closeLearningBanner()">×</span>
+        </div>
+    </div>
+
+    <div class="learning-assessment-panel" id="learning-assessment-panel">
+        <div class="learning-panel-header">
+            <div class="learning-panel-title">🎓 Self-Assessment</div>
+            <button class="learning-collapse-btn" onclick="toggleLearningPanel()">−</button>
+        </div>
+
+        <div class="learning-panel-content">
+            <div class="learning-progress-bar">
+                <div class="learning-progress-fill" id="learning-progress-fill"></div>
+            </div>
+
+            <div class="bloom-item" data-level="remember">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-remember" onchange="toggleLearningLevel('remember')">
+                <label for="bloom-remember" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🧠</div>
+                        <div class="bloom-text">I understand vector embeddings and semantic similarity</div>
+                        <div class="bloom-level">🧠 REMEMBER</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="understand">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-understand" onchange="toggleLearningLevel('understand')">
+                <label for="bloom-understand" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">💡</div>
+                        <div class="bloom-text">I can explain how Qdrant differs from keyword search</div>
+                        <div class="bloom-level">💡 UNDERSTAND</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="analyze">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-analyze" onchange="toggleLearningLevel('analyze')">
+                <label for="bloom-analyze" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🔍</div>
+                        <div class="bloom-text">I can interpret similarity scores and choose good queries</div>
+                        <div class="bloom-level">🔍 ANALYZE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="evaluate">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-evaluate" onchange="toggleLearningLevel('evaluate')">
+                <label for="bloom-evaluate" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">⚖️</div>
+                        <div class="bloom-text">I can assess when semantic search is better than grep/find</div>
+                        <div class="bloom-level">⚖️ EVALUATE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bloom-item" data-level="create">
+                <input type="checkbox" class="bloom-checkbox" id="bloom-create" onchange="toggleLearningLevel('create')">
+                <label for="bloom-create" class="bloom-label">
+                    <span class="custom-checkbox"></span>
+                    <div>
+                        <div class="bloom-emoji">🚀</div>
+                        <div class="bloom-text">I can build custom search workflows with QdrantManager</div>
+                        <div class="bloom-level">🚀 CREATE</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="learning-completion-message" id="learning-completion-message">
+                🎉 Excellent! You've mastered semantic code search!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Persist checklist state
+        const checkboxes = document.querySelectorAll('.checklist-item input');
+        const pageKey = 'semantic-search-qdrant-checklist';
+
+        // Load saved state
+        const saved = localStorage.getItem(pageKey);
+        if (saved) {
+            const state = JSON.parse(saved);
+            checkboxes.forEach((cb, i) => {
+                cb.checked = state[i] || false;
+            });
+        }
+
+        // Save on change
+        checkboxes.forEach((cb, i) => {
+            cb.addEventListener('change', () => {
+                const state = Array.from(checkboxes).map(c => c.checked);
+                localStorage.setItem(pageKey, JSON.stringify(state));
+            });
+        });
+    </script>
+</body>
+</html>
