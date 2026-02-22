@@ -2,9 +2,8 @@
 
 F13::
 {
-    ; Click timeline area first to ensure focus, then send marker shortcut
-    Click 700, 800  ; approximate timeline coordinates on your screen
-    Sleep 50
+    WinActivate "ahk_exe Resolve.exe"  ; force Resolve to stay focused
+    Sleep 100
     Send "^+!r"  ; Ctrl+Alt+Shift+R
 }
 
