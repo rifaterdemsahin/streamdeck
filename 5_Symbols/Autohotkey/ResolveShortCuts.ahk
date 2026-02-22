@@ -1,10 +1,11 @@
-#HotIf WinActive("ahk_exe Resolve.exe")
+#Requires AutoHotkey v2.0
 
 F13::
 {
-    WinActivate "ahk_exe Resolve.exe"  ; force Resolve to stay focused
-    Sleep 100
-    Send "^+!r"  ; Ctrl+Alt+Shift+R
+    if WinActive("ahk_exe Resolve.exe")
+    {
+        WinActivate "ahk_exe Resolve.exe"
+        Sleep 150
+        Send "^+!r"
+    }
 }
-
-#HotIf
