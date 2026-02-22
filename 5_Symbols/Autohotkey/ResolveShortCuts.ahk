@@ -1,9 +1,4 @@
-F13::
-{
-    if WinActive("ahk_exe DaVinci Resolve.exe")
-    {
-        WinActivate "ahk_exe DaVinci Resolve.exe"
-        Sleep 150
-        Send "^+!r"
-    }
-}
+#Requires AutoHotkey v2.0.21
+Persistent
+
+F13::Send("^+!r")
