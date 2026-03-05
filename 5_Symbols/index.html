@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erdem's Stream Deck Command Grid</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --panel: #0d1117;
+    --border: #1e2d3d;
+    --accent-blue: #00d4ff;
+    --accent-green: #00ff88;
+    --accent-orange: #ff6b35;
+    --accent-purple: #b388ff;
+    --accent-red: #ff4757;
+    --accent-yellow: #ffd32a;
+    --accent-pink: #ff6b9d;
+    --text-primary: #e8eaf0;
+    --text-dim: #4a6080;
+    --text-mid: #8899aa;
+    --glow-blue: 0 0 12px rgba(0,212,255,0.4);
+    --glow-green: 0 0 12px rgba(0,255,136,0.4);
+    --glow-orange: 0 0 12px rgba(255,107,53,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .header {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(0,212,255,0.03) 0%, transparent 100%);
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+  }
+
+  .header-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+  }
+
+  .header-title span { color: var(--accent-blue); }
+
+  .status-row {
+    display: flex;
+    gap: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: var(--glow-green);
+    margin-right: 6px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Tab Nav */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .tab {
+    padding: 14px 28px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text-mid); }
+  .tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+  /* Main layout */
+  .workspace {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Device layout row */
+  .device-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .device-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .device-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* Stream Deck Plus (4 keys + touch bar) */
+  .sd-plus {
+    background: #111820;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 16px 14px;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(0,212,255,0.08), 0 20px 40px rgba(0,0,0,0.6);
+  }
+
+  .sd-plus::before {
+    content: 'STREAM DECK +';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111820;
+    padding: 0 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: var(--accent-blue);
+    border: 1px solid var(--accent-blue);
+    border-radius: 3px;
+  }
+
+  .sd-plus-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* Stream Deck XL (8x4 = 32 keys) */
+  .sd-xl {
+    background: #111820;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 16px 16px;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(0,212,255,0.08), 0 20px 40px rgba(0,0,0,0.6);
+  }
+
+  .sd-xl-top::before {
+    content: 'STREAM DECK XL — TOP (IN FRONT)';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111820;
+    padding: 0 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .sd-xl-bottom::before {
+    content: 'STREAM DECK XL — BOTTOM (IN FRONT)';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111820;
+    padding: 0 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: var(--accent-orange);
+    border: 1px solid var(--accent-orange);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .sd-xl-keys {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+  }
+
+  /* Keys */
+  .key {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.15s;
+    text-align: center;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  .key:hover { transform: scale(1.06); z-index: 10; }
+  .key:hover .key-tooltip { opacity: 1; visibility: visible; }
+
+  .key-xl {
+    width: 56px;
+    height: 56px;
+  }
+
+  .key-icon { font-size: 22px; line-height: 1; }
+  .key-icon-xl { font-size: 18px; }
+  .key-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    line-height: 1.2;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.3px;
+  }
+  .key-label-xl { font-size: 6px; }
+
+  .key-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a2535;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* Touch strip */
+  .touch-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .touch-segment {
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #151e28, #0d1520);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .touch-segment:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
+
+  /* Color categories */
+  .cat-video    { background: linear-gradient(135deg, #1a0d2e, #2d1055); border-color: #6a35c8; }
+  .cat-video .key-icon, .cat-video .key-label { color: #b388ff; }
+  
+  .cat-sre      { background: linear-gradient(135deg, #0a1f1a, #0d2d20); border-color: #1a5c42; }
+  .cat-sre .key-icon, .cat-sre .key-label { color: #00ff88; }
+  
+  .cat-ai       { background: linear-gradient(135deg, #001a2e, #002040); border-color: #0055aa; }
+  .cat-ai .key-icon, .cat-ai .key-label { color: #00d4ff; }
+  
+  .cat-family   { background: linear-gradient(135deg, #2e1a0a, #3d2010); border-color: #8b4513; }
+  .cat-family .key-icon, .cat-family .key-label { color: #ffa040; }
+  
+  .cat-system   { background: linear-gradient(135deg, #1a1a1a, #222); border-color: #333; }
+  .cat-system .key-icon, .cat-system .key-label { color: #8899aa; }
+  
+  .cat-contract { background: linear-gradient(135deg, #1f1a0a, #2d2010); border-color: #5c4a1a; }
+  .cat-contract .key-icon, .cat-contract .key-label { color: #ffd32a; }
+  
+  .cat-focus    { background: linear-gradient(135deg, #1f0a0a, #2d1010); border-color: #5c1a1a; }
+  .cat-focus .key-icon, .cat-focus .key-label { color: #ff6b6b; }
+
+  .cat-nav      { background: linear-gradient(135deg, #0f0f18, #141420); border-color: #2a2a40; }
+  .cat-nav .key-icon, .cat-nav .key-label { color: #9999cc; }
+
+  .cat-empty    { background: #0a0e14; opacity: 0.3; cursor: default; }
+  .cat-empty:hover { transform: none; }
+
+  /* Profile pills */
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .profile-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .profile-card.pv::before { background: var(--accent-purple); }
+  .profile-card.ps::before { background: var(--accent-green); }
+  .profile-card.pc::before { background: var(--accent-yellow); }
+  .profile-card.pf::before { background: var(--accent-orange); }
+  .profile-card.pm::before { background: var(--accent-blue); }
+
+  .profile-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+  .profile-icon { font-size: 28px; margin-bottom: 10px; }
+  .profile-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .profile-card.pv .profile-name { color: var(--accent-purple); }
+  .profile-card.ps .profile-name { color: var(--accent-green); }
+  .profile-card.pc .profile-name { color: var(--accent-yellow); }
+  .profile-card.pf .profile-name { color: var(--accent-orange); }
+  .profile-card.pm .profile-name { color: var(--accent-blue); }
+
+  .profile-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .profile-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .profile-key-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-mid);
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+
+  /* Tab content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Context rules */
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .context-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .context-card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    color: var(--accent-blue);
+  }
+
+  .context-rule {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .context-rule-icon { flex-shrink: 0; }
+
+  /* Physical layout diagram */
+  .desk-diagram {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  .desk-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .desk-surface {
+    width: 700px;
+    height: 200px;
+    background: linear-gradient(180deg, #141c24, #0d1117);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .desk-device {
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid;
+    position: relative;
+  }
+
+  .desk-device-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .mini-key-grid {
+    display: grid;
+    gap: 2px;
+  }
+
+  .mini-key {
+    width: 8px;
+    height: 8px;
+    border-radius: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .you-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .arrow-down {
+    font-size: 24px;
+    color: var(--text-dim);
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">Command Grid v1.0</div>
+    <div class="header-title">ERDEM'S <span>STREAM DECK</span> SYSTEM</div>
+  </div>
+  <div class="status-row">
+    <span><span class="status-dot"></span>3 DEVICES MAPPED</span>
+    <span>102 KEYS TOTAL</span>
+    <span>5 PROFILES</span>
+    <span>SALFORD HQ</span>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <div class="tab active" onclick="showTab('physical')">Physical Setup</div>
+  <div class="tab" onclick="showTab('profiles')">Profiles</div>
+  <div class="tab" onclick="showTab('layout')">Key Layout</div>
+  <div class="tab" onclick="showTab('context')">Context Rules</div>
+</div>
+
+<!-- TAB: PHYSICAL -->
+<div id="tab-physical" class="tab-content active workspace">
+  <div class="section-label">Desk Configuration — Physical Placement</div>
+
+  <div class="desk-diagram">
+    <div class="desk-label">↑ MONITORS / SCREENS ↑</div>
+    <div class="desk-surface">
+
+      <!-- SD+ LEFT -->
+      <div class="desk-device" style="border-color:#b388ff; background: rgba(100,50,200,0.08); flex-shrink:0;">
+        <div class="mini-key-grid" style="grid-template-columns: repeat(4,1fr);">
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+        </div>
+        <div style="width:56px; height:8px; background:rgba(100,50,200,0.3); border-radius:2px; margin-top:2px;"></div>
+        <div class="desk-device-label" style="color:#b388ff;">SD+ LEFT<br>4 keys + dial</div>
+      </div>
+
+      <!-- SD XL TOP -->
+      <div class="desk-device" style="border-color:#00ff88; background: rgba(0,255,136,0.05);">
+        <div class="mini-key-grid" style="grid-template-columns: repeat(8,1fr);">
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+        </div>
+        <div class="desk-device-label" style="color:#00ff88;">XL TOP<br>32 keys — primary</div>
+      </div>
+
+      <!-- SD XL BOTTOM -->
+      <div class="desk-device" style="border-color:#ff6b35; background: rgba(255,107,53,0.05);">
+        <div class="mini-key-grid" style="grid-template-columns: repeat(8,1fr);">
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+          <div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div><div class="mini-key"></div>
+        </div>
+        <div class="desk-device-label" style="color:#ff6b35;">XL BOTTOM<br>32 keys — secondary</div>
+      </div>
+
+    </div>
+    <div class="you-label">◉ YOU</div>
+    <div class="desk-label">↓ KEYBOARD / TRACKPAD ↓</div>
+    <div style="margin-top:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; width:700px;">
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:#b388ff;letter-spacing:2px;margin-bottom:6px;">SD+ LEFT — DIALS</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.7;">
+          Dial 1: Timeline zoom (Resolve)<br>
+          Dial 2: Volume/gain<br>
+          Dial 3: Playback speed<br>
+          Dial 4: AI temperature / context switch
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;margin-bottom:6px;">XL TOP — PRIMARY ACTIONS</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.7;">
+          Row 1: Profile switchers + AI quick actions<br>
+          Row 2: Video production core<br>
+          Row 3: SRE / Contract / DevOps<br>
+          Row 4: System + comms + family
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:#ff6b35;letter-spacing:2px;margin-bottom:6px;">XL BOTTOM — DEEP ACTIONS</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.7;">
+          Row 1: AI tools & prompts<br>
+          Row 2: Media / asset pipeline<br>
+          Row 3: Contract / legal / admin<br>
+          Row 4: Family / focus / wellbeing
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: PROFILES -->
+<div id="tab-profiles" class="tab-content workspace">
+  <div class="section-label">5 Context Profiles — Auto-triggered or manual switch</div>
+  <div class="profiles-grid">
+
+    <div class="profile-card pv">
+      <div class="profile-icon">🎬</div>
+      <div class="profile-name">Video Mode</div>
+      <div class="profile-desc">DaVinci Resolve editing. YouTube pipeline active. Marker tools, proxy toggle, export, subtitle generation, fal.ai asset gen. Dial 1 = timeline zoom.</div>
+      <div class="profile-keys">
+        <span class="profile-key-badge">Resolve Focus</span>
+        <span class="profile-key-badge">Marker AI</span>
+        <span class="profile-key-badge">Export Queue</span>
+        <span class="profile-key-badge">Remotion</span>
+        <span class="profile-key-badge">Voiceover</span>
+      </div>
+    </div>
+
+    <div class="profile-card ps">
+      <div class="profile-icon">⚙️</div>
+      <div class="profile-name">SRE / Contract</div>
+      <div class="profile-desc">OpenShift, ArgoCD, Vault, Loki. Incident response shortcuts. Terminal launchers, kubectl aliases, log streaming, feature flag YAML editor.</div>
+      <div class="profile-keys">
+        <span class="profile-key-badge">kubectl</span>
+        <span class="profile-key-badge">ArgoCD</span>
+        <span class="profile-key-badge">Vault</span>
+        <span class="profile-key-badge">Loki/LogQL</span>
+        <span class="profile-key-badge">Incident</span>
+      </div>
+    </div>
+
+    <div class="profile-card pc">
+      <div class="profile-icon">📋</div>
+      <div class="profile-name">Contract</div>
+      <div class="profile-desc">IR35 admin, timesheet submission, invoice generation, unpaid wages dispute tracking, ACAS early conciliation reminders, solicitor email templates.</div>
+      <div class="profile-keys">
+        <span class="profile-key-badge">Timesheet</span>
+        <span class="profile-key-badge">Invoice</span>
+        <span class="profile-key-badge">ACAS</span>
+        <span class="profile-key-badge">Evidence Log</span>
+        <span class="profile-key-badge">Email Draft</span>
+      </div>
+    </div>
+
+    <div class="profile-card pf">
+      <div class="profile-icon">🏠</div>
+      <div class="profile-name">Family Mode</div>
+      <div class="profile-desc">Ece, Mira & Arya. n8n firewall overrides via Telegram. School run reminders, parental control toggles, Cambridge family logistics, home lab status.</div>
+      <div class="profile-keys">
+        <span class="profile-key-badge">n8n override</span>
+        <span class="profile-key-badge">School times</span>
+        <span class="profile-key-badge">Parental ctl</span>
+        <span class="profile-key-badge">Home lab</span>
+      </div>
+    </div>
+
+    <div class="profile-card pm">
+      <div class="profile-icon">🤖</div>
+      <div class="profile-name">AI / Flow</div>
+      <div class="profile-desc">Deep work AI mode. Open WebUI, Claude, DeepSeek prompts. Research mode, SearXNG, context switching. Pomodoro + distraction block. All comms silenced.</div>
+      <div class="profile-keys">
+        <span class="profile-key-badge">Open WebUI</span>
+        <span class="profile-key-badge">Claude API</span>
+        <span class="profile-key-badge">DeepSeek</span>
+        <span class="profile-key-badge">Pomodoro</span>
+        <span class="profile-key-badge">DND</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:30px;">
+    <div class="section-label">Profile Switching Logic</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+      <div class="context-card">
+        <div class="context-card-title">Auto Detection (Recommended)</div>
+        <div class="context-rule"><span class="context-rule-icon">🪟</span> DaVinci Resolve is focused window → trigger Video Mode</div>
+        <div class="context-rule"><span class="context-rule-icon">💻</span> Terminal / VSCode / OpenShift console → trigger SRE Mode</div>
+        <div class="context-rule"><span class="context-rule-icon">⏰</span> 08:15 or 15:30 (school run windows) → pulse Family Mode reminder</div>
+        <div class="context-rule"><span class="context-rule-icon">🤖</span> Open WebUI / Claude tab active → trigger AI Flow Mode</div>
+      </div>
+      <div class="context-card">
+        <div class="context-card-title">Manual Overrides (SD+ Top Row)</div>
+        <div class="context-rule"><span class="context-rule-icon">🟣</span> Key 1 on SD+ → Force Video Mode</div>
+        <div class="context-rule"><span class="context-rule-icon">🟢</span> Key 2 on SD+ → Force SRE Mode</div>
+        <div class="context-rule"><span class="context-rule-icon">🟡</span> Key 3 on SD+ → Force Contract Mode</div>
+        <div class="context-rule"><span class="context-rule-icon">🔵</span> Key 4 on SD+ → Force AI/Flow Mode</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: KEY LAYOUT -->
+<div id="tab-layout" class="tab-content workspace">
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#6a35c8;"></div>Video/Resolve</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1a5c42;"></div>SRE/DevOps</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0055aa;"></div>AI Tools</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5c4a1a;"></div>Contract</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b4513;"></div>Family</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5c1a1a;"></div>Focus/Flow</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#333;"></div>System</div>
+  </div>
+
+  <!-- STREAM DECK PLUS -->
+  <div class="section-label" style="margin-top:10px;">Stream Deck + — Left Side (4 Keys + Touch Dials)</div>
+  <div style="display:flex; gap:30px; align-items:flex-start;">
+    <div class="sd-plus" style="margin-top:14px;">
+      <div class="sd-plus-keys">
+        <div class="key cat-video" style="width:64px;height:64px;"><div class="key-icon">🎬</div><div class="key-label">VIDEO<br>MODE</div><div class="key-tooltip">Switch to DaVinci / Video Profile</div></div>
+        <div class="key cat-sre" style="width:64px;height:64px;"><div class="key-icon">⚙️</div><div class="key-label">SRE<br>MODE</div><div class="key-tooltip">Switch to SRE/Contract Profile</div></div>
+        <div class="key cat-contract" style="width:64px;height:64px;"><div class="key-icon">📋</div><div class="key-label">CONTRACT<br>MODE</div><div class="key-tooltip">Switch to Contract/Admin Profile</div></div>
+        <div class="key cat-ai" style="width:64px;height:64px;"><div class="key-icon">🤖</div><div class="key-label">AI<br>FLOW</div><div class="key-tooltip">Switch to AI Deep Work Profile</div></div>
+      </div>
+      <div class="touch-strip">
+        <div class="touch-segment">◎ ZOOM</div>
+        <div class="touch-segment">♪ VOL</div>
+        <div class="touch-segment">⏩ SPEED</div>
+        <div class="touch-segment">⬡ CTX</div>
+      </div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); line-height:2; margin-top:14px;">
+      <div style="color:var(--accent-blue);letter-spacing:2px;margin-bottom:8px;">DIAL ASSIGNMENTS</div>
+      <div>◎ Dial 1 → Timeline zoom (Resolve) / Terminal font size</div>
+      <div>♪ Dial 2 → System volume / Audio gain in Resolve</div>
+      <div>⏩ Dial 3 → Playback rate / Scroll speed</div>
+      <div>⬡ Dial 4 → AI context switch / Profile rotate</div>
+      <br>
+      <div style="color:var(--accent-blue);letter-spacing:2px;margin-bottom:8px;">DIAL PRESS ACTIONS</div>
+      <div>◎ Press → Reset zoom to fit</div>
+      <div>♪ Press → Mute toggle</div>
+      <div>⏩ Press → Play/Pause</div>
+      <div>⬡ Press → Open AI assistant (Claude)</div>
+    </div>
+  </div>
+
+  <!-- XL TOP -->
+  <div class="section-label" style="margin-top:20px;">Stream Deck XL — Top (In Front of You) — 32 Keys</div>
+  <div class="sd-xl sd-xl-top" style="margin-top:14px; display:inline-block;">
+    <div class="sd-xl-keys">
+
+      <!-- ROW 1: Profile nav + AI quick fire -->
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🎬</div><div class="key-label key-label-xl">VIDEO<br>PROFILE</div><div class="key-tooltip">Activate Video production mode</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">⚙️</div><div class="key-label key-label-xl">SRE<br>PROFILE</div><div class="key-tooltip">Activate SRE / Contract mode</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">📋</div><div class="key-label key-label-xl">CONTRACT<br>PROFILE</div><div class="key-tooltip">Activate contract admin mode</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">🏠</div><div class="key-label key-label-xl">FAMILY<br>MODE</div><div class="key-tooltip">Family quick actions + n8n overrides</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">💬</div><div class="key-label key-label-xl">ASK<br>CLAUDE</div><div class="key-tooltip">Open Claude / paste clipboard to Claude</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🔍</div><div class="key-label key-label-xl">SEARXNG<br>SEARCH</div><div class="key-tooltip">Launch private SearXNG search</div></div>
+      <div class="key key-xl cat-focus"><div class="key-icon key-icon-xl">🎯</div><div class="key-label key-label-xl">FOCUS<br>BLOCK</div><div class="key-tooltip">Pomodoro 25min + DND all comms</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">📸</div><div class="key-label key-label-xl">SCREEN<br>GRAB</div><div class="key-tooltip">ShareX screenshot → clipboard</div></div>
+
+      <!-- ROW 2: Video Production Core -->
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">✂️</div><div class="key-label key-label-xl">RAZOR<br>BLADE</div><div class="key-tooltip">Resolve: Razor tool (B)</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🔗</div><div class="key-label key-label-xl">LINK<br>CLIP</div><div class="key-tooltip">Resolve: Link/unlink audio-video</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📌</div><div class="key-label key-label-xl">ADD<br>MARKER</div><div class="key-tooltip">Resolve: Add marker (M) + AI label</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🖼️</div><div class="key-label key-label-xl">PROXY<br>TOGGLE</div><div class="key-tooltip">Toggle proxy media on/off</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📝</div><div class="key-label key-label-xl">SUBTITLE<br>GEN</div><div class="key-tooltip">Run Lua: subtitle→marker conversion</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🎨</div><div class="key-label key-label-xl">FAL.AI<br>IMAGE</div><div class="key-tooltip">Launch fal.ai batch image gen</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📤</div><div class="key-label key-label-xl">EXPORT<br>QUEUE</div><div class="key-tooltip">Resolve: Add to render queue</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🎙️</div><div class="key-label key-label-xl">ELEVENLABS<br>VO</div><div class="key-tooltip">ElevenLabs voiceover generation</div></div>
+
+      <!-- ROW 3: SRE / DevOps -->
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">🚀</div><div class="key-label key-label-xl">ARGOCD<br>SYNC</div><div class="key-tooltip">ArgoCD: sync application</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">📦</div><div class="key-label key-label-xl">KUBECTL<br>PODS</div><div class="key-tooltip">kubectl get pods -A</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">🔐</div><div class="key-label key-label-xl">VAULT<br>LOGIN</div><div class="key-tooltip">Vault: authenticate + token renew</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">📊</div><div class="key-label key-label-xl">LOKI<br>LOGS</div><div class="key-tooltip">Open Loki log stream dashboard</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">⚠️</div><div class="key-label key-label-xl">INCIDENT<br>OPEN</div><div class="key-tooltip">Open incident response runbook</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">🏷️</div><div class="key-label key-label-xl">FEATURE<br>FLAG</div><div class="key-tooltip">Open feature flag YAML config</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">🔄</div><div class="key-label key-label-xl">ROLLBACK<br>DEPLOY</div><div class="key-tooltip">ArgoCD: rollback to previous</div></div>
+      <div class="key key-xl cat-sre"><div class="key-icon key-icon-xl">📡</div><div class="key-label key-label-xl">OPENSHIFT<br>CONSOLE</div><div class="key-tooltip">Open OpenShift web console</div></div>
+
+      <!-- ROW 4: System + comms -->
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">📧</div><div class="key-label key-label-xl">OUTLOOK<br>INBOX</div><div class="key-tooltip">Open Outlook / corporate email</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">💬</div><div class="key-label key-label-xl">TEAMS<br>CHAT</div><div class="key-tooltip">Open MS Teams</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">📱</div><div class="key-label key-label-xl">TELEGRAM<br>N8N</div><div class="key-tooltip">Send n8n override via Telegram</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">🏫</div><div class="key-label key-label-xl">SCHOOL<br>RUN</div><div class="key-tooltip">15:30 alert — school pickup Mira/Arya</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">🔇</div><div class="key-label key-label-xl">MIC<br>MUTE</div><div class="key-tooltip">Global mic mute toggle</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">🖥️</div><div class="key-label key-label-xl">MONITOR<br>LAYOUT</div><div class="key-tooltip">Switch multi-monitor layout preset</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">🔒</div><div class="key-label key-label-xl">LOCK<br>SCREEN</div><div class="key-tooltip">Win+L quick lock</div></div>
+      <div class="key key-xl cat-system"><div class="key-icon key-icon-xl">📋</div><div class="key-label key-label-xl">CLIP<br>BOARD</div><div class="key-tooltip">Open clipboard history manager</div></div>
+
+    </div>
+  </div>
+
+  <!-- XL BOTTOM -->
+  <div class="section-label" style="margin-top:30px;">Stream Deck XL — Bottom (In Front of You) — 32 Keys</div>
+  <div class="sd-xl sd-xl-bottom" style="margin-top:14px; display:inline-block;">
+    <div class="sd-xl-keys">
+
+      <!-- ROW 1: AI Deep tools -->
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🧠</div><div class="key-label key-label-xl">OPEN<br>WEBUI</div><div class="key-tooltip">Launch Open WebUI (local LLMs)</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🌊</div><div class="key-label key-label-xl">DEEPSEEK<br>LOCAL</div><div class="key-tooltip">DeepSeek via Open WebUI</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">📎</div><div class="key-label key-label-xl">CLIP→AI<br>PROMPT</div><div class="key-tooltip">Paste clipboard → Claude prompt</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🗂️</div><div class="key-label key-label-xl">OBSIDIAN<br>NOTE</div><div class="key-tooltip">Quick capture to Obsidian inbox</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🎯</div><div class="key-label key-label-xl">MULTI<br>AGENT</div><div class="key-tooltip">Launch multi-agent AI workflow</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🔬</div><div class="key-label key-label-xl">CODE<br>REVIEW</div><div class="key-tooltip">Send selection to Claude Code Review</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">✍️</div><div class="key-label key-label-xl">SCRIPT<br>WRITE</div><div class="key-tooltip">AI: YouTube script writing mode</div></div>
+      <div class="key key-xl cat-ai"><div class="key-icon key-icon-xl">🏗️</div><div class="key-label key-label-xl">N8N<br>BUILDER</div><div class="key-tooltip">Open n8n workflow editor</div></div>
+
+      <!-- ROW 2: Media / Asset pipeline -->
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🎞️</div><div class="key-label key-label-xl">REMOTION<br>RENDER</div><div class="key-tooltip">Trigger Remotion animation render</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🖼️</div><div class="key-label key-label-xl">BATCH<br>ASSETS</div><div class="key-tooltip">Run BatchAssetGenerator script</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📹</div><div class="key-label key-label-xl">OBS<br>RECORD</div><div class="key-tooltip">OBS: start/stop recording</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🎥</div><div class="key-label key-label-xl">SHAREX<br>RECORD</div><div class="key-tooltip">ShareX screen recording w/ FFmpeg</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🟢</div><div class="key-label key-label-xl">GREEN<br>SCREEN</div><div class="key-tooltip">Toggle virtual background / green screen</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📺</div><div class="key-label key-label-xl">VDO<br>NINJA</div><div class="key-tooltip">Launch VDO.Ninja multi-monitor stream</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">📊</div><div class="key-label key-label-xl">INFOGRAPH<br>GEN</div><div class="key-tooltip">Generate infographic asset</div></div>
+      <div class="key key-xl cat-video"><div class="key-icon key-icon-xl">🔊</div><div class="key-label key-label-xl">VB-AUDIO<br>ROUTE</div><div class="key-tooltip">Switch VB-Audio Cable routing preset</div></div>
+
+      <!-- ROW 3: Contract + admin -->
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">⏱️</div><div class="key-label key-label-xl">TIME<br>SHEET</div><div class="key-tooltip">Open timesheet submission portal</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">💰</div><div class="key-label key-label-xl">INVOICE<br>GEN</div><div class="key-tooltip">Generate invoice via umbrella company</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">⚖️</div><div class="key-label key-label-xl">ACAS<br>TRACKER</div><div class="key-tooltip">Open unpaid wages dispute tracker</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">📂</div><div class="key-label key-label-xl">EVIDENCE<br>FOLDER</div><div class="key-tooltip">Open evidence archive for dispute</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">✉️</div><div class="key-label key-label-xl">SOLICITOR<br>DRAFT</div><div class="key-tooltip">AI: draft solicitor email template</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">📑</div><div class="key-label key-label-xl">IR35<br>DOCS</div><div class="key-tooltip">Open IR35 compliance documents</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">📅</div><div class="key-label key-label-xl">PAYSLIP<br>CHECK</div><div class="key-tooltip">Open umbrella payslip portal</div></div>
+      <div class="key key-xl cat-contract"><div class="key-icon key-icon-xl">🤝</div><div class="key-label key-label-xl">MSP<br>CHAIN</div><div class="key-tooltip">Map of contractor chain contacts</div></div>
+
+      <!-- ROW 4: Family + Focus -->
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">👶</div><div class="key-label key-label-xl">MIRA<br>ARYA</div><div class="key-tooltip">Kids device parental control dashboard</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">💑</div><div class="key-label key-label-xl">ECE<br>MSG</div><div class="key-tooltip">Quick message to Ece</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">🌐</div><div class="key-label key-label-xl">NET<br>UNBLOCK</div><div class="key-tooltip">n8n: temporarily unblock internet for kids</div></div>
+      <div class="key key-xl cat-family"><div class="key-icon key-icon-xl">🏡</div><div class="key-label key-label-xl">HOME<br>LAB</div><div class="key-tooltip">Open Proxmox / home lab dashboard</div></div>
+      <div class="key key-xl cat-focus"><div class="key-icon key-icon-xl">⏲️</div><div class="key-label key-label-xl">POMODORO<br>25M</div><div class="key-tooltip">Start 25min focus timer</div></div>
+      <div class="key key-xl cat-focus"><div class="key-icon key-icon-xl">☕</div><div class="key-label key-label-xl">BREAK<br>5MIN</div><div class="key-tooltip">5min break timer + stretch reminder</div></div>
+      <div class="key key-xl cat-focus"><div class="key-icon key-icon-xl">📵</div><div class="key-label key-label-xl">DEEP<br>WORK</div><div class="key-tooltip">Block all notifications for 2hrs</div></div>
+      <div class="key key-xl cat-focus"><div class="key-icon key-icon-xl">🌙</div><div class="key-label key-label-xl">END<br>DAY</div><div class="key-tooltip">EOD routine: close apps, update Obsidian log</div></div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB: CONTEXT -->
+<div id="tab-context" class="tab-content workspace">
+  <div class="section-label">Context-Aware Rules — Stay in Flow</div>
+  <div class="context-grid">
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--accent-purple);">🎬 Video Production Day</div>
+      <div class="context-rule"><span class="context-rule-icon">📅</span>Sunday script write → AI Flow profile. Monday–Friday editing → Video profile auto-activates when Resolve opens.</div>
+      <div class="context-rule"><span class="context-rule-icon">🎯</span>7-day pipeline: script Sun → record Mon → edit Tue–Thu → review Fri → publish Sat.</div>
+      <div class="context-rule"><span class="context-rule-icon">🤖</span>Dial 4 rotates AI context: Claude → DeepSeek → fal.ai → Remotion render.</div>
+      <div class="context-rule"><span class="context-rule-icon">🎙️</span>ElevenLabs VO key: auto-uses selected Resolve subtitle text as input.</div>
+      <div class="context-rule"><span class="context-rule-icon">💡</span>Marker AI key: reads current clip → asks Claude to generate section title + tags.</div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--accent-green);">⚙️ SRE / Contract Day</div>
+      <div class="context-rule"><span class="context-rule-icon">🚨</span>Incident key opens runbook + posts to Teams + starts timer automatically.</div>
+      <div class="context-rule"><span class="context-rule-icon">📊</span>Loki key launches pre-built LogQL query for active namespace (reads from clipboard).</div>
+      <div class="context-rule"><span class="context-rule-icon">🔐</span>Vault key auto-renews token and copies to clipboard — no manual auth loop.</div>
+      <div class="context-rule"><span class="context-rule-icon">🏷️</span>Feature flag key opens YAML + runs AI diff comparison against last deploy.</div>
+      <div class="context-rule"><span class="context-rule-icon">🔄</span>Rollback key requires double-press confirmation to prevent accidents.</div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--accent-yellow);">📋 Contract / Dispute</div>
+      <div class="context-rule"><span class="context-rule-icon">⚖️</span>ACAS tracker key shows days elapsed since EC notification, next deadline.</div>
+      <div class="context-rule"><span class="context-rule-icon">✉️</span>Solicitor draft key opens Claude with pre-loaded context: chain of parties, amounts, dates.</div>
+      <div class="context-rule"><span class="context-rule-icon">📂</span>Evidence folder key timestamped auto-screenshot capture → named evidence archive.</div>
+      <div class="context-rule"><span class="context-rule-icon">⏱️</span>Timesheet key auto-fills current week hours from calendar entries.</div>
+      <div class="context-rule"><span class="context-rule-icon">🤝</span>MSP chain key shows visual map: Contract → MSP1 → MSP2 → Agency1 → Agency2 → Umbrella.</div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--accent-orange);">🏠 Family Mode</div>
+      <div class="context-rule"><span class="context-rule-icon">⏰</span>Auto-pulsing at 08:00 (morning school run) and 15:15 (afternoon pickup). Mira & Arya alert.</div>
+      <div class="context-rule"><span class="context-rule-icon">🌐</span>Net unblock key → Telegram message to n8n → EdgeRouter firewall rule lifted for 30min.</div>
+      <div class="context-rule"><span class="context-rule-icon">💑</span>Ece quick message: pre-typed templates ("On my way", "In a call", "5 mins").</div>
+      <div class="context-rule"><span class="context-rule-icon">🏡</span>Home lab key: Proxmox VM status + Pi Zero 2W HID bridge health check.</div>
+      <div class="context-rule"><span class="context-rule-icon">📵</span>Family mode dims all contract/SRE keys to prevent accidental actions.</div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--accent-blue);">🤖 AI Deep Work / Flow</div>
+      <div class="context-rule"><span class="context-rule-icon">🧠</span>All notification keys disabled. Mic mute auto-on. DND mode active system-wide.</div>
+      <div class="context-rule"><span class="context-rule-icon">📎</span>Clip→AI key: reads clipboard → infers intent → routes to correct AI (Claude/DeepSeek/local).</div>
+      <div class="context-rule"><span class="context-rule-icon">⏲️</span>Pomodoro key enforces 25/5 rhythm. After 4 rounds → 30min break alarm.</div>
+      <div class="context-rule"><span class="context-rule-icon">🗂️</span>Obsidian capture: AI summarises active window content → appends to daily note.</div>
+      <div class="context-rule"><span class="context-rule-icon">✍️</span>Script write key: loads current week's YouTube script template + brief into Claude.</div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-card-title" style="color:var(--text-mid);">🔧 Physical Ergonomics</div>
+      <div class="context-rule"><span class="context-rule-icon">👈</span>SD+ on left: profile switching + dials. Reach without looking. Muscle memory profiles.</div>
+      <div class="context-rule"><span class="context-rule-icon">⬆️</span>XL Top (far): less frequent but important. SRE actions, system, comms — deliberate reach.</div>
+      <div class="context-rule"><span class="context-rule-icon">⬇️</span>XL Bottom (near): most frequent. AI tools, media pipeline, contract, family — immediate reach.</div>
+      <div class="context-rule"><span class="context-rule-icon">🖐️</span>Right hand stays on mouse/tablet. Left thumb can hit XL bottom row without arm movement.</div>
+      <div class="context-rule"><span class="context-rule-icon">🎨</span>Colour-coded by category — video purple, SRE green, AI blue, contract yellow, family orange.</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;">
+    <div class="section-label">Weekly Schedule → Profile Suggestion Engine</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">SUN</div>
+        <div style="font-size:18px;margin-bottom:6px;">✍️</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Script<br>Writing<br>AI Flow</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">MON</div>
+        <div style="font-size:18px;margin-bottom:6px;">🎥</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Record<br>+SRE<br>AM/PM</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">TUE</div>
+        <div style="font-size:18px;margin-bottom:6px;">✂️</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Edit<br>+SRE<br>Contract</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">WED</div>
+        <div style="font-size:18px;margin-bottom:6px;">⚙️</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">SRE<br>Primary<br>+Edit</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">THU</div>
+        <div style="font-size:18px;margin-bottom:6px;">🎬</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Edit<br>+Review<br>Assets</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-blue);letter-spacing:1px;margin-bottom:8px;">FRI</div>
+        <div style="font-size:18px;margin-bottom:6px;">📋</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Contract<br>+Review<br>+Publish</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;color:var(--accent-orange);letter-spacing:1px;margin-bottom:8px;">SAT</div>
+        <div style="font-size:18px;margin-bottom:6px;">🏠</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text-dim);line-height:1.6;">Family<br>Publish<br>Rest</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`#tab-${name}`).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
