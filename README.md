@@ -5,6 +5,9 @@ Comprehensive automation system for Stream Deck devices focused on MLOps/DevOps 
 > https://rifaterdemsahin.github.io/streamdeck/5_Symbols/index.html
 
 
+> https://rifaterdemsahin.github.io/streamdeck/5_Symbols/builder.html
+
+
 ## 🚀 Quick Navigation
 
 | Category | Link | Description |
