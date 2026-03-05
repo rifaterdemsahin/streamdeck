@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Deck XL Planner · AI-Powered</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090d;
+  --surface: #0c1018;
+  --surface2: #111722;
+  --surface3: #161e2c;
+  --border: #1c2535;
+  --border2: #253040;
+  --accent: #3b82f6;
+  --accent2: #60a5fa;
+  --accent-glow: rgba(59,130,246,0.25);
+  --green: #22c55e;
+  --green-glow: rgba(34,197,94,0.2);
+  --amber: #f59e0b;
+  --amber-glow: rgba(245,158,11,0.2);
+  --red: #ef4444;
+  --purple: #a855f7;
+  --purple-glow: rgba(168,85,247,0.2);
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #4a5568;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Syne', sans-serif;
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 14px; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–font-mono);
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(59,130,246,0.012) 1px, transparent 1px),
+linear-gradient(90deg, rgba(59,130,246,0.012) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+position: sticky;
+top: 0;
+z-index: 50;
+background: rgba(7,9,13,0.97);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(–border);
+padding: 0 20px;
+display: flex;
+align-items: center;
+gap: 12px;
+height: 50px;
+flex-wrap: wrap;
+}
+
+.topbar-brand {
+font-family: var(–font-display);
+font-size: 13px;
+font-weight: 800;
+letter-spacing: 1px;
+color: var(–accent2);
+white-space: nowrap;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.ai-badge {
+font-size: 8px;
+letter-spacing: 2px;
+background: linear-gradient(135deg, var(–purple), var(–accent));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+font-weight: 700;
+border: 1px solid rgba(168,85,247,0.3);
+border-radius: 4px;
+padding: 2px 6px;
+-webkit-text-fill-color: unset;
+color: var(–purple);
+}
+
+.divider { width: 1px; height: 24px; background: var(–border2); flex-shrink: 0; }
+
+.meta-field { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+
+.meta-label {
+font-size: 8px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–text3);
+white-space: nowrap;
+}
+
+.meta-input {
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 6px;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 12px;
+padding: 5px 9px;
+outline: none;
+transition: border-color 0.15s, box-shadow 0.15s;
+height: 30px;
+}
+.meta-input:focus { border-color: var(–accent); box-shadow: 0 0 0 2px var(–accent-glow); }
+
+.topbar-spacer { flex: 1; }
+
+.btn {
+height: 30px;
+padding: 0 13px;
+border-radius: 6px;
+border: none;
+font-family: var(–font-mono);
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.5px;
+cursor: pointer;
+transition: all 0.15s;
+display: flex;
+align-items: center;
+gap: 5px;
+white-space: nowrap;
+flex-shrink: 0;
+}
+
+.btn-primary { background: var(–accent); color: white; }
+.btn-primary:hover { background: var(–accent2); box-shadow: 0 0 12px var(–accent-glow); }
+.btn-ghost { background: var(–surface2); color: var(–text2); border: 1px solid var(–border2); }
+.btn-ghost:hover { background: var(–surface3); color: var(–text); border-color: var(–accent); }
+.btn-success { background: rgba(34,197,94,0.1); color: var(–green); border: 1px solid rgba(34,197,94,0.25); }
+.btn-success:hover { background: rgba(34,197,94,0.18); box-shadow: 0 0 12px var(–green-glow); }
+.btn-danger { background: rgba(239,68,68,0.08); color: var(–red); border: 1px solid rgba(239,68,68,0.2); }
+.btn-danger:hover { background: rgba(239,68,68,0.15); }
+.btn-ai {
+background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(59,130,246,0.15));
+color: var(–purple);
+border: 1px solid rgba(168,85,247,0.3);
+}
+.btn-ai:hover { background: linear-gradient(135deg, rgba(168,85,247,0.25), rgba(59,130,246,0.25)); box-shadow: 0 0 14px var(–purple-glow); }
+.btn-ai:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ═══ LAYOUT ═══ */
+.workspace {
+position: relative;
+z-index: 1;
+padding: 24px 24px;
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 24px;
+align-items: start;
+}
+
+/* ═══ LEFT: DEVICE ═══ */
+.device-col { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+
+.device-shell {
+background: linear-gradient(145deg, #111822, #0a1018);
+border: 1px solid #1e2d3d;
+border-radius: 18px;
+padding: 22px 20px 18px;
+box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 28px 56px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+position: relative;
+}
+
+.device-shell::before {
+content: ‘STREAM DECK XL  ·  8×4’;
+position: absolute;
+top: -10px;
+left: 50%;
+transform: translateX(-50%);
+font-size: 8px;
+letter-spacing: 3px;
+color: var(–accent);
+background: var(–bg);
+padding: 0 10px;
+border: 1px solid rgba(59,130,246,0.3);
+border-radius: 3px;
+white-space: nowrap;
+}
+
+.button-grid {
+display: grid;
+grid-template-columns: repeat(8, 1fr);
+gap: 7px;
+}
+
+/* ═══ KEY ═══ */
+.key-btn {
+width: 70px;
+height: 70px;
+border-radius: 9px;
+background: var(–surface2);
+border: 1px solid var(–border2);
+cursor: pointer;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 3px;
+transition: all 0.15s;
+position: relative;
+overflow: hidden;
+}
+
+.key-btn:hover { border-color: var(–accent); box-shadow: 0 0 0 1px var(–accent), 0 0 14px var(–accent-glow); transform: translateY(-1px); z-index: 5; }
+.key-btn.active { border-color: var(–accent); box-shadow: 0 0 0 2px var(–accent), 0 0 18px var(–accent-glow); }
+.key-btn.ai-generated { border-color: rgba(168,85,247,0.5); }
+.key-btn.ai-generated::after {
+content: ‘✦’;
+position: absolute;
+top: 3px;
+right: 4px;
+font-size: 7px;
+color: var(–purple);
+}
+
+.key-num { position: absolute; top: 4px; left: 5px; font-size: 6px; color: var(–text3); }
+
+.key-note-dot {
+position: absolute;
+top: 4px;
+right: 4px;
+width: 5px;
+height: 5px;
+border-radius: 50%;
+background: var(–amber);
+display: none;
+}
+.key-btn.has-note .key-note-dot { display: block; }
+.key-btn.ai-generated .key-note-dot { right: 14px; }
+
+.key-color-overlay { position: absolute; inset: 0; border-radius: 8px; opacity: 0.2; pointer-events: none; }
+.key-emoji { font-size: 22px; line-height: 1; }
+.key-text { font-size: 7px; color: rgba(255,255,255,0.8); text-align: center; line-height: 1.3; padding: 0 3px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-width: 100%; word-break: break-word; }
+.key-empty-hint { font-size: 9px; color: var(–text3); }
+
+/* ═══ RIGHT: EDITOR PANEL ═══ */
+.editor-col { display: flex; flex-direction: column; gap: 14px; }
+
+.editor-card {
+background: var(–surface);
+border: 1px solid var(–border2);
+border-radius: 14px;
+overflow: hidden;
+}
+
+.editor-header {
+background: var(–surface2);
+border-bottom: 1px solid var(–border);
+padding: 12px 16px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.editor-key-id {
+font-family: var(–font-display);
+font-size: 11px;
+font-weight: 800;
+color: var(–accent2);
+letter-spacing: 1px;
+}
+
+.editor-pos { font-size: 10px; color: var(–text3); }
+.editor-close { margin-left: auto; width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(–border2); background: transparent; color: var(–text2); cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.editor-close:hover { color: var(–red); border-color: var(–red); background: rgba(239,68,68,0.08); }
+
+/* ═══ AI PROMPT BOX ═══ */
+.ai-prompt-box {
+padding: 14px 16px;
+background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(59,130,246,0.06));
+border-bottom: 1px solid rgba(168,85,247,0.15);
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.ai-prompt-label {
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 9px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–purple);
+}
+
+.ai-pulse {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: var(–purple);
+box-shadow: 0 0 8px var(–purple-glow);
+animation: pulse 2s infinite;
+flex-shrink: 0;
+}
+
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.ai-input-row { display: flex; gap: 8px; }
+
+.ai-prompt-input {
+flex: 1;
+background: rgba(0,0,0,0.3);
+border: 1px solid rgba(168,85,247,0.25);
+border-radius: 8px;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 12px;
+padding: 9px 12px;
+outline: none;
+transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ai-prompt-input:focus { border-color: var(–purple); box-shadow: 0 0 0 2px var(–purple-glow); }
+.ai-prompt-input::placeholder { color: rgba(168,85,247,0.3); }
+
+.ai-thinking {
+display: none;
+align-items: center;
+gap: 8px;
+font-size: 10px;
+color: var(–purple);
+padding: 4px 0;
+}
+
+.ai-thinking.show { display: flex; }
+
+.thinking-dots span {
+display: inline-block;
+width: 4px; height: 4px;
+border-radius: 50%;
+background: var(–purple);
+margin: 0 2px;
+animation: bounce 1.2s infinite;
+}
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-5px);} }
+
+/* ═══ EDITOR BODY ═══ */
+.editor-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+.ed-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ed-row-3 { display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; }
+
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(–text3); }
+
+.field-input {
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 6px;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 12px;
+padding: 7px 10px;
+outline: none;
+transition: border-color 0.15s;
+width: 100%;
+height: 32px;
+}
+.field-input:focus { border-color: var(–accent); box-shadow: 0 0 0 2px var(–accent-glow); }
+.field-input.ai-filled { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.05); }
+
+.field-select {
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 6px;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 11px;
+padding: 7px 10px;
+outline: none;
+cursor: pointer;
+width: 100%;
+height: 32px;
+}
+.field-select.ai-filled { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.05); }
+
+.field-textarea {
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 6px;
+color: var(–text);
+font-family: var(–font-mono);
+font-size: 11px;
+padding: 8px 10px;
+outline: none;
+transition: border-color 0.15s;
+width: 100%;
+resize: vertical;
+min-height: 70px;
+line-height: 1.6;
+}
+.field-textarea:focus { border-color: var(–accent); }
+.field-textarea.ai-filled { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.05); }
+
+.script-area {
+min-height: 110px;
+background: #050a10 !important;
+border-color: #1a2535 !important;
+color: #7dd3fc;
+font-size: 10px;
+}
+.script-area.ai-filled { border-color: rgba(168,85,247,0.35) !important; }
+.script-area::placeholder { color: #1e3348; }
+
+/* emoji display */
+.emoji-display {
+width: 32px; height: 32px;
+border-radius: 6px;
+background: var(–surface2);
+border: 1px solid var(–border2);
+display: flex; align-items: center; justify-content: center;
+font-size: 18px;
+cursor: pointer;
+transition: all 0.15s;
+flex-shrink: 0;
+}
+.emoji-display:hover { border-color: var(–accent); }
+.emoji-display.ai-filled { border-color: rgba(168,85,247,0.4); }
+
+.emoji-input-row { display: flex; gap: 6px; align-items: center; }
+
+/* color swatches */
+.swatches { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.swatch { width: 22px; height: 22px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: all 0.1s; flex-shrink: 0; }
+.swatch:hover, .swatch.selected { border-color: white; transform: scale(1.18); }
+.swatch-none { background: var(–surface3); border: 1px dashed var(–border2) !important; }
+.swatch-none.selected { border-color: var(–accent) !important; }
+
+/* editor actions */
+.editor-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 12px 16px; border-top: 1px solid var(–border); background: var(–surface2); }
+
+/* ═══ EMOJI PICKER ═══ */
+.emoji-picker {
+background: var(–surface);
+border: 1px solid var(–border2);
+border-radius: 12px;
+padding: 10px;
+display: none;
+flex-direction: column;
+gap: 8px;
+position: fixed;
+z-index: 200;
+box-shadow: 0 20px 48px rgba(0,0,0,0.8);
+width: 320px;
+max-height: 380px;
+}
+.emoji-picker.open { display: flex; animation: fadeUp 0.15s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+
+.emoji-search { background: var(–surface2); border: 1px solid var(–border2); border-radius: 6px; color: var(–text); font-family: var(–font-mono); font-size: 11px; padding: 7px 10px; outline: none; width: 100%; }
+.emoji-search:focus { border-color: var(–accent); }
+
+.emoji-cats { display: flex; gap: 3px; flex-wrap: wrap; }
+.emoji-cat-btn { font-size: 13px; padding: 3px 7px; border-radius: 4px; background: transparent; border: 1px solid var(–border); cursor: pointer; transition: all 0.1s; }
+.emoji-cat-btn:hover, .emoji-cat-btn.active { background: var(–surface2); border-color: var(–accent); }
+
+.emoji-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 2px; overflow-y: auto; max-height: 200px; }
+.emoji-grid::-webkit-scrollbar { width: 3px; }
+.emoji-grid::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 2px; }
+.emoji-opt { width: 34px; height: 34px; border-radius: 5px; background: transparent; border: none; cursor: pointer; font-size: 19px; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+.emoji-opt:hover { background: var(–surface2); }
+
+/* ═══ YAML MODAL ═══ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(–surface); border: 1px solid var(–border2); border-radius: 14px; padding: 22px; width: 600px; max-height: 80vh; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 28px 56px rgba(0,0,0,0.8); }
+.modal-title { font-family: var(–font-display); font-size: 13px; font-weight: 800; color: var(–accent2); }
+.yaml-out { background: #050810; border: 1px solid #1a2535; border-radius: 7px; padding: 12px; font-family: var(–font-mono); font-size: 10px; color: #7dd3fc; line-height: 1.7; overflow-y: auto; flex: 1; min-height: 180px; max-height: 380px; white-space: pre; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ═══ TOAST ═══ */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(70px); background: var(–surface2); border: 1px solid var(–green); border-radius: 9px; padding: 10px 22px; font-size: 11px; color: var(–green); z-index: 300; transition: transform 0.22s ease; box-shadow: 0 0 20px var(–green-glow); pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.ai { border-color: var(–purple); color: var(–purple); box-shadow: 0 0 20px var(–purple-glow); }
+
+.file-input-label { height: 30px; padding: 0 13px; border-radius: 6px; border: 1px solid var(–border2); background: var(–surface2); color: var(–text2); font-family: var(–font-mono); font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+.file-input-label:hover { background: var(–surface3); border-color: var(–accent); color: var(–text); }
+#yaml-file-input { display: none; }
+
+/* AI generated indicator strip */
+.ai-strip {
+display: none;
+padding: 6px 16px;
+background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(59,130,246,0.08));
+border-bottom: 1px solid rgba(168,85,247,0.12);
+font-size: 9px;
+color: var(–purple);
+letter-spacing: 1px;
+align-items: center;
+gap: 8px;
+}
+.ai-strip.show { display: flex; }
+</style>
+
+</head>
+<body>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+  <div class="topbar-brand">SD·XL PLANNER <span class="ai-badge">✦ AI</span></div>
+  <div class="divider"></div>
+  <div class="meta-field">
+    <span class="meta-label">Context</span>
+    <input id="input-context" class="meta-input" type="text" placeholder="VIDEO" style="width:120px;" />
+  </div>
+  <div class="meta-field">
+    <span class="meta-label">Profile</span>
+    <input id="input-profile" class="meta-input" type="text" placeholder="RESOLVE" style="width:110px;" />
+  </div>
+  <div class="meta-field">
+    <span class="meta-label">Page</span>
+    <input id="input-page" class="meta-input" type="text" placeholder="01" style="width:52px;" />
+  </div>
+  <div class="divider"></div>
+  <div class="topbar-spacer"></div>
+  <label class="file-input-label">↑ Load YAML<input type="file" id="yaml-file-input" accept=".yaml,.yml" /></label>
+  <button class="btn btn-ghost" onclick="clearAll()">⌫ Clear</button>
+  <button class="btn btn-success" onclick="saveYaml()">↓ Save YAML</button>
+</div>
+
+<!-- WORKSPACE -->
+
+<div class="workspace">
+
+  <!-- LEFT: Device grid -->
+
+  <div class="device-col">
+    <div class="device-shell">
+      <div id="button-grid" class="button-grid"></div>
+    </div>
+    <div style="font-size:9px;color:var(--text3);text-align:center;line-height:1.7;">
+      Click any key to edit &nbsp;·&nbsp; ✦ = AI generated &nbsp;·&nbsp; <span style="color:var(--amber);">●</span> = has notes/script
+    </div>
+  </div>
+
+  <!-- RIGHT: Editor -->
+
+  <div class="editor-col">
+    <div id="editor-card" class="editor-card" style="display:none;">
+
+```
+  <div class="editor-header">
+    <div class="editor-key-id" id="editor-key-id">KEY 01</div>
+    <div class="editor-pos">Row <span id="ed-row">—</span> · Col <span id="ed-col">—</span></div>
+    <button class="editor-close" onclick="closeEditor()">✕</button>
+  </div>
+
+  <!-- AI STRIP -->
+  <div class="ai-strip" id="ai-strip">✦ AI-generated content — review and edit as needed</div>
+
+  <!-- AI PROMPT BOX -->
+  <div class="ai-prompt-box">
+    <div class="ai-prompt-label"><div class="ai-pulse"></div>AI COMPLETE — describe what this button should do</div>
+    <div class="ai-input-row">
+      <input id="ai-prompt-input" class="ai-prompt-input" placeholder="e.g. 'trigger incident response' or 'export DaVinci render queue'..." />
+      <button class="btn btn-ai" id="ai-btn" onclick="runAI()">✦ Complete</button>
+    </div>
+    <div class="ai-thinking" id="ai-thinking">
+      <div class="thinking-dots"><span></span><span></span><span></span></div>
+      <span>Claude is building your button...</span>
+    </div>
+  </div>
+
+  <!-- EDITOR FIELDS -->
+  <div class="editor-body">
+
+    <div class="ed-row-3">
+      <div class="field-group">
+        <div class="field-label">Icon</div>
+        <div class="emoji-input-row">
+          <div class="emoji-display" id="emoji-display" onclick="toggleEmojiPicker(event)">＋</div>
+          <input id="ed-emoji-text" class="field-input" style="flex:1;width:auto;" placeholder="emoji" />
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Label</div>
+        <input id="ed-label" class="field-input" placeholder="EXPORT" />
+      </div>
+      <div class="field-group">
+        <div class="field-label">Category</div>
+        <select id="ed-category" class="field-select">
+          <option value="">— none —</option>
+          <option value="video">🎬 Video</option>
+          <option value="sre">⚙️ SRE</option>
+          <option value="ai">🤖 AI</option>
+          <option value="contract">📋 Contract</option>
+          <option value="family">🏠 Family</option>
+          <option value="focus">🎯 Focus</option>
+          <option value="system">🖥️ System</option>
+          <option value="nav">⬡ Nav</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ed-row">
+      <div class="field-group">
+        <div class="field-label">Action / Shortcut / URL</div>
+        <input id="ed-action" class="field-input" placeholder="Ctrl+Alt+E or https://..." />
+      </div>
+      <div class="field-group">
+        <div class="field-label">Key Tint</div>
+        <div class="swatches" id="color-swatches">
+          <div class="swatch swatch-none selected" data-color="" onclick="selectColor(this,'')"></div>
+          <div class="swatch" data-color="#6a35c8" style="background:#6a35c8" onclick="selectColor(this,'#6a35c8')"></div>
+          <div class="swatch" data-color="#1a5c42" style="background:#1a5c42" onclick="selectColor(this,'#1a5c42')"></div>
+          <div class="swatch" data-color="#0055aa" style="background:#0055aa" onclick="selectColor(this,'#0055aa')"></div>
+          <div class="swatch" data-color="#8b4513" style="background:#8b4513" onclick="selectColor(this,'#8b4513')"></div>
+          <div class="swatch" data-color="#5c4a1a" style="background:#5c4a1a" onclick="selectColor(this,'#5c4a1a')"></div>
+          <div class="swatch" data-color="#5c1a1a" style="background:#5c1a1a" onclick="selectColor(this,'#5c1a1a')"></div>
+          <div class="swatch" data-color="#1a2535" style="background:#1a2535" onclick="selectColor(this,'#1a2535')"></div>
+          <div class="swatch" data-color="#2d1055" style="background:#2d1055" onclick="selectColor(this,'#2d1055')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group full">
+      <div class="field-label">Notes</div>
+      <textarea id="ed-notes" class="field-textarea" placeholder="Purpose, context, trigger conditions..."></textarea>
+    </div>
+
+    <div class="field-group full">
+      <div class="field-label">Script / Command</div>
+      <textarea id="ed-script" class="field-textarea script-area" placeholder="# PowerShell, bash, kubectl, AHK, multi-action..."></textarea>
+    </div>
+
+  </div>
+
+  <div class="editor-actions">
+    <button class="btn btn-danger" onclick="clearKey()">Clear</button>
+    <button class="btn btn-primary" onclick="saveKey()">✓ Save Key</button>
+  </div>
+
+</div>
+
+<!-- Placeholder when no key selected -->
+<div id="editor-placeholder" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:48px 32px;text-align:center;color:var(--text3);">
+  <div style="font-size:32px;margin-bottom:14px;">⬡</div>
+  <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;">Click any key to begin</div>
+  <div style="font-size:10px;line-height:1.8;">Type a description and let AI complete the button<br>or fill in the fields manually</div>
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- EMOJI PICKER -->
+
+<div id="emoji-picker" class="emoji-picker">
+  <input class="emoji-search" id="emoji-search" placeholder="Search..." oninput="filterEmojis()" />
+  <div class="emoji-cats" id="emoji-cats"></div>
+  <div class="emoji-grid" id="emoji-grid"></div>
+</div>
+
+<!-- YAML MODAL -->
+
+<div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-title" id="modal-filename">output.yaml</div>
+    <pre class="yaml-out" id="yaml-output"></pre>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="copyYaml()">Copy</button>
+      <button class="btn btn-success" onclick="downloadYaml()">↓ Download</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-overlay').classList.remove('open')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const ROWS = 4, COLS = 8;
+let buttons = Array.from({length: ROWS * COLS}, (_, i) => ({
+  id: i, row: Math.floor(i/COLS)+1, col:(i%COLS)+1,
+  emoji:'', label:'', category:'', color:'', action:'', notes:'', script:'', aiGenerated: false
+}));
+
+let activeKey = null;
+let selectedColor = '';
+
+// ══════════════════════════════════════════
+// EMOJI DATA
+// ══════════════════════════════════════════
+const EMOJI_CATS = {
+  '⭐': ['⭐','🔥','💡','⚡','🎯','🚀','✅','❌','⚠️','🔔','📌','🔒','🔓','🔑','💎','🏆','🎖️','🎗️','🔺','💠'],
+  '🛠️': ['🛠️','⚙️','🔧','🔨','🔩','🪛','🔬','💻','🖥️','⌨️','🖱️','📱','📡','🔌','🔋','💾','📀','🖨️','🖲️','⌚'],
+  '🎬': ['🎬','🎥','📹','🎞️','📽️','🎙️','🎚️','🎛️','🔊','🎵','🎶','🎤','🎧','🎼','🥁','🎹','🎸','🎺','🎻','🪗'],
+  '🤖': ['🤖','🧠','💬','🗣️','👁️','🦾','🧬','⚗️','🔮','🪄','✨','🌐','🕸️','📊','📈','📉','🗃️','🗂️','🧩','🪤'],
+  '📋': ['📋','📝','📄','📃','📑','📅','📆','🗓️','📇','🗃️','🗄️','📁','📂','🗂️','🗑️','📌','📍','✏️','🖊️','📎'],
+  '🏠': ['🏠','🏡','👨‍👩‍👧‍👦','👶','👧','🧒','👩','📱','💬','📞','🏫','🚌','☕','🛋️','🌿','🌳','🏡','🛒','🍕','🧸'],
+  '🎯': ['🎯','⏲️','⌛','⏰','🔕','📵','🤫','🧘','💤','🌙','🌅','☀️','🌈','⚡','🔋','📴','🔇','🚫','⛔','🛑'],
+  '🚀': ['🚀','✈️','🛸','🌍','🗺️','🧭','🏔️','🌋','🌊','💧','❄️','🔥','💥','🌪️','⭐','🌠','🌌','🪐','☄️','🛰️'],
+};
+let allEmojis = Object.values(EMOJI_CATS).flat();
+let filteredEmojis = [...EMOJI_CATS['⭐']];
+let activeCat = '⭐';
+
+// ══════════════════════════════════════════
+// RENDER GRID
+// ══════════════════════════════════════════
+function renderGrid() {
+  const grid = document.getElementById('button-grid');
+  grid.innerHTML = '';
+  buttons.forEach((b, i) => {
+    const el = document.createElement('div');
+    el.className = 'key-btn'
+      + (activeKey === i ? ' active' : '')
+      + (b.aiGenerated ? ' ai-generated' : '')
+      + ((b.notes || b.script) ? ' has-note' : '');
+    el.innerHTML = `
+      <span class="key-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="key-note-dot"></span>
+      ${b.color ? `<div class="key-color-overlay" style="background:${b.color}"></div>` : ''}
+      ${b.emoji ? `<div class="key-emoji">${b.emoji}</div>` : ''}
+      ${b.label ? `<div class="key-text">${escHtml(b.label)}</div>` : (!b.emoji ? '<div class="key-empty-hint">+</div>' : '')}
+    `;
+    if (b.color) el.style.borderColor = b.color + '55';
+    el.addEventListener('click', () => openEditor(i));
+    grid.appendChild(el);
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════
+function openEditor(idx) {
+  activeKey = idx;
+  const b = buttons[idx];
+  document.getElementById('editor-card').style.display = 'block';
+  document.getElementById('editor-placeholder').style.display = 'none';
+  document.getElementById('editor-key-id').textContent = `KEY ${String(idx+1).padStart(2,'0')}`;
+  document.getElementById('ed-row').textContent = b.row;
+  document.getElementById('ed-col').textContent = b.col;
+  document.getElementById('emoji-display').textContent = b.emoji || '＋';
+  document.getElementById('ed-emoji-text').value = b.emoji || '';
+  document.getElementById('ed-label').value = b.label || '';
+  document.getElementById('ed-category').value = b.category || '';
+  document.getElementById('ed-action').value = b.action || '';
+  document.getElementById('ed-notes').value = b.notes || '';
+  document.getElementById('ed-script').value = b.script || '';
+  document.getElementById('ai-prompt-input').value = '';
+  document.getElementById('ai-thinking').classList.remove('show');
+  selectedColor = b.color || '';
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedColor));
+
+  // Clear ai-filled classes
+  document.querySelectorAll('.ai-filled').forEach(el => el.classList.remove('ai-filled'));
+  document.getElementById('ai-strip').classList.toggle('show', b.aiGenerated);
+
+  renderGrid();
+  document.getElementById('ai-prompt-input').focus();
+}
+
+function closeEditor() {
+  activeKey = null;
+  document.getElementById('editor-card').style.display = 'none';
+  document.getElementById('editor-placeholder').style.display = 'block';
+  closeEmojiPicker();
+  renderGrid();
+}
+
+function saveKey() {
+  if (activeKey === null) return;
+  const emojiText = document.getElementById('ed-emoji-text').value.trim();
+  const displayEmoji = document.getElementById('emoji-display').textContent;
+  const prevAiGen = buttons[activeKey].aiGenerated;
+  buttons[activeKey] = {
+    ...buttons[activeKey],
+    emoji: emojiText || (displayEmoji !== '＋' ? displayEmoji : ''),
+    label: document.getElementById('ed-label').value.trim(),
+    category: document.getElementById('ed-category').value,
+    color: selectedColor,
+    action: document.getElementById('ed-action').value.trim(),
+    notes: document.getElementById('ed-notes').value.trim(),
+    script: document.getElementById('ed-script').value.trim(),
+    aiGenerated: prevAiGen,
+  };
+  renderGrid();
+  showToast('✓ Key saved');
+}
+
+function clearKey() {
+  if (activeKey === null) return;
+  const idx = activeKey;
+  buttons[idx] = { ...buttons[idx], emoji:'', label:'', category:'', color:'', action:'', notes:'', script:'', aiGenerated: false };
+  document.getElementById('emoji-display').textContent = '＋';
+  document.getElementById('ed-emoji-text').value = '';
+  document.getElementById('ed-label').value = '';
+  document.getElementById('ed-category').value = '';
+  document.getElementById('ed-action').value = '';
+  document.getElementById('ed-notes').value = '';
+  document.getElementById('ed-script').value = '';
+  document.getElementById('ai-strip').classList.remove('show');
+  document.querySelectorAll('.ai-filled').forEach(el => el.classList.remove('ai-filled'));
+  selectedColor = '';
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === ''));
+  renderGrid();
+}
+
+// ══════════════════════════════════════════
+// COLOR
+// ══════════════════════════════════════════
+function selectColor(el, color) {
+  selectedColor = color;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ══════════════════════════════════════════
+// AI COMPLETE
+// ══════════════════════════════════════════
+async function runAI() {
+  const prompt = document.getElementById('ai-prompt-input').value.trim();
+  if (!prompt) { showToast('Enter a description first'); return; }
+
+  const ctx = document.getElementById('input-context').value || 'general';
+  const prof = document.getElementById('input-profile').value || 'default';
+  const keyNum = activeKey !== null ? activeKey + 1 : '?';
+  const row = activeKey !== null ? buttons[activeKey].row : '?';
+  const col = activeKey !== null ? buttons[activeKey].col : '?';
+
+  document.getElementById('ai-btn').disabled = true;
+  document.getElementById('ai-thinking').classList.add('show');
+
+  const systemPrompt = `You are a Stream Deck button configuration expert. The user is Erdem — a UK-based DevOps/SRE contractor at NESO/National Grid, YouTube video creator (DaVinci Resolve, fal.ai, ElevenLabs, Remotion), and AI Solutions Architect. He uses PowerShell on Windows, runs n8n automations, Proxmox home lab, kubectl/ArgoCD/Vault/Loki for SRE work, and produces weekly YouTube tutorials. He has a partner Ece and two kids Mira and Arya.
+
+Given a description of what a Stream Deck button should do, return ONLY a valid JSON object with these exact keys:
+- emoji: a single relevant emoji character
+- label: short button label (max 12 chars, uppercase, can use newline \\n for 2 lines)
+- category: one of: video | sre | ai | contract | family | focus | system | nav
+- color: a dark hex color matching the category (e.g. #2d1055 for video, #0a2a1a for sre, #001a2e for ai, #1f1a0a for contract, #2e1a0a for family, #1f0a0a for focus, #1a1a1a for system)
+- action: the keyboard shortcut, CLI command, or URL (concise, practical)
+- notes: 2-3 sentence explanation of what this button does and when to use it
+- script: a practical ready-to-run script (PowerShell, bash, or kubectl) that implements the action. Include comments. If it's a simple shortcut, write a brief AutoHotKey or PowerShell SendKeys equivalent.
+
+Context: ${ctx} | Profile: ${prof} | Key position: Row ${row}, Col ${col}
+
+Return ONLY the JSON object, no markdown, no explanation.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.find(c => c.type === 'text')?.text || '';
+
+    // Extract JSON
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+    const result = JSON.parse(jsonMatch[0]);
+
+    // Populate fields
+    setFieldAI('emoji-display', null, result.emoji || '');
+    document.getElementById('emoji-display').textContent = result.emoji || '＋';
+    document.getElementById('emoji-display').classList.add('ai-filled');
+
+    setFieldAI('ed-emoji-text', null, result.emoji || '');
+    setFieldAI('ed-label', 'field-input', result.label?.replace(/\\n/g, '\n') || '');
+    setSelectAI('ed-category', result.category || '');
+    setFieldAI('ed-action', 'field-input', result.action || '');
+    setFieldAI('ed-notes', 'field-textarea', result.notes || '');
+    setFieldAI('ed-script', 'field-textarea', result.script || '');
+
+    // Set color
+    if (result.color) {
+      selectedColor = result.color;
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+      const matchSwatch = [...document.querySelectorAll('.swatch')].find(s => s.dataset.color === result.color);
+      if (matchSwatch) matchSwatch.classList.add('selected');
+    }
+
+    // Mark as AI generated
+    if (activeKey !== null) buttons[activeKey].aiGenerated = true;
+    document.getElementById('ai-strip').classList.add('show');
+    renderGrid();
+    showToast('✦ AI complete — review and save', 'ai');
+
+  } catch(err) {
+    showToast('AI error: ' + err.message);
+    console.error(err);
+  } finally {
+    document.getElementById('ai-btn').disabled = false;
+    document.getElementById('ai-thinking').classList.remove('show');
+  }
+}
+
+function setFieldAI(id, cls, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = val;
+  if (cls) el.classList.add('ai-filled');
+}
+
+function setSelectAI(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = val;
+  el.classList.add('ai-filled');
+}
+
+// Enter key on AI input
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('ai-prompt-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') runAI();
+  });
+  document.getElementById('ed-emoji-text').addEventListener('input', function() {
+    const v = this.value.trim();
+    document.getElementById('emoji-display').textContent = v || '＋';
+  });
+  renderGrid();
+});
+
+// ══════════════════════════════════════════
+// EMOJI PICKER
+// ══════════════════════════════════════════
+function buildEmojiPicker() {
+  const catBar = document.getElementById('emoji-cats');
+  catBar.innerHTML = '';
+  Object.keys(EMOJI_CATS).forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-cat-btn' + (cat === activeCat ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => {
+      activeCat = cat;
+      filteredEmojis = EMOJI_CATS[cat];
+      document.getElementById('emoji-search').value = '';
+      document.querySelectorAll('.emoji-cat-btn').forEach(b => b.classList.toggle('active', b.textContent === cat));
+      renderEmojiGrid();
+    };
+    catBar.appendChild(btn);
+  });
+  filteredEmojis = EMOJI_CATS[activeCat];
+  renderEmojiGrid();
+}
+
+function renderEmojiGrid() {
+  const grid = document.getElementById('emoji-grid');
+  grid.innerHTML = '';
+  filteredEmojis.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-opt';
+    btn.textContent = em;
+    btn.onclick = () => {
+      document.getElementById('emoji-display').textContent = em;
+      document.getElementById('ed-emoji-text').value = em;
+      closeEmojiPicker();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function filterEmojis() {
+  const q = document.getElementById('emoji-search').value.toLowerCase();
+  filteredEmojis = q ? allEmojis.filter(e => e.includes(q)) : EMOJI_CATS[activeCat];
+  renderEmojiGrid();
+}
+
+function toggleEmojiPicker(e) {
+  e.stopPropagation();
+  const picker = document.getElementById('emoji-picker');
+  if (picker.classList.contains('open')) { closeEmojiPicker(); return; }
+  const rect = e.target.getBoundingClientRect();
+  picker.style.top = (rect.bottom + 6) + 'px';
+  picker.style.left = rect.left + 'px';
+  picker.classList.add('open');
+  buildEmojiPicker();
+  document.getElementById('emoji-search').focus();
+}
+
+function closeEmojiPicker() {
+  document.getElementById('emoji-picker').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('emoji-picker').contains(e.target) && e.target.id !== 'emoji-display')
+    closeEmojiPicker();
+});
+
+// ══════════════════════════════════════════
+// YAML
+// ══════════════════════════════════════════
+function getFilename() {
+  const c = (document.getElementById('input-context').value.trim() || 'CONTEXT').replace(/\s+/g,'_');
+  const p = (document.getElementById('input-profile').value.trim() || 'PROFILE').replace(/\s+/g,'_');
+  const n = (document.getElementById('input-page').value.trim() || '01').replace(/\s+/g,'_');
+  return `${c}__${p}__page${n}.yaml`;
+}
+
+function buildYaml() {
+  const ctx = document.getElementById('input-context').value.trim();
+  const prof = document.getElementById('input-profile').value.trim();
+  const page = document.getElementById('input-page').value.trim();
+  const lines = [
+    `# Stream Deck XL — ${ctx} / ${prof} / Page ${page}`,
+    `# Generated: ${new Date().toISOString()}`,
+    '',
+    'meta:',
+    `  context: "${ctx}"`,
+    `  profile: "${prof}"`,
+    `  page: "${page}"`,
+    `  device: Stream Deck XL`,
+    `  grid: 8x4`,
+    '',
+    'buttons:'
+  ];
+  buttons.forEach(b => {
+    if (!b.emoji && !b.label && !b.action && !b.notes && !b.script) return;
+    lines.push(`  - id: ${b.id+1}`);
+    lines.push(`    row: ${b.row}`);
+    lines.push(`    col: ${b.col}`);
+    if (b.aiGenerated) lines.push(`    ai_generated: true`);
+    if (b.emoji)    lines.push(`    emoji: "${b.emoji}"`);
+    if (b.label)    lines.push(`    label: "${b.label.replace(/"/g,'\\"')}"`);
+    if (b.category) lines.push(`    category: ${b.category}`);
+    if (b.color)    lines.push(`    color: "${b.color}"`);
+    if (b.action)   lines.push(`    action: "${b.action.replace(/"/g,'\\"')}"`);
+    if (b.notes) {
+      lines.push(`    notes: |`);
+      b.notes.split('\n').forEach(l => lines.push(`      ${l}`));
+    }
+    if (b.script) {
+      lines.push(`    script: |`);
+      b.script.split('\n').forEach(l => lines.push(`      ${l}`));
+    }
+  });
+  return lines.join('\n');
+}
+
+function saveYaml() {
+  const yaml = buildYaml();
+  document.getElementById('yaml-output').textContent = yaml;
+  document.getElementById('modal-filename').textContent = '📄 ' + getFilename();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function downloadYaml() {
+  const yaml = document.getElementById('yaml-output').textContent;
+  const fn = getFilename();
+  const blob = new Blob([yaml], {type: 'text/yaml'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fn;
+  a.click();
+  showToast('✓ Saved: ' + fn);
+}
+
+function copyYaml() {
+  navigator.clipboard.writeText(document.getElementById('yaml-output').textContent);
+  showToast('✓ Copied');
+}
+
+// ══════════════════════════════════════════
+// LOAD YAML
+// ══════════════════════════════════════════
+document.getElementById('yaml-file-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try { loadFromYaml(ev.target.result); showToast('✓ Loaded: ' + file.name); }
+    catch(err) { alert('Could not parse: ' + err.message); }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+function loadFromYaml(text) {
+  const ctxM = text.match(/context:\s*"([^"]*)"/);
+  const profM = text.match(/profile:\s*"([^"]*)"/);
+  const pageM = text.match(/page:\s*"([^"]*)"/);
+  if (ctxM) document.getElementById('input-context').value = ctxM[1];
+  if (profM) document.getElementById('input-profile').value = profM[1];
+  if (pageM) document.getElementById('input-page').value = pageM[1];
+
+  buttons = Array.from({length: ROWS*COLS}, (_, i) => ({
+    id:i, row:Math.floor(i/COLS)+1, col:(i%COLS)+1,
+    emoji:'', label:'', category:'', color:'', action:'', notes:'', script:'', aiGenerated:false
+  }));
+
+  const bSection = text.split('buttons:')[1] || '';
+  const blockRe = /  - id:\s*(\d+)([\s\S]*?)(?=  - id:|\s*$)/g;
+  let m;
+  while ((m = blockRe.exec(bSection)) !== null) {
+    const idx = parseInt(m[1]) - 1;
+    if (idx < 0 || idx >= buttons.length) continue;
+    const blk = m[2];
+    const g = k => { const r = blk.match(new RegExp(`    ${k}: "([^"]*)"`)); return r ? r[1] : ''; };
+    const gb = k => { const r = blk.match(new RegExp(`    ${k}: \\|\\n([\\s\\S]*?)(?=    \\w|$)`)); return r ? r[1].replace(/^      /gm,'').replace(/\n$/,'') : ''; };
+    buttons[idx].emoji       = g('emoji');
+    buttons[idx].label       = g('label');
+    buttons[idx].category    = blk.match(/    category:\s*(\S+)/)?.[1] || '';
+    buttons[idx].color       = g('color');
+    buttons[idx].action      = g('action');
+    buttons[idx].notes       = gb('notes');
+    buttons[idx].script      = gb('script');
+    buttons[idx].aiGenerated = /ai_generated:\s*true/.test(blk);
+  }
+  closeEditor();
+  renderGrid();
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function clearAll() {
+  if (!confirm('Clear all 32 buttons?')) return;
+  buttons = Array.from({length: ROWS*COLS}, (_, i) => ({
+    id:i, row:Math.floor(i/COLS)+1, col:(i%COLS)+1,
+    emoji:'', label:'', category:'', color:'', action:'', notes:'', script:'', aiGenerated:false
+  }));
+  closeEditor();
+  renderGrid();
+  showToast('✓ Cleared');
+}
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+
+</body>
+</html>
