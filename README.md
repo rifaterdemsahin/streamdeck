@@ -2,7 +2,7 @@
 
 Comprehensive automation system for Stream Deck devices focused on MLOps/DevOps workflows and video editing tasks.
 
-> https://rifaterdemsahin.github.io/streamdeck/
+> https://rifaterdemsahin.github.io/streamdeck/5_Symbols/index.html
 
 
 ## 🚀 Quick Navigation
