@@ -2,6 +2,9 @@
 
 Comprehensive automation system for Stream Deck devices focused on MLOps/DevOps workflows and video editing tasks.
 
+> https://rifaterdemsahin.github.io/streamdeck/
+
+
 ## 🚀 Quick Navigation
 
 | Category | Link | Description |
